@@ -68,6 +68,27 @@ parse_args:
 #-----------------------------------------------------# 
 
 #--- additional BIDS-app options --- (add in below) --#
+  --shells:
+    help: '(Mrtrix3) specify one or more b-values to use during processing, as a
+          comma-separated list of the desired approximate b-values (b-values are
+          clustered to allow for small deviations). Note that some commands are
+          incompatible with multiple b-values, and will report an error if more
+          than one b-value is provided. 
+          WARNING: note that, even though b=0 volumes are never referred to as
+          shells in the literature, they still have to be explicitly included in
+          the list of b-values as provided to the -shell option! Several 
+          algorithms which include the b=0 volumes in their computations may 
+          otherwise return an undesired reuslt.'
+    nargs: "+"
+
+  --lmax:
+    help: '(Mrtrix3) the maximum spherical harmonic order for the output FOD(s).
+          For algorithms with multiple outputs, this should be provided as a 
+          comma-sperated list of integers, one for each output image; for single-
+          output algorithms, only a single integer should be provided. If omitted,
+          commands will use the lmax of the corresponding response function (i.e 
+          based on its number of coefficients), up to a maximum of 8.'
+    nargs: "+"
 
 #-----------------------------------------------------#
 
@@ -87,9 +108,6 @@ zona_bb_subcortex:
 
 freesurfer:
   labels: 'resources/freesurfer/fs_labels.csv'
-
-mrtpipelines:
-  mrt_template: 'resources/mrtpipelines/sub-HCPUR100'
 
 # Containers
 # Note: Update from latest to use specific tags
