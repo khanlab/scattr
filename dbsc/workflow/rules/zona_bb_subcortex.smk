@@ -9,7 +9,7 @@ rule xfm_to_native:
             suffix="T1w.nii.gz",
             **config["subj_wildcards"],
         ),
-        xfm=## ADD XFM from template to native
+        xfm=#ADD XFM from template to native#
     output:
         nii=bids(
             root=join(config['output_dir'], 'zona_bb_subcortex'),
@@ -44,10 +44,10 @@ rule binarize:
 
 
 rule add_brainstem:
-    ## NEED TO UPDATE BRAINSTEM INPUT
+    #CHECK TO SEE OUT INPUT SHOULD BE CALLED FROM OTHER SMK FILE#
     input:
         bin=rule.binarize.output.bin,
-        aparcaseg=#APARCASEG.NII.GZ
+        aparcaseg=rule.freesurfer.xfm_to_native.output.aparcaseg,
     output:
         bin=bids(
             root=join(config['output_dir'], 'zona_bb_subcortex'),
@@ -138,10 +138,11 @@ rule rm_bb_thal:
 
 
 rule add_new_thal:
+    # Need to double check calling of rule from a different smk file
     input: 
         aparcaseg=rule.add_brainstem.input.aparcaseg, 
         labels=config['freesurfer']['labels'],
-        thal=rule.freesurfer.xfm_to_native.output.nii,
+        thal=rule.freesurfer.xfm_to_native.output.thal,
         seg=rule.rm_bb_thal.output.rm_seg,
     output:
         seg=bids(
