@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Variables
+subject=$1  # Subject ID 
+njobs=$2    # Number of cores for pararallelization 
+
+# Directories (update as needed)
+OUTDIR=/scratch/$USER/Zona/data/hcpur100_3T
+
+# Singularity containers & tools
+SINGULARITY_FS=/project/6050199/akhanf/singularity/bids-apps/pwighton_freesurfer_7.1.0.sif
+SINGULARITY_NEUROGLIA=/project/6050199/akhanf/singularity/khanlab_neuroglia-core_v1.3.0.img
+ANTS=/project/6050199/akhanf/opt/ants
+
+# Freesurfer settings
+mkdir -p $SLURM_TMPDIR/fs/${subject:4}/scripts
+export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=$njobs
+export FS_LICENSE=$FS_LICENSE_FILE
+export SUBJECTS_DIR=$SLURM_TMPDIR/fs
+
+# Script
+## Copy files to temp folder
+tar -xf /project/6050199/ext-data/hcp1200/HCP_1200_T1w_Diffusion_FS/${subject:4}/T1w/${subject:4}.freesurfer.tar -C $SLURM_TMPDIR/fs
+
+## Perform thalamic segmentation
+singularity exec $SINGULARITY_FS segmentThalamicNuclei.sh ${subject:4}
+
+singularity exec $SINGULARITY_FS mri_convert $SLURM_TMPDIR/fs/${subject:4}/mri/ThalamicNuclei.v12.T1.mgz $SLURM_TMPDIR/fs/${subject:4}/mri/ThalamicNuclei.v12.T1.nii.gz
+
+$ANTS/antsApplyTransforms -d 3 -n MultiLabel -i $SLURM_TMPDIR/fs/${subject:4}/mri/ThalamicNuclei.v12.T1.nii.gz -r $OUTDIR/$subject/anat/${subject}_acq-procHCP_T1w.nii.gz -o $SLURM_TMPDIR/fs/${subject:4}/mri/${subject}_space-T1w_desc-thalamus_dseg.nii.gz
+
+## Sync files to output folder
+cp $SLURM_TMPDIR/fs/${subject:4}/mri/${subject}_space-T1w_desc-thalamus_dseg.nii.gz $OUTDIR/derivatives/freesurfer/$subject/anat/${subject}_space-T1w_desc-fs_thalamus.nii.gz

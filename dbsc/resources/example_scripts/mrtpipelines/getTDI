@@ -1,0 +1,38 @@
+#!/bin/bash
+# Variables
+subj=sub-${1:4}
+out_dir=$HOME/scratch/Zona/data/hcp1200_3T_2/hcp_test
+test_dir=$HOME/scratch/Zona/data/hcp1200_3T_2/hcp_test
+njobs=$2
+localscratch=$SLURM_TMPDIR
+
+SINGULARITY_IMG=$HOME/opt/singularity/mrtpipelines_0.1.6.sif
+SINGULARITY_DEV=$HOME/opt/singularity/mrtrix3-dev.sif
+export SINGULARITYENV_OMP_NUM_THREADS=$njobs
+export SINGULARITYENV_MKL_NUM_THREADS=$njobs
+
+# Create subject specific directories on localscratch
+mkdir -p $localscratch/$subj/tractography/edge_unfiltered
+mkdir -p $localscratch/$subj/tractography/edge
+mkdir -p $localscratch/$subj/work
+mkdir -p $localscratch/$subj/tdi 
+
+tar -xf $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/${subj}_edge.tar -C $localscratch/$subj/tractography
+
+## Update edge connectivity individually
+for node1 in `seq 1 72`; do
+  for node2 in `seq $((node1 + 1)) 72`; do
+
+    ## Create TDI map
+    singularity exec $SINGULARITY_IMG tckmap -nthreads $njobs -template $test_dir/$subj/anat/${subj}_acq-procHCP_T1w.nii.gz -tck_weights_in $localscratch/$subj/tractography/edge/${subj}_space-dwi_desc-subcortex_tckweights${node1}-${node2}.csv -contrast tdi $localscratch/$subj/tractography/edge/${subj}_space-dwi_desc-from_${node1}-${node2}.tck $localscratch/$subj/tdi/${subj}_space-dwi_tdi${node1}-${node2}.nii.gz
+  done 
+done 
+
+push `pwd`
+
+cd $localscratch/$subj/tdi/
+tar -cf $localscratch/$subj/tdi/${subj}_tdi.tar *.nii.gz && rm $localscratch/$subj/tdi/*.nii.gz
+
+popd
+
+rsync -r $localscratch/$subj/* $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/

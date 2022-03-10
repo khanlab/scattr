@@ -1,0 +1,81 @@
+#!/bin/bash
+# Variables
+subj=sub-${1:4}
+out_dir=$HOME/scratch/Zona/data/hcp1200_3T/hcp_test
+njobs=$2
+localscratch=$SLURM_TMPDIR
+
+SINGULARITY_IMG=$HOME/opt/singularity/mrtpipelines_0.1.6.sif
+SINGULARITY_DEV=$HOME/opt/singularity/mrtrix3-dev.sif
+export SINGULARITYENV_OMP_NUM_THREADS=$njobs
+export SINGULARITYENV_MKL_NUM_THREADS=$njobs
+
+# Create subject specific directories on localscratch
+mkdir -p $localscratch/$subj/tractography/edge_unfiltered
+mkdir -p $localscratch/$subj/tractography/edge
+mkdir -p $localscratch/$subj/work
+mkdir -p $localscratch/$subj/tdi 
+
+# Processing
+## tck2connectome
+echo "Evaluating node assignments..."
+singularity exec $SINGULARITY_IMG tck2connectome -nthreads $njobs -zero_diagonal -stat_edge sum -assignment_radial_search 1.5 -tck_weights_in $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/${subj}_space-dwi_desc-iFOD2_tckweights.txt -out_assignments $localscratch/$subj/tractography/${subj}_space-dwi_desc-subcortical_nodeassignment.txt -symmetric $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/${subj}/tractography/${subj}_space-dwi_desc-iFOD2_tractography-tckgen.tck $out_dir/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_desc-ZonaBBSubCorSeg.nii.gz $localscratch/$subj/tractography/${subj}_space-dwi_desc-subcortical_nodeweights.csv
+
+## connectome2tck
+echo "Extracting node connectivity..."
+nodes=1
+for i in `seq 2 72`; do
+  nodes=$nodes,$i
+done
+
+## Extract out per edge connectivity
+singularity exec $SINGULARITY_IMG connectome2tck -nthreads $njobs -nodes $nodes -exclusive -files per_edge -tck_weights_in $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/${subj}_space-dwi_desc-iFOD2_tckweights.txt -prefix_tck_weights_out $localscratch/$subj/tractography/edge_unfiltered/${subj}_space-dwi_desc-subcortex_tckweights $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/${subj}_space-dwi_desc-iFOD2_tractography-tckgen.tck $localscratch/$subj/tractography/${subj}_space-dwi_desc-subcortical_nodeassignment.txt $localscratch/$subj/tractography/edge_unfiltered/${subj}_space-dwi_desc-from_
+
+## Filter tractography - remove streamlines passing through other ROIs (except for ZI)
+singularity exec $SINGULARITY_IMG mrcalc -nthreads $njobs $out_dir/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_desc-ZonaBBSubCorSeg.nii.gz 21 -eq $localscratch/$subj/work/${subj}_mask_lZI.mif
+
+singularity exec $SINGULARITY_IMG mrcalc -nthreads $njobs $out_dir/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_desc-ZonaBBSubCorSeg.nii.gz 22 -eq $localscratch/$subj/work/${subj}_mask_rZI.mif
+
+for node in `seq 1 72`; do 
+  singularity exec $SINGULARITY_IMG mrcalc -nthreads $njobs $out_dir/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_desc-ZonaBBSubCorSeg.nii.gz $node -eq $localscratch/$subj/work/${subj}_mask_${node}.mif
+done 
+
+## Update edge connectivity individually
+for node1 in `seq 1 72`; do
+  for node2 in `seq $((node1 + 1)) 72`; do
+    singularity exec $SINGULARITY_IMG mrcalc -nthreads $njobs $out_dir/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_desc-ZonaBBSubCorSeg.nii.gz 0 -neq $localscratch/$subj/work/${subj}_mask_${node1}.mif -sub $localscratch/$subj/work/${subj}_mask_${node2}.mif -sub $localscratch/$subj/work/${subj}_mask_lZI.mif -sub $localscratch/$subj/work/${subj}_mask_rZI.mif -sub $localscratch/$subj/work/${subj}_ex_mask.mif -force 
+
+    singularity exec $SINGULARITY_IMG tckedit -nthreads $njobs -exclude $localscratch/$subj/work/${subj}_ex_mask.mif -tck_weights_in $localscratch/$subj/tractography/edge_unfiltered/${subj}_space-dwi_desc-subcortex_tckweights${node1}-${node2}.csv -tck_weights_out $localscratch/$subj/tractography/edge/${subj}_space-dwi_desc-subcortex_tckweights${node1}-${node2}.csv $localscratch/$subj/tractography/edge_unfiltered/${subj}_space-dwi_desc-from_${node1}-${node2}.tck $localscratch/$subj/tractography/edge/${subj}_space-dwi_desc-from_${node1}-${node2}.tck
+
+    ## Create TDI map
+    singularity exec $SINGULARITY_IMG tckmap -nthreads $njobs -template $out_dir/$subj/anat/${subj}_acq-procHCP_T1w.nii.gz -tck_weights_in $localscratch/$subj/tractography/edge/${subj}_space-dwi_desc-subcortex_tckweights${node1}-${node2}.csv -contrast tdi $localscratch/$subj/tractography/edge/${subj}_space-dwi_desc-from_${node1}-${node2}.tck $localscratch/$subj/tdi/${subj}_space-dwi_tdi${node1}-${node2}.nii.gz
+  done 
+done 
+
+## Combine edge conenctivity and update tckweights
+singularity exec $SINGULARITY_IMG tckedit $localscratch/$subj/tractography/edge/*.tck $localscratch/$subj/tractography/${subj}_space-dwi_desc-subcortical_tractography.tck
+
+cat $localscratch/$subj/tractography/edge/*tckweights*.csv >> $localscratch/$subj/tractography/${subj}_space-dwi_desc-subcortical_tractography_tckweights.txt
+
+## Update connectivity matrix after filtering
+singularity exec $SINGULARITY_IMG tck2connectome -nthreads $njobs -zero_diagonal -stat_edge sum -assignment_radial_search 1.5 -tck_weights_in $localscratch/$subj/tractography/${subj}_space-dwi_desc-subcortical_tractography_tckweights.txt -out_assignments $localscratch/$subj/tractography/${subj}_space-dwi_desc-subcortical_nodeassignment.txt -symmetric $localscratch/$subj/tractography/${subj}_space-dwi_desc-subcortical_tractography.tck $out_dir/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_desc-ZonaBBSubCorSeg.nii.gz $localscratch/$subj/tractography/${subj}_space-dwi_desc-subcortical_nodeweights.csv -force
+
+# Tar / rm up extra files
+echo "Cleaning up & syncing files..."
+pushd `pwd`
+
+cd $localscratch/$subj/tdi/
+tar -cf $localscratch/$subj/tdi/${subj}_tdi.tar *.nii.gz && rm $localscratch/$subj/tdi/*.nii.gz
+
+cd $localscratch/$subj/tractography
+rm *subcortical_nodeassignment.txt *subcortical_tckweights.txt *subcortical_tractography.tck
+rm -r $localscratch/$subj/tractography/edge_unfiltered
+tar -cf $localscratch/$subj/tractography/${subj}_edge.tar edge/ && rm -r $localscratch/$subj/tractography/edge/ 
+
+rm -r $localscratch/$subj/work
+
+popd
+
+# Move output to subject folders
+rsync -r $localscratch/$subj/tractography/${subj}_space-dwi_desc-subcortical_nodeweights.csv $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/${subj}_space-dwi_desc-subcortical_nodeweights.csv
+rsync -r $localscratch/$subj/* $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/

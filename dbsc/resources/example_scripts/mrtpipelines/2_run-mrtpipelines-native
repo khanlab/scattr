@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Variables
+subj=sub-${1:4}
+out_dir=/scratch/tkai/Zona/data/hcp1200_3T/hcp_test
+avg_resp=/scratch/tkai/Zona/data/hcp1200_3T/deriv_common/avg_response
+njobs=$2
+localscratch=$SLURM_TMPDIR
+
+SINGULARITY_IMG=$HOME/opt/singularity/mrtpipelines_0.1.6.sif
+SINGULARITY_DEV=$HOME/opt/singularity/mrtrix3-dev.sif
+export SINGULARITYENV_OMP_NUM_THREADS=$njobs
+export SINGULARITYENV_MKL_NUM_THREADS=$njobs
+
+# Script
+## FOD
+mkdir -p $localscratch/$subj/response 
+
+singularity exec $SINGULARITY_IMG dwi2fod -mask $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/dwi/${subj}_space-dwi_brainmask.mif -nthreads $njobs -shell 0,1000,2000,3000 msmt_csd $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/dwi/${subj}_space-dwi_dwi.mif $avg_resp/sub-HCP_desc-avg_model-CSD_WMResp.txt $localscratch/$subj/response/${subj}_space-dwi_desc-avg_model-CSD_WMFOD.mif 
+
+singularity exec $SINGULARITY_IMG mtnormalise -nthreads $njobs -mask $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/dwi/${subj}_space-dwi_brainmask.mif -niter 15 -order 3 -value 0.282095 $localscratch/$subj/response/${subj}_space-dwi_desc-avg_model-CSD_WMFOD.mif $localscratch/$subj/response/${subj}_space-dwi_desc-avg_model-CSD_WMFODNorm.mif 
+
+## Tractography (20M streamlines)
+mkdir -p $localscratch/$subj/tractography 
+
+singularity exec $SINGULARITY_IMG tckgen -algorithm iFOD2 -step 0.35 -nthreads $njobs -exclude $out_dir/derivatives/freesurfer/$subj/anat/${subj}_space-T1w_desc-fsexclude_roi.nii.gz -exclude $out_dir/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_desc-ZonaBBSegHull_bin.nii.gz -include $out_dir/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_desc-ZonaBBSubCorSeg_bin.nii.gz -mask $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/dwi/${subj}_space-dwi_brainmask.mif -seed_image $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/dwi/${subj}_space-dwi_brainmask.mif -select 20000000 $localscratch/$subj/response/${subj}_space-dwi_desc-avg_model-CSD_WMFODNorm.mif $localscratch/$subj/tractography/${subj}_space-dwi_desc-iFOD2_tractography-tckgen.tck
+
+singularity exec $SINGULARITY_IMG tcksift2 -nthreads $njobs $localscratch/$subj/tractography/${subj}_space-dwi_desc-iFOD2_tractography-tckgen.tck $localscratch/$subj/response/${subj}_space-dwi_desc-avg_model-CSD_WMFODNorm.mif $localscratch/$subj/tractography/${subj}_space-dwi_desc-iFOD2_tckweights.txt
+
+# ## Super-resolved TDI
+# mkdir -p $localscratch/$subj/tdi 
+
+# singularity exec $SINGULARITY_IMG tckmap -nthreads $njobs -template $out_dir/$subj/anat/${subj}_acq-procHCP_T1w.nii.gz -tck_weights_in $localscratch/$subj/tractography/${subj}_space-dwi_tckweights.txt -vox 0.25 -dec -contrast tdi $localscratch/$subj/tractography/${subj}_space-dwi_desc-iFOD2_tractography-tckgen.tck $localscratch/$subj/tdi/${subj}_space-dwi_desc-0.25mm_tdi.nii.gz
+
+# Sync outputs
+# rsync -r $localscratch/$subj $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/
+mkdir -p $out_dir/derivatives/mrtpipelines_0.1.6/test/$subj/
+rsync -rv $localscratch/$subj $out_dir/derivatives/mrtpipelines_0.1.6/test/

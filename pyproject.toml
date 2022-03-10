@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "deep brain structural connectivity"
+version = "0.1.0-pre.1"
+description = "SnakeBIDS app for mapping the subcortical connectome"
+authors = ["Jason Kai <tkai@uwo.ca>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.8"
+snakebids = "^0.5.0"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "4.0"
+pytest-console-scripts = "1.2"
+pytest = "^7.0.1"
+black = "^22.1.0"
+pylint = "^2.12.2"
+isort = "^5.10.1"
+poethepoet = "^0.13.1"
+pre-commit = "^2.17.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+setup = "pre-commit install"
+quality = { shell = "isort dbsc/*.py && black dbsc" }
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.pylint.master]
+ignore-patterns = "^[0-9][0-9]+_,^test_"
+
+[tool.pylint.messages_control]
+disable = """
+    missing-function-docstring
+    missing-module-docstring
+    fixme
+"""

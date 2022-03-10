@@ -1,0 +1,101 @@
+bids_dir: "/path/to/bids/dir"
+output_dir: "/path/to/output/dir" # don't use "."
+
+snakebids_dir: "." # DO NOT MODIFY - used to refer to files need by workflow running with CLI
+
+debug: False # Enable printing of debug statements during parsing -- disable if generating dag visualizations 
+
+derivatives: False # Search in bids/derivatives if True; can also be path(s) to derivatives datasets
+
+# List of analysis levels in bids app
+analysis_levels: &analysis_levels
+  - participant
+  - group
+
+# Mapping from analysis_level to set of target rules or files
+targets_by_analysis_level:
+  participant:
+    - "all" # if "", then the first rule is run
+  group:
+    - "all_group_tsv"
+
+# this configures the pybids grabber - create an entry for each type of input you want to grab
+# indexed by name of input dictionary for each input is passed directly to pybids get()
+# https://bids-standard.github.io/pybids/generated/bids.layout.BIDSLayout.html#bids.layout.BIDSLayout.get
+pybids_inputs:
+  T1w:
+    filters:
+      suffix: "T1w"
+      extension: ".nii.gz"
+      datatype: "anat"
+      space: null 
+    wildcards:
+      - subject
+      - session
+
+# Configuration for the command-line parameters to make available
+# passed on the argparse add_argument()
+parse_args: 
+
+#--- core BIDS-app options --- (do not modify below) ---# 
+  bids_dir:
+    help: The directory with the input dataset formatted according to the BIDS standard
+
+  output_dir:
+    help: The directory where the output files should be stored. If you are running 
+          group level analysis, this folder should be prepopulated with the results 
+          of the participant level analysis
+
+  analysis_level:
+    help: Level of the analysis that will be performed
+    choices: *analysis_levels
+
+  --participant_label:
+    help: The label(s) of the participant(s) that should be analyzed. The label
+          corresponds to sub-<participant_label> from the BIDS spec (so it does
+          not include "sub-"). If this parameter is not provided, all subjects
+          will be analyzed. Multiple participants can be specified with a space
+          seperated list.
+    nargs: "+"
+
+  --exclude_participant_label:
+    help: The label(s) of the participant(s) that should be excluded. The label
+          corresponds to sub-<participant_label> from the BIDS spec (so it does
+          not include "sub-"). If this parameter is not provided, all subjects 
+          will be analyzed. Multiple participants can be specified with a space
+          sepearated list.
+    nargs: "+"
+#-----------------------------------------------------# 
+
+#--- additional BIDS-app options --- (add in below) --#
+
+#-----------------------------------------------------#
+
+# Workflow specific config
+# Space (MNI152, MNINlin2009bAsym)
+space: MNI152
+
+zona_bb_subcortex:
+  MNI152:
+    dir: 'resources/MNI152'
+    seg: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNI152_ZonaBBSubCorSeg.nii.gz'
+    exclude: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNI152_desc-exclude_ROI.nii.gz'
+  MNI2009:
+    dir: 'resources/MNI2009b'
+    seg: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNINlin2009bAsym_ZonaBBSubCorSeg.nii.gz'
+    exclude: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNINlin2009bAsym_desc-exclude_ROI.nii.gz'
+
+freesurfer:
+  labels: 'resources/freesurfer/fs_labels.csv'
+
+mrtpipelines:
+  mrt_template: 'resources/mrtpipelines/sub-HCPUR100'
+
+# Containers
+# Note: Update from latest to use specific tags
+singularity:
+  freesurfer: "docker://pwighton/freesurfer:7.2.0"
+  neuroglia-core: "docker://khanlab/neuroglia-core:latest"
+  mrtpipelines: "docker://kaitj/mrtpipelines:0.1.6"
+
+fs_license: /path/to/fs/license

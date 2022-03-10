@@ -1,0 +1,38 @@
+#!/bin/bash
+# Variables
+subj=sub-${1:4}
+njobs=$2
+wm=$3
+out_dir=$HOME/scratch/Zona/data/hcp1200_3T/hcp_test
+localscratch=$SLURM_TMPDIR
+
+# Singularity containers
+DIPY_IMG=/home/tkai/opt/singularity/dipy_1.3.0.sif
+export SINGULARITYENV_OMP_NUM_THREADS=$njobs
+export SINGULARITYENV_MKL_NUM_THREADS=$njobs
+
+# Untar
+echo "Untarring archives and symlinking necessary files..."
+mkdir -p $localscratch/$subj/anat 
+ln -s $out_dir/$subj/anat/${subj}_acq-procHCP_T1w_brain.nii.gz $localscratch/$subj/anat/
+
+mkdir -p $localscratch/$subj/tractography/cleaned/
+tar -xf $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/${subj}_masked.tar -C $localscratch/$subj/tractography/
+
+# Script
+for hemi in L R; do
+    for thresh in 25 50 75; do
+        singularity run $DIPY_IMG python3 $out_dir/derivatives/mrtpipelines_0.1.6/code/scripts/cleanTract $subj $localscratch $localscratch/$subj/tractography/cleaned $hemi $wm -thresh $thresh -v
+
+    done
+done
+
+# Data syncing
+pushd .
+
+cd $localscratch/$subj/tractography
+tar -cf ${subj}_cleaned-${wm}.tar cleaned/
+
+popd
+
+rsync -rv $localscratch/$subj/tractography/${subj}_cleaned-${wm}.tar $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography
