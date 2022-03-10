@@ -212,3 +212,19 @@ rule add_brainstem_new_seg:
         config['singularity']['neuroglia-core']
     shell:
         'fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.seg} {output.seg}'
+
+
+rule create_convex_hull:
+    input:
+        bin_seg=rules.add_brainstem_new_seg.output.seg,
+    output:
+        convex_hull=bids(
+            root=join(config['output_dir'], 'zona_bb_subcortex'),
+            datatype='anat',
+            space='T1w',
+            desc='ConvexHull',
+            suffix=seg_bin.nii.gz',
+            **config['subj_wildcards'],
+        )
+    script:
+        '../resources/zona_bb_subcortex/convexHull_roi.py'
