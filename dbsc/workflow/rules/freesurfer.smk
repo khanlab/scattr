@@ -20,11 +20,11 @@ rule thalamic_segmentation:
         "FS_LICENSE={params.fs_license} "
         "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={params.threads} "
         "SUBJECTS_DIR={input.freesurfer_dir} "
-        "segmentThalamicNuclei.sh {{subject:4}}"
+        "segmentThalamicNuclei.sh {{subject}}"
 
 rule mgz_to_nii:
     input: 
-        thal=rule.thalamic_segmentation.output.thal_seg,
+        thal=rules.thalamic_segmentation.output.thal_seg,
         aparcaseg=join(config["output_dir"], "freesurfer/{subject}/mri/aparc+aseg.mgz")
     params:
         fs_license=config["fs_license"],
@@ -52,10 +52,10 @@ rule mgz_to_nii:
         "mri_convert {input.thal} {output.thal} "
         "mri_convert {input.aparcaseg} {output.aparcaseg} "
 
-rule xfm_to_native:
+rule fs_xfm_to_native:
     input:
-        thal=rule.mgz_to_nii.output.thal,
-        aparcaseg=rule.mgz_to_nii.output.aparcaseg,
+        thal=rules.mgz_to_nii.output.thal,
+        aparcaseg=rules.mgz_to_nii.output.aparcaseg,
         ref=bids(
             root=config["bids_dir"],
             datatype="anat",

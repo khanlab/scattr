@@ -1,5 +1,9 @@
 from os.path import join 
 
+include: "freesurfer.smk"
+
+# ADD SEGMENTATION FOR CORTICAL RIBBON
+
 rule xfm_to_native:
     input:
         seg=config['zona_bb_subcortex'][config['Space']]['seg']
@@ -27,7 +31,7 @@ rule xfm_to_native:
 
 rule binarize:
     input: 
-        nii=rule.xfm_to_native.output.nii,
+        nii=rules.xfm_to_native.output.nii,
     output:
         bin=bids(
             root=join(config['output_dir'], 'zona_bb_subcortex'),
@@ -44,10 +48,9 @@ rule binarize:
 
 
 rule add_brainstem:
-    #CHECK TO SEE OUT INPUT SHOULD BE CALLED FROM OTHER SMK FILE#
     input:
-        bin=rule.binarize.output.bin,
-        aparcaseg=rule.freesurfer.xfm_to_native.output.aparcaseg,
+        bin=rules.binarize.output.bin,
+        aparcaseg=rules.fs_xfm_to_native.output.aparcaseg,
     output:
         bin=bids(
             root=join(config['output_dir'], 'zona_bb_subcortex'),
@@ -73,8 +76,8 @@ rule xfm_zona_rois:
             hemi=['L', 'R'],
             struct=['fct', 'ft', 'fl', 'hfields']
         )
-        ref=rule.xfm_to_native.input.ref,
-        xfm=rule.xfm_to_native.input.xfm,
+        ref=rules.xfm_to_native.input.ref,
+        xfm=rules.xfm_to_native.input.xfm,
     output:
         mask=expand(
             bids(
@@ -97,7 +100,7 @@ rule xfm_zona_rois:
 rule rm_bb_thal:
     """Removes existing thalamus"""
     input:
-        seg=rule.xfm_to_native.output.nii, 
+        seg=rules.xfm_to_native.output.nii, 
     output:
         seg=bids(
             root=join(config['output_dir'], 'zona_bb_subcortex'),
@@ -138,12 +141,11 @@ rule rm_bb_thal:
 
 
 rule add_new_thal:
-    # Need to double check calling of rule from a different smk file
     input: 
-        aparcaseg=rule.add_brainstem.input.aparcaseg, 
+        aparcaseg=rules.add_brainstem.input.aparcaseg, 
         labels=config['freesurfer']['labels'],
-        thal=rule.freesurfer.xfm_to_native.output.thal,
-        seg=rule.rm_bb_thal.output.rm_seg,
+        thal=rules.fs_xfm_to_native.output.thal,
+        seg=rules.rm_bb_thal.output.rm_seg,
     output:
         seg=bids(
             root=join(config['output_dir'], 'zona_bb_subcortex'),
@@ -180,7 +182,7 @@ rule add_new_thal:
 
 rule bin_new_seg:
     input:
-        seg=rule.add_new_thal.output.seg
+        seg=rules.add_new_thal.output.seg
     output:
         seg=bids(
             root=join(config['output_dir'], 'zona_bb_subcortex'),
@@ -198,8 +200,8 @@ rule bin_new_seg:
 
 rule add_brainstem_new_seg:
     input:
-        seg=rule.bin_new_seg.output.seg
-        aparcaseg=rule.add_brainstem.input.aparcaseg
+        seg=rules.bin_new_seg.output.seg
+        aparcaseg=rules.add_brainstem.input.aparcaseg
     output:
         seg=bids(
             root=join(config['output_dir'], 'zona_bb_subcortex'),

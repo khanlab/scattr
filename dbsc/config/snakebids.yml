@@ -90,6 +90,34 @@ parse_args:
           based on its number of coefficients), up to a maximum of 8.'
     nargs: "+"
 
+  --step:
+    help: '(Mrtrix3) set the step size of the algorithm in mm (default is 
+          set to 0.35mm).'
+    default: 0.35
+
+  --sl_count:
+    help: '(Mrtrix3) set the desired number of streamlines to be selected, after
+          all selection criteria has been applied (i.e. inclusion/exclusion ROIS,
+          min/max length, etc. Streamlines will be seeded until this number of 
+          streamlines have been selected, or the maximum allowed number of seeds
+          has been exceeded. By default, 20,000,000 streamlines are to be selected.
+          Set to zero to disable, which will result in streamlines being seeded until
+          the maximum allowed number of seeds has been reached.'
+    default: 20000000
+
+  --radial_search:
+    help: '(Mrtrix3) perform a radial search from each streamline endpoint to locate
+          the nearest node. Argument is the maximum radius in mm; if no node is found
+          within this radius, the streamline endpoint is not assigned to any node.
+          Default search radius is 1.5mm.'
+    default: 1.5
+
+  --exclude_gm:
+    help: 'Exclude streamlines passing through GM nodes along its trajectory.
+          Default: True'
+    default: True
+    action: 'store_false'
+
 #-----------------------------------------------------#
 
 # Workflow specific config
