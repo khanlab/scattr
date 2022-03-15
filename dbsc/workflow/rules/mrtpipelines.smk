@@ -372,7 +372,7 @@ rule connectome_map:
 
 # Remove streamlines passing through other GM ROI
 if config['exclude_gm']:
-    rule: filter_for_gm:
+    rule extract_tck:
         input:
             node_weights=rules.connectome_map.output.node_weights,
             sl_assignment=rules.connectome_map.output.sl_assignment,
@@ -430,5 +430,131 @@ if config['exclude_gm']:
         shell:
             'mrcalc -nthreads {params.threads} {input.subcortical_seg} {wildcards.node1} -eq {output.roi_mask}'
 
+    rule filter_tck:
+        # Node1 should be same as prev rule, need to iterate over node2
+        input:
+            roi1=bids(
+                root=join(config['out_dir'], 'mrtpipelines'),
+                datatype='anat',
+                space='T1w',
+                desc='{node1}',
+                suffix='mask.mif'
+            ),
+            roi2=bids(
+                root=join(config['out_dir'], 'mrtpipelines'),
+                datatype='anat',
+                space='T1w',
+                desc='{node2}',
+                suffix='mask.mif'
+            ),
+            # ZI rois (do these need to be separately defined in output?)
+            lZI=bids(
+                root=join(config['out_dir'], 'mrtpipelines'),
+                datatype='anat',
+                space='T1w',
+                desc='21',
+                suffix='mask.mif'
+            ),            
+            rZI=bids(
+                root=join(config['out_dir'], 'mrtpipelines'),
+                datatype='anat',
+                space='T1w',
+                desc='22',
+                suffix='mask.mif'
+            ),
+            subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+            tck=rules.extract_tck.output.edge_tck,
+            weights=rules.connectome_map.outputs.node_weights
+        params:
+            threads=workflow.threads,
+        output:
+            filter_mask=temp(
+                bids(
+                    root=join(config['out_dir'], 'mrtpipelines'),
+                    datatype='anat',
+                    space='T1w',
+                    desc='exclude',
+                    suffix='mask.mif'
+                )
+            )
+            filtered_tck=temp(
+                    bids(
+                root=join(config['out_dir'], 'mrtpipelines'),
+                datatype='tractography',
+                space='T1w',
+                desc='from_{node1}-{node2}',
+                suffix='tractography.tck'
+                )
+            )
+            filtered_weights=temp(
+                    bids(
+                    root=join(config['out_dir'], 'mrtpipelines'),
+                    datatype='tractography',
+                    space='T1w',
+                    desc='from_{node1}-{node2}',
+                    suffix='weights.csv'
+                )
+            )
+        containers:
+            config['singularity']['mrtpipelines'],
+        shell: 
+            'mrcalc -nthreads {params.threads} {input.subcortical_seg} 0 -neq {input.roi1} -sub {input.roi2} -sub {input.lZI} -sub {input.rZI} -sub {output.filter_mask} '
+            'tckedit -nthreads {params.therads} -exclude {output.filter_mask} -tck_weights_in {input.weights} -tck_weights_out {output.filtered_weights} {input.tck} {output.filtered_tck} '
 
-    # Define node1, node2 wildcard
+
+    rule combine_filtered:
+        input:
+            tck=expand(rules.filter_tck.output.filtered_tck, zip, **config['input_zip_lists']['T1w']),
+            weights=expand(rules.filter_tck.output.filtered_weights, zip, **config['input_zip_lists']['T1w']),
+        params:
+            threads=workflow.threads,
+        output:
+            combined_tck=bids(
+                root=join(config['out_dir'], 'mrtpipelines'),
+                datatype='tractography',
+                space='T1w',
+                desc='subcortical',
+                suffix='tractography.tck'
+            )
+            combined_weights=bids(
+                root=join(config['out_dir'], 'mrtpipelines'),
+                datatype='tractography',
+                space='T1w',
+                desc='subcortical',
+                suffix='tckweights.txt'
+            )
+        container:
+            config['singularity']['mrtpipelines'],
+        shell:
+            'tckedit {input.tck} {output.combined_tck} '
+            'cat {input.weights} >> {output.combined_weights} '
+
+    rule filtered_connectome_map:
+        input:
+            weights=rules.combine_filtered.output.combined_weights,
+            tck=rules.combine_filtered.output.combined_tck, 
+            subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        params:
+            threads=workflow.threads,
+            radius=config['radial_search']
+        output:
+            sl_assignment=bids(
+                root=join(config['out_dir'], 'mrtpipelines'),
+                datatype='tractography',
+                space='T1w',
+                desc='subcortical',
+                suffix='nodeassignment.txt',
+                **config['subj_wildcards'],
+            ),
+            node_weights=bids(
+                root=join(config['out_dir'], 'mrtpipelines'),
+                datatype='tractography',
+                space='T1w',
+                desc='subcortical',
+                suffix='nodeweights.csv'
+                **config['subj_wildcards'],
+            )
+        container:
+            config['singularity']['mrtpipelines']
+        shell:
+            'tck2connectome -nthreads {params.threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} -force'
