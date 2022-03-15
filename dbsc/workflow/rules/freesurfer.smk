@@ -26,6 +26,8 @@ rule mgz_to_nii:
     input: 
         thal=rules.thalamic_segmentation.output.thal_seg,
         aparcaseg=join(config["output_dir"], "freesurfer/{subject}/mri/aparc+aseg.mgz")
+        lRibbon=join(config["output_dir"], "freesurfer/{subject}/mri/lh.ribbon.mgz")
+        rRibbon=join(config["output_dir"], "freesurfer/{subject}/mri/rh.ribbon.mgz")
     params:
         fs_license=config["fs_license"],
         threads=workflow.cores,
@@ -43,6 +45,22 @@ rule mgz_to_nii:
             suffix="aparcaseg.nii.gz"
             space="Freesurfer",
             **config["subj_wildcards"],
+        ),
+        ribbon_mgz=temp(
+            bids(
+                root=join(config['output_dir'], 'freesurfer'),
+                datatype='anat',
+                suffix='ribbon.mgz'
+                space='Freesurfer',
+                **config["subj_wildcards"],
+            )
+        ),
+        ribbon=bids(
+            root=join(config['output_dir'], 'freesurfer'),
+            datatype='anat',
+            suffix='ribbon.nii.gz'
+            space='Freesurfer',
+            **config["subj_wildcards"],
         )
     container:
         config['singularity']['freesurfer']
@@ -51,11 +69,14 @@ rule mgz_to_nii:
         "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={params.threads} "
         "mri_convert {input.thal} {output.thal} "
         "mri_convert {input.aparcaseg} {output.aparcaseg} "
+        "mergeseg --src {input.lRibbon} --merge {input.rRibbon} --o {output.ribbon_mgz}"
+        "mri_convert {output.ribbon_mgz} {output.ribbon}"
 
 rule fs_xfm_to_native:
     input:
         thal=rules.mgz_to_nii.output.thal,
         aparcaseg=rules.mgz_to_nii.output.aparcaseg,
+        ribbon=rules.mgz_to_nii.output.ribbon,
         ref=bids(
             root=config["bids_dir"],
             datatype="anat",
@@ -77,8 +98,16 @@ rule fs_xfm_to_native:
             space='T1w',
             **config["subj_wildcards"],
         )
+        ribbon=bids(
+            root=join(config["output_dir"], 'freesurfer'),
+            datatype='anat',
+            suffix='ribbon.nii.gz',
+            space='T1w',
+            **config["subj_wildcards"],
+        )
     container:
         config['singularity']['neuroglia-core'],
     shell:
         "antsApplyTransforms -d 3 -n MultiLabel -i {input.thal} -r {input.ref} -o {output.thal} "
         "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} "
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.ribbon} -r {input.ref} -o {output.ribbon} "

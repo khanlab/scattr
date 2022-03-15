@@ -285,7 +285,7 @@ rule compute_tensor:
 rule gen_tractography:
     input:
         fod=rules.normalise_fod.output.wm_fod,
-        cortical_ribbon=#ADD CORTICAL RIBBON
+        cortical_ribbon=rules.fs_xfm_to_native.output.ribbon,
         convex_hull=rules.create_convex_hull.output.convex_hull,
         subcortical_seg=rules.add_brainstem_new_seg.output.seg,
         mask=rules.nii_to_mif.output.mask,
