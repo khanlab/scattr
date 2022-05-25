@@ -1,6 +1,6 @@
 ## Deep Brain Structural Connectivity (DBSC)
 
-**Development in-progress**
+**Development in-progress** (conversion from shell scripts)
 
 DBSC is a workflow that maps connections between subcortical structures.
 It uses existing tools like `prepdwi`, `Freesurfer`, and `Mrtrix3`, as well
