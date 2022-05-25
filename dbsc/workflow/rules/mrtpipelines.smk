@@ -96,9 +96,9 @@ rule estimate_response:
 rule avg_response:
     """Compute average response function"""
     input:
-        sfwm=expand(rules.estimate_response.output.sfwm, zip, **config['input_zip_lists']['T1w']),
-        gm=expand(rules.estimate_response.output.gm, zip, **config['input_zip_lists']['T1w']),
-        csf=expand(rules.estimate_response.output.csf, zip, **config['input_zip_lists']['T1w'])
+        sfwm=expand(rules.estimate_response.output.sfwm, subject=config['subjects']),
+        gm=expand(rules.estimate_response.output.gm, subject=config['subjects']),
+        csf=expand(rules.estimate_response.output.csf, subject=config['subjects'])
     output:
         avg_sfwm=bids(
             root=join(config['output_dir'], 'mrtpipelines/avg'),
