@@ -19,3 +19,5 @@ Future implementation will include option to run these workflows.
 Original workflow was run using scripts similar to those in `resources/example_scripts`
 
 ### Relevant Papers
+
+Kai, J, Khan AR, Haast RAM, Lau JC. Mapping the subcortical connectome using in vivo diffusion MRI: feasibility and reliability. bioRxiv 2022.03.28.485689. doi: [10.1101/2022.03.28.485689](https://doi.org/10.1101/2022.03.28.485689)
