@@ -96,7 +96,8 @@ rule xfm_zona_rois:
     shell:
         'applywarp --rel --interp=nn -i {input.mask} -r {input.ref} -w {input.xfm} -o {output.mask}'
 
-
+# Everything in the block below should be replaced by labelmerge
+######################################################################
 rule rm_bb_thal:
     """Removes existing thalamus"""
     input:
@@ -215,7 +216,7 @@ rule add_brainstem_new_seg:
         config['singularity']['neuroglia-core']
     shell:
         'fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.seg} {output.seg}'
-
+###############################################################################
 
 rule create_convex_hull:
     input:
