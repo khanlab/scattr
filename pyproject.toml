@@ -1,13 +1,18 @@
 [tool.poetry]
-name = "deep brain structural connectivity"
+name = "Deep Brain Structural Connectivity (DBSC)"
 version = "0.1.0-pre.1"
-description = "SnakeBIDS app for mapping the subcortical connectome"
-authors = ["Jason Kai <tkai@uwo.ca>"]
+description = "Snakebids app for mapping the subcortical connectome"
+authors = [
+    "Jason Kai <tkai@uwo.ca>",
+    "Tristan Kuehn",
+    "Jonathan C. Lau",
+    "Ali R. Khan"
+    ]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "~3.8"
-snakebids = "^0.5.0"
+python = ">=3.8, <3.11"
+snakebids = "^0.6.0"
 nibabel = "^3.2.2"
 numpy = "^1.22.3"
 scipy = "^1.8.0"
@@ -21,6 +26,7 @@ pylint = "^2.12.2"
 isort = "^5.10.1"
 poethepoet = "^0.13.1"
 pre-commit = "^2.17.0"
+snakefmt = "^0.6.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -28,7 +34,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
 setup = "pre-commit install"
-quality = { shell = "isort dbsc/*.py && black dbsc" }
+isort = "isort dbsc/*.py"
+black = "black dbsc -l 79"
+snakefmt = "snakefmt dbsc"
+quality = ["isort", "black", "snakefmt"]
 
 [tool.isort]
 profile = "black"
