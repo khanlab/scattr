@@ -39,12 +39,13 @@ parse_args:
 
 #--- core BIDS-app options --- (do not modify below) ---# 
   bids_dir:
-    help: The directory with the input dataset formatted according to the BIDS standard
+    help: The directory with the input dataset formatted according to the 
+          BIDS standard.
 
   output_dir:
-    help: The directory where the output files should be stored. If you are running 
-          group level analysis, this folder should be prepopulated with the results 
-          of the participant level analysis
+    help: The directory where the output files should be stored. If you are 
+          running group level analysis, this folder should be prepopulated 
+          with the results of the participant level analysis.
 
   analysis_level:
     help: Level of the analysis that will be performed
@@ -69,52 +70,54 @@ parse_args:
 
 #--- additional BIDS-app options --- (add in below) --#
   --shells:
-    help: '(Mrtrix3) specify one or more b-values to use during processing, as a
-          comma-separated list of the desired approximate b-values (b-values are
-          clustered to allow for small deviations). Note that some commands are
-          incompatible with multiple b-values, and will report an error if more
-          than one b-value is provided. 
+    help: '(Mrtrix3) specify one or more b-values to use during processing, as 
+          a comma-separated list of the desired approximate b-values (b-values 
+          are clustered to allow for small deviations). Note that some 
+          commands are incompatible with multiple b-values, and will report an 
+          error if more than one b-value is provided. 
           WARNING: note that, even though b=0 volumes are never referred to as
-          shells in the literature, they still have to be explicitly included in
-          the list of b-values as provided to the -shell option! Several 
+          shells in the literature, they still have to be explicitly included 
+          in the list of b-values as provided to the -shell option! Several 
           algorithms which include the b=0 volumes in their computations may 
           otherwise return an undesired reuslt.'
     nargs: "+"
 
   --lmax:
-    help: '(Mrtrix3) the maximum spherical harmonic order for the output FOD(s).
-          For algorithms with multiple outputs, this should be provided as a 
-          comma-sperated list of integers, one for each output image; for single-
-          output algorithms, only a single integer should be provided. If omitted,
-          commands will use the lmax of the corresponding response function (i.e 
-          based on its number of coefficients), up to a maximum of 8.'
+    help: '(Mrtrix3) the maximum spherical harmonic order for the output 
+          FOD(s). For algorithms with multiple outputs, this should be 
+          provided as a comma-sperated list of integers, one for each output 
+          image; for single-output algorithms, only a single integer 
+          should be provided. If omitted, commands will use the lmax of the 
+          corresponding response function (i.e. based on its number of 
+          coefficients), up to a maximum of 8.'
     nargs: "+"
 
   --step:
-    help: '(Mrtrix3) set the step size of the algorithm in mm (default is 
-          set to 0.35mm).'
+    help: '(Mrtrix3) set the step size of the algorithm in mm 
+          (default: 0.35mm)'
     default: 0.35
 
   --sl_count:
-    help: '(Mrtrix3) set the desired number of streamlines to be selected, after
-          all selection criteria has been applied (i.e. inclusion/exclusion ROIS,
-          min/max length, etc. Streamlines will be seeded until this number of 
-          streamlines have been selected, or the maximum allowed number of seeds
-          has been exceeded. By default, 20,000,000 streamlines are to be selected.
-          Set to zero to disable, which will result in streamlines being seeded until
-          the maximum allowed number of seeds has been reached.'
+    help: '(Mrtrix3) set the desired number of streamlines to be selected, 
+          after all selection criteria has been applied (i.e. 
+          inclusion/exclusion ROIS, min/max length, etc. Streamlines will be 
+          seeded until this number of streamlines have been selected, or the 
+          maximum allowed number of seeds has been exceeded. Set to zero to 
+          disable, which will result in streamlines being seeded until
+          the maximum allowed number of seeds has been reached. 
+          (default: 20,000,000 streamlines)'
     default: 20000000
 
   --radial_search:
-    help: '(Mrtrix3) perform a radial search from each streamline endpoint to locate
-          the nearest node. Argument is the maximum radius in mm; if no node is found
-          within this radius, the streamline endpoint is not assigned to any node.
-          Default search radius is 1.5mm.'
+    help: '(Mrtrix3) perform a radial search from each streamline endpoint to 
+          locate the nearest node. Argument is the maximum radius in mm; if no 
+          node is found within this radius, the streamline endpoint is not 
+          assigned to any node. (default: 1.5mm)'
     default: 1.5
 
   --exclude_gm:
-    help: 'Exclude streamlines passing through GM nodes along its trajectory.
-          Default: True'
+    help: 'Exclude streamlines passing through other GM nodes along its 
+          trajectory (default: True)'
     default: True
     action: 'store_false'
 
