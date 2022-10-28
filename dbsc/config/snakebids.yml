@@ -9,8 +9,9 @@ derivatives: False # Search in bids/derivatives if True; can also be path(s) to 
 
 # List of analysis levels in bids app
 analysis_levels: &analysis_levels
-  - participant
+  - participant1
   - group
+  - participant2
 
 # Mapping from analysis_level to set of target rules or files
 targets_by_analysis_level:
@@ -93,8 +94,8 @@ parse_args:
     nargs: "+"
 
   --step:
-    help: '(Mrtrix3) set the step size of the algorithm in mm 
-          (default: 0.35mm)'
+    help: '(Mrtrix3) set the step size of the algorithm in mm. Should set to
+          4 steps per voxel (e.g. 1/4 * voxel size). (default: 0.35mm)'
     default: 0.35
 
   --sl_count:
@@ -114,17 +115,10 @@ parse_args:
           node is found within this radius, the streamline endpoint is not 
           assigned to any node. (default: 1.5mm)'
     default: 1.5
-
-  --exclude_gm:
-    help: 'Exclude streamlines passing through other GM nodes along its 
-          trajectory (default: True)'
-    default: True
-    action: 'store_false'
-
 #-----------------------------------------------------#
 
 # Workflow specific config
-# Space (MNI152, MNINlin2009bAsym)
+# Spaces available (MNI152, MNINlin2009bAsym)
 space: MNI152
 
 zona_bb_subcortex:
@@ -137,11 +131,12 @@ zona_bb_subcortex:
     seg: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNINlin2009bAsym_ZonaBBSubCorSeg.nii.gz'
     exclude: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNINlin2009bAsym_desc-exclude_ROI.nii.gz'
 
+# NOTE: This may not be needed with labelmerge
 freesurfer:
   labels: 'resources/freesurfer/fs_labels.csv'
 
 # Containers
-# Note: Update from latest to use specific tags
+# NOTE: Update from latest to use specific tags
 singularity:
   freesurfer: "docker://pwighton/freesurfer:7.2.0"
   neuroglia-core: "docker://khanlab/neuroglia-core:latest"
