@@ -5,8 +5,9 @@ description = "Snakebids app for mapping the subcortical connectome"
 authors = [
     "Jason Kai <tkai@uwo.ca>",
     "Tristan Kuehn",
+    "Ali R. Khan",
+    "Roy A.M. Haast",
     "Jonathan C. Lau",
-    "Ali R. Khan"
     ]
 readme = "README.md"
 
