@@ -18,10 +18,10 @@ lmaxes = config.get('lmax', '')
 #------------ MRTRIX PREPROC BEGIN ----------#
 rule nii2mif:
     input:
-        dwi=config["input_path"]["dwi"],
-        bval=lambda wildcards: re.sub(".nii.gz", ".bval", config["input_path"]["dwi"])),
-        bvec=lambda wildcards: re.sub(".nii.gz", ".bvec", config["input_path"]["dwi"])),
-        mask=config["input_path"]["mask"]
+        dwi=inputs["dwi"].input_path,
+        bval=lambda wildcards: re.sub(".nii.gz", ".bval", inputs["dwi"].input_path)),
+        bvec=lambda wildcards: re.sub(".nii.gz", ".bvec", inputs["dwi"].input_path)),
+        mask=inputs["mask"].input_path
     output:
         dwi=bids(
             root=mrtrix_dir,
