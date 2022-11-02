@@ -94,7 +94,8 @@ parse_args:
 
   --step:
     help: '(Mrtrix3) set the step size of the algorithm in mm. Should set to
-          4 steps per voxel (e.g. 1/4 * voxel size). (default: 0.35mm)'
+          4 steps per voxel (e.g. 1/4 * voxel size) in order to sample more 
+          frequently in compact region. (default: 0.35mm)'
     default: 0.35
 
   --sl_count:
