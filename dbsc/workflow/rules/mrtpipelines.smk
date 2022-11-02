@@ -188,8 +188,6 @@ rule mtnormalise:
         gm_fod=rules.dwi2fod.output.gm_fod,
         csf_fod=rules.dwi2fod.output.csf_fod,
         mask=rules.nii2mif.output.mask,
-    params:
-        threads=workflow.threads,
     output:
         wm_fod=bids(
             root=mrtrix_dir,
@@ -227,8 +225,6 @@ rule dwinormalise:
     input:
         dwi=rules.nii2mif.output.dwi,
         mask=rules.nii2mif.output.mask,
-    params:
-        threads=workflow.threads,
     output:
         dwi=bids(
             root=mrtrix_dir,
@@ -237,6 +233,7 @@ rule dwinormalise:
             suffix='dwi.mif',
             **config['subj_wildcards'],
         )
+    threads: workflow.cores
     container:
         config['singularity']['mrtrix']
     shell:
@@ -248,8 +245,6 @@ rule dwi2tensor:
     input:
         dwi=rules.dwinoramlise.dwi,
         mask=rules.nii2mif.output.mask,
-    params:
-        threads=workflow.threads,
     output:
         dti=bids(
             root=mrtrix_dir,
@@ -285,6 +280,7 @@ rule dwi2tensor:
             suffix='fa.mif',
             **config['subj_wildcards'],
         )
+    threads: workflow.cores
     group: "subject_1"
     container:
         config['singularity']['mrtrix']
@@ -365,17 +361,15 @@ TODO (v0.2): ADD OPTION TO MULTIPLY BY MU COEFFICIENT
         radius=config['radial_search']
     output:
         sl_assignment=bids(
-            root=join(config['out_dir'], 'mrtpipelines'),
+            root=mrtix_dir,
             datatype='tractography',
-            space='T1w',
             desc='subcortical',
             suffix='nodeassignment.txt',
             **config['subj_wildcards'],
         ),
         node_weights=bids(
-            root=join(config['out_dir'], 'mrtpipelines'),
+            root=mrtrix_dir,
             datatype='tractography',
-            space='T1w',
             desc='subcortical',
             suffix='nodeweights.csv'
             **config['subj_wildcards'],
@@ -516,10 +510,16 @@ rule filter_tck:
 
 rule combine_filtered:
     input:
-        tck=expand(rules.filter_tck.output.filtered_tck, zip, **config['input_zip_lists']['dwi']),
-        weights=expand(rules.filter_tck.output.filtered_weights, zip, **config['input_zip_lists']['dwi']),
-    params:
-        threads=workflow.threads,
+        tck=expand(
+            rules.filter_tck.output.filtered_tck, 
+            zip, 
+            **config['input_zip_lists']['dwi']
+        ),
+        weights=expand(
+            rules.filter_tck.output.filtered_weights, 
+            zip, 
+            **config['input_zip_lists']['dwi']
+        ),
     output:
         combined_tck=bids(
             root=mrtrix_dir,
@@ -527,7 +527,7 @@ rule combine_filtered:
             desc='subcortical',
             suffix='tractography.tck',
             **config["subj_wildcards"]
-        )
+        ),
         combined_weights=bids(
             root=mrtrix_dir,
             datatype='tractography',
