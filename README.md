@@ -10,6 +10,39 @@ connectome), making use of existing neuroimaging tools like `prepdwi`,
 This workflow was used to process the data for the analysis from 
 [`hcp_subcortical_repo`](https://github.com/kaitj/hcp_subcortical_repro).
 
+### Contributing
+Clone the git repository. DBSC dependencies are managed with Poetry 
+(version 1.2.x), which you'll need installed on your machine. 
+You can find instructions on the Poetry 
+[website](https://python-poetry.org/docs/). 
+
+Then, setup the development environment with the following commands:
+
+```
+poetry install
+poetry run poe setup
+```
+
+DBSC uses poethepoet as a task runner. 
+You can see what commands are available by running:
+
+```
+poetry run poe
+```
+
+If you wish, you can also run poe [command] directly by installing poethepoet 
+on your system. Follow the install instructions at the link above.
+
+DBSC uses pre-commit hooks (installed via the poe setup command above) to lint 
+and format code (we use black, isort, flake8). By default, these hooks are 
+run on every commit. Additionally, please run the following task:
+
+```
+poetry run poe quality
+```
+
+Please be sure they all pass before making a PR.
+
 ### Notes
 
 * Original workflow had worked on HCP data which had transforms readily 
