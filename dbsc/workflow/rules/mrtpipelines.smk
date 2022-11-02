@@ -51,6 +51,7 @@ rule nii_to_mif:
             space='T1w',
             **config['subj_wildcards']
         )
+    group: "subject_1"
     container:
         config['singularity']['mrtpipelines']
     shell: 
@@ -87,12 +88,13 @@ rule estimate_response:
             suffix='response.txt',
             **config['subj_wildcards'],
         )
+    group: "subject_1"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'dwi2response dhollander {input.dwi} {output.sfwm} {output.gm} {output.csf} -nthreads {threads}'
 
-
+# TODO: Add check for pre-computed group response function 
 rule avg_response:
     """Compute average response function"""
     input:
@@ -118,6 +120,7 @@ rule avg_response:
             desc='csf',
             suffix='response.txt',
         )
+    group: "group"
     container:
         config['singularity']['mrtpipelines']
     shell:
@@ -157,13 +160,14 @@ rule compute_fod:
             desc='csf',
             suffix='fod.mif'
         ),
+    group: "subject_2"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'if [ {params.shell} == "" ] && [ {params.lmax} == "" ]; then'
-        '  dwi2fod -nthreads {params.threads} -shell {params.shell} -lmax {params.lmax} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.csf} '
-        'else '
         '  dwi2fod -nthreads {params.threads} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.avg_csf} '
+        'else '
+        '  dwi2fod -nthreads {params.threads} -shell {params.shell} -lmax {params.lmax} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.csf} '
         'fi'
 
 
@@ -200,11 +204,11 @@ rule normalise_fod:
             suffix='fodnorm.mif',
             **config['subj_wildcards'],
         ),
+    group: "subject_2"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'mtnormalise -nthreads {params.threads} -mask {input.mask} {input.wm_fod} {output.wm_fod} {input.gm_fod} {output.gm_fod} {input.csf_fod} {output.csf_fod}'
-
 
 # DTI (Tensor) Processing
 rule dwi_normalise:
@@ -226,6 +230,7 @@ rule dwi_normalise:
         config['singularity']['mrtpipelines']
     shell:
         'dwinormalise -nthreads {params.threads} {input.dwi} {input.mask} {output.dwi}'
+    group: participant1
 
 
 rule compute_tensor:
@@ -274,6 +279,7 @@ rule compute_tensor:
             suffix='fa.mif',
             **config['subj_wildcards'],
         )
+    group: "subject_1"
     container:
         config['singularity']['mrtpipelines']
     shell:
@@ -302,6 +308,7 @@ rule gen_tractography:
             suffix='tractography.tck',
             **config["subj_wildcards"],
         )
+    group: "subject_2"
     container:
         config['singularity']['mrtpipelines']
     shell:
@@ -331,15 +338,16 @@ rule weight_tractography:
             **config['subj_wildcards'],
             ]
         ),
+    group: "subject_2"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'tcksift2 -nthreads {params.threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights}'
 
-# ADD OPTION TO OUTPUT TDI MAP
+# TODO: ADD OPTION TO OUTPUT TDI MAP
 
 # Connectivity map
-# ADD OPTION TO MULTIPLY BY MU COEFFICIENT
+# TODO: ADD OPTION TO MULTIPLY BY MU COEFFICIENT
 rule connectome_map:
     input:
         weights=rules.weight_tractography.output.weights,
@@ -365,13 +373,12 @@ rule connectome_map:
             suffix='nodeweights.csv'
             **config['subj_wildcards'],
         )
+    group: "subject_2"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'tck2connectome -nthreads {params.threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} '
 
-# Remove streamlines passing through other GM ROI
-if config['exclude_gm']:
     rule extract_tck:
         input:
             node_weights=rules.connectome_map.output.node_weights,
@@ -400,6 +407,7 @@ if config['exclude_gm']:
                     **config['subj_wildcards'],
                 )
             ),
+        group: "subject_2"
         container:
             config['singularity']['mrtpipelines'],
         shell:
@@ -408,7 +416,7 @@ if config['exclude_gm']:
             'done '
             'connectome2tck -nthreads {params.threads} -nodes $nodes -exclusive -filters_per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {output.edge_weight} {input.tck} {input.sl_assignment} {output.edge_tck} '
 
-
+    # NOTE: Pass labelmerge split segs here?
     rule create_roi_mask:
         # EXPAND OVER NODE1 IN RULE ALL
         input:
@@ -425,6 +433,7 @@ if config['exclude_gm']:
                     suffix='mask.mif'
                 )
             ),
+        group: "subject_2"
         container:
             config['singularity']['mrtpipelines'],
         shell:
@@ -495,12 +504,12 @@ if config['exclude_gm']:
                     suffix='weights.csv'
                 )
             )
+        group: "subject_2"
         containers:
             config['singularity']['mrtpipelines'],
         shell: 
             'mrcalc -nthreads {params.threads} {input.subcortical_seg} 0 -neq {input.roi1} -sub {input.roi2} -sub {input.lZI} -sub {input.rZI} -sub {output.filter_mask} '
             'tckedit -nthreads {params.therads} -exclude {output.filter_mask} -tck_weights_in {input.weights} -tck_weights_out {output.filtered_weights} {input.tck} {output.filtered_tck} '
-
 
     rule combine_filtered:
         input:
@@ -523,6 +532,7 @@ if config['exclude_gm']:
                 desc='subcortical',
                 suffix='tckweights.txt'
             )
+        group: "subject_2"
         container:
             config['singularity']['mrtpipelines'],
         shell:
@@ -554,6 +564,7 @@ if config['exclude_gm']:
                 suffix='nodeweights.csv'
                 **config['subj_wildcards'],
             )
+        group: "subject_2"
         container:
             config['singularity']['mrtpipelines']
         shell:
