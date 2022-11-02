@@ -1,32 +1,23 @@
-default_language_version:
-  python: python3.8
+exclude: "^migrations/"
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
     hooks:
-      - id: check-yaml
-      - id: debug-statements
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
-  - repo: local
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+
+-   repo: https://github.com/pycqa/isort
+    rev: 5.10.1
     hooks:
-      - id: isort
-        entry: poetry run isort
-        name: isort
-        language: system
-        types_or: [cython, pyi, python]
-  - repo: local
+    -   id: isort
+
+-   repo: https://github.com/psf/black
+    rev: 22.8.0
     hooks:
-      - id: flake8
-        entry: poetry run flake8
-        language: system
-        name: flake8
-        types_or: [cython, pyi, python]
-  - repo: local
+    -   id: black
+
+-   repo: https://github.com/pycqa/flake8
+    rev: 5.0.4
     hooks:
-      - id: system
-        name: PyLint
-        entry: poetry run pylint
-        language: system
-        exclude: \._py\}\}$
-        types_or: [cython, pyi, python]
+    -   id: flake8
