@@ -9,9 +9,8 @@ derivatives: False # Search in bids/derivatives if True; can also be path(s) to 
 
 # List of analysis levels in bids app
 analysis_levels: &analysis_levels
-  - participant1
+  - participant
   - group
-  - participant2
 
 # Mapping from analysis_level to set of target rules or files
 targets_by_analysis_level:

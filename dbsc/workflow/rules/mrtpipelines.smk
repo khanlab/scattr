@@ -51,12 +51,12 @@ rule nii_to_mif:
             space='T1w',
             **config['subj_wildcards']
         )
+    group: "subject_1"
     container:
         config['singularity']['mrtpipelines']
     shell: 
         'mrconvert -nthreads {threads} -fslgrad {input.bvecs} {input.bvals} {input.dwi} {output.dwi} '
         'mrconvert -nthreads {threads} {input.mask} {output.mask}'
-    group: participant1
 
 
 rule estimate_response:
@@ -88,11 +88,11 @@ rule estimate_response:
             suffix='response.txt',
             **config['subj_wildcards'],
         )
+    group: "subject_1"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'dwi2response dhollander {input.dwi} {output.sfwm} {output.gm} {output.csf} -nthreads {threads}'
-    group: participant1
 
 # TODO: Add check for pre-computed group response function 
 rule avg_response:
@@ -120,11 +120,11 @@ rule avg_response:
             desc='csf',
             suffix='response.txt',
         )
+    group: "group"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'average_response {input.sfwm} {output.avg_sfwm} {input.gm} {output.avg_gm} {input.csf} {output.csf}'
-    group: group
 
 
 rule compute_fod:
@@ -160,6 +160,7 @@ rule compute_fod:
             desc='csf',
             suffix='fod.mif'
         ),
+    group: "subject_2"
     container:
         config['singularity']['mrtpipelines']
     shell:
@@ -168,7 +169,6 @@ rule compute_fod:
         'else '
         '  dwi2fod -nthreads {params.threads} -shell {params.shell} -lmax {params.lmax} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.csf} '
         'fi'
-    group: participant2
 
 
 rule normalise_fod:
@@ -204,11 +204,11 @@ rule normalise_fod:
             suffix='fodnorm.mif',
             **config['subj_wildcards'],
         ),
+    group: "subject_2"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'mtnormalise -nthreads {params.threads} -mask {input.mask} {input.wm_fod} {output.wm_fod} {input.gm_fod} {output.gm_fod} {input.csf_fod} {output.csf_fod}'
-    group: participant2
 
 # DTI (Tensor) Processing
 rule dwi_normalise:
@@ -279,12 +279,12 @@ rule compute_tensor:
             suffix='fa.mif',
             **config['subj_wildcards'],
         )
+    group: "subject_1"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'dwi2tensor -nthreads {params.threads} -mask {input.mask} {input.dwi} {output.dti}'
         'tensor2metric -nthreads {params.threads} -mask {input.mask} {output.dti} -fa {output.fa} -ad {output.ad} -rd {output.rd} -adc {output.md}'
-    group: participant1
 
 
 # Tractography processing
@@ -308,11 +308,11 @@ rule gen_tractography:
             suffix='tractography.tck',
             **config["subj_wildcards"],
         )
+    group: "subject_2"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'tckgen -nthreads {params.threads} -algorithm iFOD2 -step {params.step} -select {params.sl_count} -exclude {input.cortical_ribbon} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {output.tck}'
-    group: participant2
 
 rule weight_tractography:
     input:
@@ -338,11 +338,11 @@ rule weight_tractography:
             **config['subj_wildcards'],
             ]
         ),
+    group: "subject_2"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'tcksift2 -nthreads {params.threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights}'
-    group: participant2
 
 # TODO: ADD OPTION TO OUTPUT TDI MAP
 
@@ -373,11 +373,11 @@ rule connectome_map:
             suffix='nodeweights.csv'
             **config['subj_wildcards'],
         )
+    group: "subject_2"
     container:
         config['singularity']['mrtpipelines']
     shell:
         'tck2connectome -nthreads {params.threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} '
-    group: participant2
 
     rule extract_tck:
         input:
@@ -407,6 +407,7 @@ rule connectome_map:
                     **config['subj_wildcards'],
                 )
             ),
+        group: "subject_2"
         container:
             config['singularity']['mrtpipelines'],
         shell:
@@ -414,7 +415,6 @@ rule connectome_map:
             '  nodes=$nodes,$i '
             'done '
             'connectome2tck -nthreads {params.threads} -nodes $nodes -exclusive -filters_per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {output.edge_weight} {input.tck} {input.sl_assignment} {output.edge_tck} '
-        group: participant2
 
     # NOTE: Pass labelmerge split segs here?
     rule create_roi_mask:
@@ -433,6 +433,7 @@ rule connectome_map:
                     suffix='mask.mif'
                 )
             ),
+        group: "subject_2"
         container:
             config['singularity']['mrtpipelines'],
         shell:
@@ -503,12 +504,12 @@ rule connectome_map:
                     suffix='weights.csv'
                 )
             )
+        group: "subject_2"
         containers:
             config['singularity']['mrtpipelines'],
         shell: 
             'mrcalc -nthreads {params.threads} {input.subcortical_seg} 0 -neq {input.roi1} -sub {input.roi2} -sub {input.lZI} -sub {input.rZI} -sub {output.filter_mask} '
             'tckedit -nthreads {params.therads} -exclude {output.filter_mask} -tck_weights_in {input.weights} -tck_weights_out {output.filtered_weights} {input.tck} {output.filtered_tck} '
-        group: participant2
 
     rule combine_filtered:
         input:
@@ -531,12 +532,12 @@ rule connectome_map:
                 desc='subcortical',
                 suffix='tckweights.txt'
             )
+        group: "subject_2"
         container:
             config['singularity']['mrtpipelines'],
         shell:
             'tckedit {input.tck} {output.combined_tck} '
             'cat {input.weights} >> {output.combined_weights} '
-        group: participant2
 
     rule filtered_connectome_map:
         input:
@@ -563,8 +564,8 @@ rule connectome_map:
                 suffix='nodeweights.csv'
                 **config['subj_wildcards'],
             )
+        group: "subject_2"
         container:
             config['singularity']['mrtpipelines']
         shell:
             'tck2connectome -nthreads {params.threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} -force'
-        group: participant2
