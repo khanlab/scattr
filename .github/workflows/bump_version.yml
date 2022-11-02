@@ -30,7 +30,7 @@ jobs:
             echo "OLD_BUMP=$(echo $PREV_VER | cut -d '.' -f 4)" >> $GITHUB_ENV
           fi
 
-      - name: Bump version:
+      - name: Bump version
         env:
           BUMP_VER: ${{ env.OLD_BUMP }}
         run: |
