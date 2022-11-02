@@ -170,10 +170,10 @@ rule dwi2fod:
     container:
         config['singularity']['mrtrix']
     shell:
-        'if [ {params.shell} == "" ] && [ {params.lmax} == "" ]; then'
+        'if [ {params.shell} == "" ]; then'
         '  dwi2fod -nthreads {threads} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.avg_csf} '
         'else '
-        '  dwi2fod -nthreads {threads} -shell {params.shell} -lmax {params.lmax} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.csf} '
+        '  dwi2fod -nthreads {threads} -shell {params.shell} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.csf} '
         'fi'
 
 
