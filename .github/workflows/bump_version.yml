@@ -21,7 +21,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BP_PAT_TOKEN }}
 
       - name: Get previous version
-        nev:
+        env:
           PREV_VER: ${{ env.PREV_VER }}
         run: |
           if [[ "$PREV_VER" != *"-pre."* ]]; then
