@@ -4,7 +4,7 @@ include: 'zona_bb_subcortex.smk'
 include: 'freesurfer.smk'
 
 # Directories
-mrtrix_dir = join(config["root"], "mrtrix")
+mrtrix_dir = join(config["derivatives"], "mrtrix")
 
 # Paramaters
 responsemean_flag = config.get('responsemean_dir', None)
