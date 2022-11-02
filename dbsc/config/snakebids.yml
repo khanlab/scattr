@@ -124,6 +124,11 @@ parse_args:
           node is found within this radius, the streamline endpoint is not
           assigned to any node. (default: 1.5mm)'
     default: 1.5
+
+  --responsemean_dir:
+    help: 'Provide directory containing average response functions. If not 
+          provided, one will be computed from the subjects in the input 
+          directory.'
 #-----------------------------------------------------#
 
 # Workflow specific config
