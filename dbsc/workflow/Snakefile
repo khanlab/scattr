@@ -6,14 +6,13 @@ from snakebids import bids
 configfile: 'config/snakebids.yml'
 
 # writes inputs_config.yml and updates config dict
-config.update(
-    snakebids.generate_inputs(
-        bids_dir=config["bids_dir"],
-        pybids_inputs=config["pybids_inputs"],
-        derivatives=config["derivatives"],
-        participant_label=config["participant_label"],
-        exclude_participant_label=config["exclude_partiicpant_label"],
-    )
+inputs = snakebids.generate_inputs(
+    bids_dir=config["bids_dir"],
+    pybids_inputs=config["pybids_inputs"],
+    derivatives=config["derivatives"],
+    participant_label=config["participant_label"],
+    exclude_participant_label=config["exclude_participant_label"],
+    use_bids_inputs=True,
 )
 
 # this adds constraints to the bids naming
