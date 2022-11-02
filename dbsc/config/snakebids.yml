@@ -25,19 +25,19 @@ targets_by_analysis_level:
 pybids_inputs:
   dwi:
     filters:
-      suffix: dwi
-      extension: .nii.gz
-      datatype: dwi
-      space: T1w
+      suffix: "dwi"
+      extension: ".nii.gz"
+      datatype: "dwi"
+      space: "T1w"
     wildcards:
       - subject
       - session
   mask:
     filters:
-      suffix: mask
-      extension: .nii.gz
-      datatype: dwi
-      space: T1w
+      suffix: "mask"
+      extension: ".nii.gz"
+      datatype: "dwi"
+      space: "T1w"
     wildcards:
       - subject
       - session
