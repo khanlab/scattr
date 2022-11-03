@@ -6,6 +6,7 @@ include: "freesurfer.smk"
 
 
 # Directories
+prepdwi_dir = join(config["bids_dir"], "derivatives", "prepdwi")
 mrtrix_dir = join(config["bids_dir"], "derivatives", "mrtrix")
 
 # Parameters
@@ -20,7 +21,12 @@ lmax = config.get("lmax", None)
 # ------------ MRTRIX PREPROC BEGIN ----------#
 rule nii2mif:
     input:
-        dwi=inputs["dwi"].input_path,
+        dwi=bids(
+            root=prepdwi_dir,
+            datatype="dwi",
+            suffix="dwi.nii.gz",
+            **config["subj_wildcards"]
+        ),
         bval=re.sub(".nii.gz", ".bval", inputs["dwi"].input_path),
         bvec=re.sub(".nii.gz", ".bvec", inputs["dwi"].input_path),
         mask=inputs["mask"].input_path,
@@ -125,15 +131,21 @@ rule dwi2fod:
     input:
         dwi=rules.nii2mif.output.dwi,
         mask=rules.nii2mif.output.mask,
-        wm_rf=join(config["responsemean_dir"], "desc-wm_response.txt")
-        if responsemean_flag
-        else rules.responsemean.output.wm_avg_rf,
-        gm_rf=join(config["responsemean_dir"], "desc-gm_response.txt")
-        if responsemean_flag
-        else rules.responsemean.output.gm_avg_rf,
-        csf_rf=join(config["responsemean_dir"], "desc-csf_response.txt")
-        if responsemean_flag
-        else rules.responsemean.output.csf_avg_rf,
+        wm_rf=(
+            join(config["responsemean_dir"], "desc-wm_response.txt")
+            if responsemean_flag
+            else rules.responsemean.output.wm_avg_rf
+        ),
+        gm_rf=(
+            join(config["responsemean_dir"], "desc-gm_response.txt")
+            if responsemean_flag
+            else rules.responsemean.output.gm_avg_rf
+        ),
+        csf_rf=(
+            join(config["responsemean_dir"], "desc-csf_response.txt")
+            if responsemean_flag
+            else rules.responsemean.output.csf_avg_rf
+        ),
     params:
         shells=f"-shells {shells}" if shells else "",
     output:
