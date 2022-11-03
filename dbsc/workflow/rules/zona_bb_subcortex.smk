@@ -5,16 +5,20 @@ from os.path import join
 include: "freesurfer.smk"
 
 
+# References:
+# J.C. Lau, Y. Xiao, R.A.M. Haast, G. Gilmore, K. Uludağ, K.W. MacDougall, R.S. Menon, A.G. Parrent, T.M. Peters, A.R. Khan. Direct visualization and characterization of the human zona incerta and surrounding structures. Hum. Brain Mapp., 41 (2020), pp. 4500-4517, 10.1002/hbm.25137
+
+# Y. Xiao, J.C. Lau, T. Anderson, J. DeKraker, D.L. Collins, T. Peters, A.R. Khan. An accurate registration of the BigBrain dataset with the MNI PD25 and ICBM152 atlases. Sci. Data, 6 (2019), p. 210, 10.1038/s41597-019-0217-0
+
 # Directories
 zona_dir = join(config["output_dir"], "zona_bb_subcortex")
-
-# ADD SEGMENTATION FOR CORTICAL RIBBON
 
 
 rule xfm2native:
     """Transform from Zona template space to subject native space"""
     input:
         seg=config["zona_bb_subcortex"][config["Space"]]["seg"],
+        seg_anat=config["zona_bb_subcortex"][config["Space"]]["T1w"],
         ref=bids(
             root=config["bids_dir"],
             datatype="anat",
@@ -22,6 +26,13 @@ rule xfm2native:
             **config["subj_wildcards"],
         ),
     output:
+        xfm=bids(
+            root=zona_dir,
+            datatype="anat",
+            desc=f"from{config['Space']}toNative",
+            suffix="xfm.mat",
+            **config["subj_wildcards"],
+        ),
         nii=bids(
             root=zona_dir,
             datatype="anat",
@@ -33,7 +44,8 @@ rule xfm2native:
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "applywarp --rel --interp=nn -i {input.seg} -r {input.ref} -w {input.xfm} -o {output.nii}"
+        "flirt -in {input.seg_anat} -r {input.ref} -omat {output.xfm}"
+        "applywarp --rel --interp=nn -i {input.seg} -r {input.ref} -w {output.xfm} -o {output.nii}"
 
 
 rule binarize:

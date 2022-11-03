@@ -123,16 +123,17 @@ space: MNI152
 
 zona_bb_subcortex:
   MNI152:
-    seg: 'resources/MNI152/sub-SNSX32Nlin2020Asym_space-MNI152_desc-ZonaBBSubcor_dseg.nii.gz'
+    T1w: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNI152_T1w.nii.gz'
+    seg: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNI152_desc-ZonaBBSubcor_dseg.nii.gz'
   MNI2009b:
-    seg: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNINlin2009bAsym_desc-ZonaBBSubcor_dseg.nii.gz'
+    T1w: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNINLin2009bAsym_T1w.nii.gz'
+    seg: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNINLin2009bAsym_desc-ZonaBBSubcor_dseg.nii.gz'
 
 # NOTE: This may not be needed with labelmerge
 freesurfer:
   labels: 'resources/freesurfer/fs_labels.csv'
 
 # Containers
-# NOTE: Update from latest to use specific tags
 singularity:
   freesurfer: "docker://pwighton/freesurfer:7.2.0"
   neuroglia-core: "docker://khanlab/neuroglia-core:latest"
