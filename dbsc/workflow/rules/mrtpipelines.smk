@@ -6,8 +6,7 @@ include: "freesurfer.smk"
 
 
 # Directories
-prepdwi_dir = join(config["bids_dir"], "derivatives", "prepdwi")
-mrtrix_dir = join(config["bids_dir"], "derivatives", "mrtrix")
+mrtrix_dir = join(config["output_dir"], "mrtrix")
 
 # Parameters
 responsemean_flag = config.get("responsemean_dir", None)
@@ -21,15 +20,10 @@ lmax = config.get("lmax", None)
 # ------------ MRTRIX PREPROC BEGIN ----------#
 rule nii2mif:
     input:
-        dwi=bids(
-            root=prepdwi_dir,
-            datatype="dwi",
-            suffix="dwi.nii.gz",
-            **config["subj_wildcards"]
-        ),
-        bval=re.sub(".nii.gz", ".bval", inputs["dwi"].input_path),
-        bvec=re.sub(".nii.gz", ".bvec", inputs["dwi"].input_path),
-        mask=inputs["mask"].input_path,
+        dwi=config["input_path"]["dwi"],
+        bval=re.sub(".nii.gz", ".bval", config["input_path"]["dwi"]),
+        bvec=re.sub(".nii.gz", ".bvec", config["input_path"]["dwi"]),
+        mask=config["input_path"]["mask"],
     output:
         dwi=bids(
             root=mrtrix_dir,
