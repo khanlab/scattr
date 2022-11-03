@@ -16,8 +16,6 @@ analysis_levels: &analysis_levels
 targets_by_analysis_level:
   participant:
     - "all" # if "", then the first rule is run
-  group:
-    - "all_group_tsv"
 
 # this configures the pybids grabber - create an entry for each type of input you want to grab
 # indexed by name of input dictionary for each input is passed directly to pybids get()
@@ -126,8 +124,8 @@ parse_args:
     default: 1.5
 
   --responsemean_dir:
-    help: 'Provide directory containing average response functions. If not 
-          provided, one will be computed from the subjects in the input 
+    help: 'Provide directory containing average response functions. If not
+          provided, one will be computed from the subjects in the input
           directory.'
 #-----------------------------------------------------#
 
