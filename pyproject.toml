@@ -45,4 +45,4 @@ profile = "black"
 multi_line_output = 3
 
 [tool.snakefmt]
-include = "\.smk$|^Snakefile"
+include = '\.smk$|^Snakefile'
