@@ -12,20 +12,14 @@ rule thalamic_segmentation:
 
     Reference: J.E. Iglesias, R. Insausti, G. Lerma-Usabiaga, M. Bocchetta, K. Van Leemput, D.N. Greve, A. van der Kouwe, B. Fischl, C. Caballero-Gaudes, P.M. Paz-Alonso. A probabilistic atlas of the human thalamic nuclei combining ex vivo MRI and histology. NeuroImage, 183 (2018), pp. 314-326, 10.1016/j.neuroimage.2018.08.012
 
-    NOTE: Output name is defined by Freesurfer
+    NOTE: Output file is defined by Freesurfer script
     """
     input:
         freesurfer_dir=freesurfer_dir,
     params:
         fs_license=config["fs_license"],
     output:
-        thal_seg=bids(
-            root=freesurfer_dir,
-            datatype="anat",
-            suffix="T1.mgz",
-            space="Freesurfer",
-            **config["subj_wildcards"],
-        ),
+        thal_seg=join(freesurfer_dir, "{subject}/mri/ThalamicNuclei.v12.T1.mgz"),
     threads: workflow.cores
     container:
         config["singularity"]["freesurfer"]
@@ -46,7 +40,11 @@ fs_out = bids(
 
 
 rule mgz2nii:
-    """Convert from .mgz to .nii.gz"""
+    """
+    Convert from .mgz to .nii.gz
+
+    NOTE: During conversion, files are renamed to BIDS-esque formatting
+    """
     input:
         thal=rules.thalamic_segmentation.output.thal_seg,
         aparcaseg=join(freesurfer_dir, "{subject}/mri/aparc+aseg.mgz"),
