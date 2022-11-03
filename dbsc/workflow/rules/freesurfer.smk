@@ -3,11 +3,16 @@ from os.path import join
 # Directories
 freesurfer_dir = join(config["out_dir"], "freesurfer")
 
+# Freesurfer references (with additional in rules as necessary)
+# B. Fischl, A. van der Kouwe, C. Destrieux, E. Halgren, F. Ségonne, D.H. Salat, E. Busa, L.J. Seidman, J. Goldstein, D. Kennedy, V. Caviness, N. Makris, B. Rosen, A.M. Dale. Automatically parcellating the human cerebral cortex. Cereb. Cortex, 14 (2004), pp. 11-22, 10.1093/cercor/bhg087
+
 
 rule thalamic_segmentation:
     """Perform thalamus segmentation
 
-    NOTE: Outputname is defined by Freesurfer
+    Reference: J.E. Iglesias, R. Insausti, G. Lerma-Usabiaga, M. Bocchetta, K. Van Leemput, D.N. Greve, A. van der Kouwe, B. Fischl, C. Caballero-Gaudes, P.M. Paz-Alonso. A probabilistic atlas of the human thalamic nuclei combining ex vivo MRI and histology. NeuroImage, 183 (2018), pp. 314-326, 10.1016/j.neuroimage.2018.08.012
+
+    NOTE: Output name is defined by Freesurfer
     """
     input:
         freesurfer_dir=freesurfer_dir,
@@ -57,7 +62,7 @@ rule mgz2nii:
             fs_out, suffix="aparcaseg.nii.gz", space="Freesurfer", allow_missing=True
         ),
         ribbon_mgz=expand(
-            temp(fs_out), suffix="ribbon.mgz", space="Freesurfer", allow_missing=True
+            fs_out, suffix="ribbon.mgz", space="Freesurfer", allow_missing=True
         ),
         ribbon=expand(
             fs_out, suffix="ribbon.nii.gz", space="Freesurfer", allow_missing=True
