@@ -11,7 +11,7 @@ zona_dir = join(config["output_dir"], "zona_bb_subcortex")
 # ADD SEGMENTATION FOR CORTICAL RIBBON
 
 
-rule xfm_to_native:
+rule xfm2native:
     """Transform from Zona template space to subject native space"""
     input:
         seg=config["zona_bb_subcortex"][config["Space"]]["seg"],
@@ -38,7 +38,7 @@ rule xfm_to_native:
 
 rule binarize:
     input:
-        nii=rules.xfm_to_native.output.nii,
+        nii=rules.xfm2native.output.nii,
     output:
         bin=bids(
             root=zona_dir,
@@ -57,7 +57,7 @@ rule binarize:
 rule add_brainstem:
     input:
         binarize=rules.binarize.output.bin,
-        aparcaseg=rules.fs_xfm_to_native.output.aparcaseg,
+        aparcaseg=rules.fs_xfm2native.output.aparcaseg,
     output:
         binarize=bids(
             root=zona_dir,
@@ -83,8 +83,8 @@ rule xfm_zona_rois:
             hemi=["L", "R"],
             struct=["fct", "ft", "fl", "hfields"],
         ),
-        ref=rules.xfm_to_native.input.ref,
-        xfm=rules.xfm_to_native.input.xfm,
+        ref=rules.xfm2native.input.ref,
+        xfm=rules.xfm2native.input.xfm,
     output:
         mask=expand(
             bids(
@@ -109,7 +109,7 @@ rule xfm_zona_rois:
 rule rm_bb_thal:
     """Removes existing thalamus"""
     input:
-        seg=rules.xfm_to_native.output.nii,
+        seg=rules.xfm2native.output.nii,
     output:
         seg=bids(
             root=join(config["output_dir"], "zona_bb_subcortex"),
@@ -153,7 +153,7 @@ rule add_new_thal:
     input:
         aparcaseg=rules.add_brainstem.input.aparcaseg,
         labels=config["freesurfer"]["labels"],
-        thal=rules.fs_xfm_to_native.output.thal,
+        thal=rules.fs_xfm2native.output.thal,
         seg=rules.rm_bb_thal.output.rm_seg,
     output:
         seg=bids(
