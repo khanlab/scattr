@@ -6,12 +6,12 @@ include: "freesurfer.smk"
 
 
 # Directories
-mrtrix_dir = join(config["derivatives"], "mrtrix")
+mrtrix_dir = join(config["bids_dir"], "derivatives", "mrtrix")
 
-# Paramaters
+# Parameters
 responsemean_flag = config.get("responsemean_dir", None)
-shells = config.get("shells", "")
-lmaxes = config.get("lmax", "")
+shells = config.get("shells", None)
+lmax = config.get("lmax", None)
 
 # Mrtrix3 citation (additional citations are included per rule as necessary):
 # Tournier, J.-D.; Smith, R. E.; Raffelt, D.; Tabbara, R.; Dhollander, T.; Pietsch, M.; Christiaens, D.; Jeurissen, B.; Yeh, C.-H. & Connelly, A. MRtrix3: A fast, flexible and open software framework for medical image processing and visualisation. NeuroImage, 2019, 202, 116137
@@ -21,8 +21,8 @@ lmaxes = config.get("lmax", "")
 rule nii2mif:
     input:
         dwi=inputs["dwi"].input_path,
-        bval=lambda wildcards: re.sub(".nii.gz", ".bval", inputs["dwi"].input_path),
-        bvec=lambda wildcards: re.sub(".nii.gz", ".bvec", inputs["dwi"].input_path),
+        bval=re.sub(".nii.gz", ".bval", inputs["dwi"].input_path),
+        bvec=re.sub(".nii.gz", ".bvec", inputs["dwi"].input_path),
         mask=inputs["mask"].input_path,
     output:
         dwi=bids(
@@ -57,8 +57,8 @@ rule dwi2response:
         dwi=rules.nii2mif.output.dwi,
         mask=rules.nii2mif.output.mask,
     params:
-        shells=shells,
-        lmax=lmaxes,
+        shells=f"-shells {shells}" if shells else "",
+        lmax=f"-lmax {lmax}" if lmax else "",
     output:
         wm_rf=bids(
             root=mrtrix_dir,
@@ -87,11 +87,7 @@ rule dwi2response:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        'if [ {params.shell} == "" ] && [ {params.lmax} == ""]; then'
-        "  dwi2response dhollander {input.dwi} {output.wm_rf} {output.gm_rf} {output.csf_rf} -nthreads {threads} -mask {input.mask}"
-        "else "
-        "  dwi2response dhollander {input.dwi} {output.wm_rf} {output.gm_rf} {output.csf_rf} -nthreads {threads} -mask {input.mask} -shells {params.shells} -lmax {params.lmax} "
-        "fi"
+        "dwi2response dhollander {input.dwi} {output.wm_rf} {output.gm_rf} {output.csf_rf} -nthreads {threads} -mask {input.mask} {params.shells} {params.lmax} "
 
 
 rule responsemean:
@@ -145,7 +141,7 @@ rule dwi2fod:
         if responsemean_flag
         else rules.responsemean.output.csf_avg_rf,
     params:
-        shell=shells,
+        shells=f"-shells {shells}" if shells else "",
     output:
         wm_fod=bids(
             root=mrtrix_dir,
@@ -177,11 +173,7 @@ rule dwi2fod:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        'if [ {params.shell} == "" ]; then'
-        "  dwi2fod -nthreads {threads} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.avg_csf} "
-        "else "
-        "  dwi2fod -nthreads {threads} -shell {params.shell} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.csf} "
-        "fi"
+        "dwi2fod -nthreads {threads} {params.shells} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.csf}"
 
 
 rule mtnormalise:
@@ -389,7 +381,8 @@ rule tck2connectome:
             root=mrtrix_dir,
             datatype="tractography",
             desc="subcortical",
-            suffix="nodeweights.csv" ** config["subj_wildcards"],
+            suffix="nodeweights.csv",
+            **config["subj_wildcards"],
         ),
     threads: workflow.cores
     group:
@@ -405,6 +398,8 @@ rule connectome2tck:
         node_weights=rules.tck2connectome.output.node_weights,
         sl_assignment=rules.tck2connectome.output.sl_assignment,
         tck=rules.tckgen.output.tck,
+    params:
+        nodes=",".join(str(num) for num in range(2, 73)),
     output:
         edge_weight=temp(
             bids(
@@ -430,10 +425,7 @@ rule connectome2tck:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "for i in `seq 2 72`; do "
-        "  nodes=$nodes,$i "
-        "done "
-        "connectome2tck -nthreads {threads} -nodes $nodes -exclusive -filters_per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {output.edge_weight} {input.tck} {input.sl_assignment} {output.edge_tck} "
+        "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -filters_per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {output.edge_weight} {input.tck} {input.sl_assignment} {output.edge_tck} "
 
 
 # NOTE: Use labelmerge split segs here?
@@ -509,7 +501,7 @@ rule filter_tck:
             bids(
                 root=mrtrix_dir,
                 datatype="tractography",
-                desc="from_{node1}-{node2}",
+                desc="from{node1}to{node2}",
                 suffix="tractography.tck",
                 **config["subj_wildcards"]
             )
@@ -518,7 +510,7 @@ rule filter_tck:
             bids(
                 root=mrtrix_dir,
                 datatype="tractography",
-                desc="from_{node1}-{node2}",
+                desc="from{node1}to{node2}",
                 suffix="weights.csv",
                 **config["subj_wildcards"]
             )
