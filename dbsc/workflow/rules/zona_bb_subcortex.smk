@@ -1,17 +1,22 @@
 from os.path import join
+from functools import partial
 
 
 # Rules to include
 include: "freesurfer.smk"
 
 
+# Directories
+zona_dir = join(config["output_dir"], "zona_bb_subcortex")
+
+
+# BIDS partials
+bids_anat = partial(bids, root=zona_dir, datatype="anat", **config["subj_wildcards"])
+
 # References:
 # J.C. Lau, Y. Xiao, R.A.M. Haast, G. Gilmore, K. Uludağ, K.W. MacDougall, R.S. Menon, A.G. Parrent, T.M. Peters, A.R. Khan. Direct visualization and characterization of the human zona incerta and surrounding structures. Hum. Brain Mapp., 41 (2020), pp. 4500-4517, 10.1002/hbm.25137
 
 # Y. Xiao, J.C. Lau, T. Anderson, J. DeKraker, D.L. Collins, T. Peters, A.R. Khan. An accurate registration of the BigBrain dataset with the MNI PD25 and ICBM152 atlases. Sci. Data, 6 (2019), p. 210, 10.1038/s41597-019-0217-0
-
-# Directories
-zona_dir = join(config["output_dir"], "zona_bb_subcortex")
 
 
 rule xfm2native:
@@ -19,27 +24,19 @@ rule xfm2native:
     input:
         seg=config["zona_bb_subcortex"][config["Space"]]["seg"],
         seg_anat=config["zona_bb_subcortex"][config["Space"]]["T1w"],
-        ref=bids(
+        ref=bids_anat(
             root=config["bids_dir"],
-            datatype="anat",
             suffix="T1w.nii.gz",
-            **config["subj_wildcards"],
         ),
     output:
-        xfm=bids(
-            root=zona_dir,
-            datatype="anat",
+        xfm=bids_anat(
             desc=f"from{config['Space']}toNative",
             suffix="xfm.mat",
-            **config["subj_wildcards"],
         ),
-        nii=bids(
-            root=zona_dir,
-            datatype="anat",
+        nii=bids_anat(
             space="T1w",
             desc="ZonaBB",
             suffix="dseg.nii.gz",
-            **config["subj_wildcards"],
         ),
     container:
         config["singularity"]["neuroglia-core"]
@@ -52,32 +49,26 @@ rule binarize:
     input:
         nii=rules.xfm2native.output.nii,
     output:
-        bin=bids(
-            root=zona_dir,
-            datatype="anat",
+        mask=bids_anat(
             space="T1w",
             desc="ZonaBB",
             suffix="mask.nii.gz",
-            **config["subj_wildcards"],
         ),
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "fslmaths {input.nii} -bin {output.bin}"
+        "fslmaths {input.nii} -bin {output.mask}"
 
 
 rule add_brainstem:
     input:
-        binarize=rules.binarize.output.bin,
+        binarize=rules.binarize.output.mask,
         aparcaseg=rules.fs_xfm2native.output.aparcaseg,
     output:
-        binarize=bids(
-            root=zona_dir,
-            datatype="anat",
+        binarize=bids_anat(
             space="T1w",
             desc="ZonaBBStem",
             suffix="mask.nii.gz",
-            **config["subj_wildcards"],
         ),
     container:
         config["singularity"]["neuroglia-core"]
@@ -87,28 +78,20 @@ rule add_brainstem:
 
 rule xfm_zona_rois:
     input:
-        mask=expand(
-            join(
-                config["zona_bb_subcortex"][config["Space"]]["dir"],
-                f'sub-SNSX32Nlin2020Asym_space-{config["Space"]}_hemi-{{hemi}}_desc-{{struct}}_mask.nii.gz',
-            ),
-            hemi=["L", "R"],
-            struct=["fct", "ft", "fl", "hfields"],
+        mask=join(
+            config["zona_bb_subcortex"][config["Space"]]["dir"],
+            f'sub-SNSX32Nlin2020Asym_space-{config["Space"]}_hemi-{{hemi}}_desc-{{struct}}_mask.nii.gz',
         ),
         ref=rules.xfm2native.input.ref,
         xfm=rules.xfm2native.input.xfm,
     output:
-        mask=expand(
-            bids(
-                root=zona_dir,
-                datatype="anat",
-                space="T1w",
-                hemi="{hemi}",
-                desc="{struct}",
-                suffix="mask.nii.gz",
-            ),
-            hemi=["L", "R"],
-            struct=["fct", "ft", "fl", "hfields"],
+        mask=bids(
+            root=zona_dir,
+            datatype="anat",
+            space="T1w",
+            hemi="{{hemi,(L|R)}}",
+            desc="{{struct,(fct|ft|fl|hfields)}}",
+            suffix="mask.nii.gz",
         ),
     container:
         config["singularity"]["neuroglia-core"]
@@ -245,13 +228,10 @@ rule create_convex_hull:
     input:
         bin_seg=rules.add_brainstem_new_seg.output.seg,
     output:
-        convex_hull=bids(
-            root=zona_dir,
-            datatype="anat",
+        convex_hull=bids_anat(
             space="T1w",
             desc="ConvexHull",
             suffix="mask.nii.gz",
-            **config["subj_wildcards"],
         ),
     script:
         "../resources/zona_bb_subcortex/convexHull_roi.py"
