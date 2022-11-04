@@ -44,7 +44,7 @@ rule xfm2native:
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "flirt -in {input.seg_anat} -r {input.ref} -omat {output.xfm}"
+        "flirt -in {input.seg_anat} -r {input.ref} -omat {output.xfm} &&"
         "applywarp --rel --interp=nn -i {input.seg} -r {input.ref} -w {output.xfm} -o {output.nii}"
 
 
