@@ -1,7 +1,16 @@
 from os.path import join
+from functools import partial
 
 # Directories
 freesurfer_dir = join(config["out_dir"], "freesurfer")
+
+# BIDS partials
+bids_fs_out = partial(
+    bids,
+    root=freesurfer_dir,
+    datatype="anat",
+    **config["subj_wildcards"],
+)
 
 # Freesurfer references (with additional in rules as necessary)
 # B. Fischl, A. van der Kouwe, C. Destrieux, E. Halgren, F. Ségonne, D.H. Salat, E. Busa, L.J. Seidman, J. Goldstein, D. Kennedy, V. Caviness, N. Makris, B. Rosen, A.M. Dale. Automatically parcellating the human cerebral cortex. Cereb. Cortex, 14 (2004), pp. 11-22, 10.1093/cercor/bhg087
@@ -24,19 +33,10 @@ rule thalamic_segmentation:
     container:
         config["singularity"]["freesurfer"]
     shell:
-        "FS_LICENSE={params.fs_license} "
-        "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} "
-        "SUBJECTS_DIR={input.freesurfer_dir} "
+        "FS_LICENSE={params.fs_license} &&"
+        "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} &&"
+        "SUBJECTS_DIR={input.freesurfer_dir} &&"
         "segmentThalamicNuclei.sh {wildcards.subject}"
-
-
-fs_out = bids(
-    root=freesurfer_dir,
-    datatype="anat",
-    suffix="{suffix}",
-    space="{space}",
-    **config["subj_wildcards"],
-)
 
 
 rule mgz2nii:
@@ -53,24 +53,16 @@ rule mgz2nii:
     params:
         fs_license=config["fs_license"],
     output:
-        thal=expand(
-            fs_out, suffix="thalamus.nii.gz", space="Freesurfer", allow_missing=True
-        ),
-        aparcaseg=expand(
-            fs_out, suffix="aparcaseg.nii.gz", space="Freesurfer", allow_missing=True
-        ),
-        ribbon_mgz=expand(
-            fs_out, suffix="ribbon.mgz", space="Freesurfer", allow_missing=True
-        ),
-        ribbon=expand(
-            fs_out, suffix="ribbon.nii.gz", space="Freesurfer", allow_missing=True
-        ),
+        thal=bids_fs_out(space="Freesurfer", suffix="thalamus.nii.gz"),
+        aparcaseg=bids_fs_out(space="Freesurfer", suffix="aparcaseg.nii.gz"),
+        ribbon_mgz=bids_fs_out(space="Freesurfer", suffix="ribbon.mgz"),
+        ribbon=bids_fs_out(space="Freesurfer", suffix="ribbon.nii.gz"),
     threads: workflow.cores
     container:
         config["singularity"]["freesurfer"]
     shell:
-        "FS_LICENSE={params.fs_license} "
-        "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={params.threads} "
+        "FS_LICENSE={params.fs_license} &&"
+        "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={params.threads} &&"
         "mri_convert {input.thal} {output.thal} &&"
         "mri_convert {input.aparcaseg} {output.aparcaseg} &&"
         "mergeseg --src {input.lRibbon} --merge {input.rRibbon} --o {output.ribbon_mgz} &&"
@@ -90,14 +82,12 @@ rule fs_xfm_to_native:
             **config["subj_wildcards"],
         ),
     output:
-        thal=expand(fs_out, suffix="thalamus.nii.gz", space="T1w", allow_missing=True),
-        aparcaseg=expand(
-            fs_out, suffix="aparcaseg.nii.gz", space="T1w", allow_missing=True
-        ),
-        ribbon=expand(fs_out, suffix="ribbon.nii.gz", space="T1w", allow_missing=True),
+        thal=bids_fs_out(space="T1w", suffix="thalamus.nii.gz"),
+        aparcaseg=bids_fs_out(space="T1w", suffix="thalamus.nii.gz"),
+        ribbon=bids_fs_out(space="T1w", suffix="ribbon.nii.gz"),
     container:
         config["singularity"]["neuroglia-core"]
     shell:
         "antsApplyTransforms -d 3 -n MultiLabel -i {input.thal} -r {input.ref} -o {output.thal} &&"
         "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} &&"
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.ribbon} -r {input.ref} -o {output.ribbon} "
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.ribbon} -r {input.ref} -o {output.ribbon}"
