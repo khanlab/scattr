@@ -13,7 +13,7 @@ config.update(
         derivatives=config["derivatives"],
         participant_label=config["participant_label"],
         exclude_participant_label=config["exclude_participant_label"],
-        use_bids_inputs=True,
+        use_bids_inputs=False,
     )
 )
 

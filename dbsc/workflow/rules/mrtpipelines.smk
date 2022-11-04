@@ -475,7 +475,7 @@ rule filter_tck:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "mrcalc -nthreads {threads} {input.subcortical_seg} 0 -neq {input.roi1} -sub {input.roi2} -sub {input.lZI} -sub {input.rZI} -sub {output.filter_mask} "
+        "mrcalc -nthreads {threads} {input.subcortical_seg} 0 -neq {input.roi1} -sub {input.roi2} -sub {input.lZI} -sub {input.rZI} -sub {output.filter_mask} &&"
         "tckedit -nthreads {params.therads} -exclude {output.filter_mask} -tck_weights_in {input.weights} -tck_weights_out {output.filtered_weights} {input.tck} {output.filtered_tck} "
 
 
@@ -512,7 +512,7 @@ rule combine_filtered:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tckedit {input.tck} {output.combined_tck} "
+        "tckedit {input.tck} {output.combined_tck} &&"
         "cat {input.weights} >> {output.combined_weights} "
 
 
