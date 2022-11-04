@@ -37,12 +37,19 @@ build-backend = "poetry.core.masonry.api"
 setup = "pre-commit install"
 isort = "isort dbsc/*.py"
 black = "black dbsc -l 79"
+flake8 = "flake8 dbsc --ignore=E501"
 snakefmt = "snakefmt dbsc"
-quality = ["isort", "black", "snakefmt"]
+quality = ["isort", "black", "flake8", "snakefmt"]
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
+
+[tool.black]
+line-length = 79
+
+[tool.flake8]
+ignore = 'E501'
 
 [tool.snakefmt]
 include = '\.smk$|^Snakefile'
