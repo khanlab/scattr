@@ -1,4 +1,5 @@
 from os.path import join
+from functools import partial
 
 
 include: "zona_bb_subcortex.smk"
@@ -12,6 +13,36 @@ mrtrix_dir = join(config["output_dir"], "mrtrix")
 responsemean_flag = config.get("responsemean_dir", None)
 shells = config.get("shells", None)
 lmax = config.get("lmax", None)
+
+# BIDS partials
+bids_response_out = partial(
+    bids,
+    root=mrtrix_dir,
+    datatype="response",
+    suffix="response.txt",
+)
+
+bids_dti_out = partial(
+    bids,
+    root=mrtrix_dir,
+    datatype="dti",
+    model="dti",
+    **config["subj_wildcards"],
+)
+
+bids_tractography_out = partial(
+    bids,
+    root=mrtrix_dir,
+    datatype="tractography",
+    **config["subj_wildcards"],
+)
+
+bids_anat_out = partial(
+    bids,
+    root=mrtrix_dir,
+    datatype="anat",
+    **config["subj_wildcards"],
+)
 
 # Mrtrix3 citation (additional citations are included per rule as necessary):
 # Tournier, J.-D.; Smith, R. E.; Raffelt, D.; Tabbara, R.; Dhollander, T.; Pietsch, M.; Christiaens, D.; Jeurissen, B.; Yeh, C.-H. & Connelly, A. MRtrix3: A fast, flexible and open software framework for medical image processing and visualisation. NeuroImage, 2019, 202, 116137
@@ -47,15 +78,6 @@ rule nii2mif:
         "mrconvert -nthreads {threads} {input.mask} {output.mask}"
 
 
-dwi2response_out = bids(
-    root=mrtrix_dir,
-    datatype="response",
-    desc="{tissue}",
-    suffix="response.txt",
-    **config["subj_wildcards"],
-)
-
-
 rule dwi2response:
     """
     Estimate response functions using Dhollander algorithm
@@ -69,9 +91,21 @@ rule dwi2response:
         shells=f"-shells {shells}" if shells else "",
         lmax=f"-lmax {lmax}" if lmax else "",
     output:
-        wm_rf=expand(dwi2response_out, tissue="wm", allow_missing=True),
-        gm_rf=expand(dwi2response_out, tissue="gm", allow_missing=True),
-        csf_rf=expand(dwi2response_out, tissue="csf", allow_missing=True),
+        wm_rf=bids_response_out(
+            desc="wm",
+            suffix="response.txt",
+            **config["subj_wildcards"],
+        ),
+        gm_rf=bids_response_out(
+            desc="gm",
+            suffix="response.txt",
+            **config["subj_wildcards"],
+        ),
+        csf_rf=bids_response_out(
+            desc="csf",
+            suffix="response.txt",
+            **config["subj_wildcards"],
+        ),
     threads: workflow.cores
     group:
         "subject_1"
@@ -81,14 +115,6 @@ rule dwi2response:
         "dwi2response dhollander {input.dwi} {output.wm_rf} {output.gm_rf} {output.csf_rf} -nthreads {threads} -mask {input.mask} {params.shells} {params.lmax} "
 
 
-responsemean_out = bids(
-    root=join(mrtrix_dir, "avg"),
-    datatype="response",
-    desc="{tissue}",
-    suffix="response.txt",
-)
-
-
 rule responsemean:
     """Compute average response function"""
     input:
@@ -96,9 +122,18 @@ rule responsemean:
         gm_rf=expand(rules.dwi2response.output.gm_rf, subject=config["subjects"]),
         csf_rf=expand(rules.dwi2response.output.csf_rf, subject=config["subjects"]),
     output:
-        wm_avg_rf=expand(responsemean_out, tissue="wm", allow_missing=True),
-        gm_avg_rf=expand(responsemean_out, tissue="gm", allow_missing=True),
-        csf_avg_rf=expand(responsemean_out, tissue="csf", allow_missing=True),
+        wm_avg_rf=bids_response_out(
+            root=join(mrtrix_dir, "avg"),
+            desc="wm",
+        ),
+        gm_avg_rf=bids_response_out(
+            root=join(mrtrix_dir, "avg"),
+            desc="gm",
+        ),
+        csf_avg_rf=bids_response_out(
+            root=join(mrtrix_dir, "avg"),
+            desc="csf",
+        ),
     threads: workflow.cores
     group:
         "group"
@@ -108,16 +143,6 @@ rule responsemean:
         "responsemean {input.wm_rf} {output.wm_avg_rg} -nthreads {threads} &&"
         "responsemean {input.gm_rf} {output.gm_avg_rg} -nthreads {threads} &&"
         "responsemean {input.csf_rf} {output.csf_avg_rg} -nthreads {threads}"
-
-
-dwi2fod_out = bids(
-    root=mrtrix_dir,
-    datatype="response",
-    model="csd",
-    desc="{tissue}",
-    suffix="fod.mif",
-    **config["subj_wildcards"],
-)
 
 
 rule dwi2fod:
@@ -143,9 +168,24 @@ rule dwi2fod:
     params:
         shells=f"-shells {shells}" if shells else "",
     output:
-        wm_fod=expand(dwi2fod_out, tissue="wm", allow_missing=True),
-        gm_fod=expand(dwi2fod_out, tissue="gm", allow_missing=True),
-        csf_fod=expand(dwi2fod_out, tissue="csf", allow_missing=True),
+        wm_fod=bids_response_out(
+            model="csd",
+            desc="wm",
+            suffix="fod.mif",
+            **config["subj_wildcards"],
+        ),
+        gm_fod=bids_response_out(
+            model="csd",
+            desc="gm",
+            suffix="fod.mif",
+            **config["subj_wildcards"],
+        ),
+        csf_fod=bids_response_out(
+            model="csd",
+            desc="csf",
+            suffix="fod.mif",
+            **config["subj_wildcards"],
+        ),
     threads: workflow.cores
     group:
         "subject_2"
@@ -153,15 +193,6 @@ rule dwi2fod:
         config["singularity"]["mrtrix"]
     shell:
         "dwi2fod -nthreads {threads} {params.shells} -mask {input.mask} msmt_csd {input.dwi} {input.avg_sfwm} {output.wm_fod} {input.avg_gm} {output.gm_fod} {input.avg_csf} {output.csf}"
-
-
-mtnormalise_out = bids(
-    root=mrtrix_dir,
-    datatype="response",
-    model="csd",
-    desc="normalized",
-    suffix="{tissue}_fod.mif",
-)
 
 
 rule mtnormalise:
@@ -176,9 +207,24 @@ rule mtnormalise:
         csf_fod=rules.dwi2fod.output.csf_fod,
         mask=rules.nii2mif.output.mask,
     output:
-        wm_fod=expand(mtnormalise_out, tissue="wm", allow_missing=True),
-        gm_fod=expand(mtnormalise_out, tissue="gm", allow_missing=True),
-        csf_fod=expand(mtnormalise_out, tissue="csf", allow_missing=True),
+        wm_fod=bids_response_out(
+            model="csd",
+            desc="wm",
+            suffix="fodNormalized.mif",
+            **config["subj_wildcards"],
+        ),
+        gm_fod=bids_response_out(
+            model="csd",
+            desc="gm",
+            suffix="fodNormalized.mif",
+            **config["subj_wildcards"],
+        ),
+        csf_fod=bids_response_out(
+            model="csd",
+            desc="csf",
+            suffix="fodNormalized.mif",
+            **config["subj_wildcards"],
+        ),
     threads: workflow.cores
     group:
         "subject_2"
@@ -210,30 +256,16 @@ rule dwinormalise:
         "subject_1"
 
 
-dwi2tensor_out = bids(
-    root=mrtrix_dir,
-    datatype="dti",
-    model="dti",
-    suffix="{dti}.mif",
-    **config["subj_wildcards"],
-)
-
-
 rule dwi2tensor:
     input:
         dwi=rules.dwinoramlise.dwi,
         mask=rules.nii2mif.output.mask,
     output:
-        dti=bids(
-            root=mrtrix_dir,
-            datatype="dti",
-            suffix="dti.mif",
-            **config["subj_wildcards"],
-        ),
-        fa=expand(dwi2tensor_out, dti="fa", allow_missing=True),
-        ad=expand(dwi2tensor_out, dti="ad", allow_missing=True),
-        rd=expand(dwi2tensor_out, dti="rd", allow_missing=True),
-        md=expand(dwi2tensor_out, dti="md", allow_missing=True),
+        dti=bids_dti_out(suffix="tensor.mif"),
+        fa=bids_dti_out(suffix="fa.mif"),
+        ad=bids_dti_out(suffix="ad.mif"),
+        rd=bids_dti_out(suffix="rd.mif"),
+        md=bids_dti_out(suffix="md.mif"),
     threads: workflow.cores
     group:
         "subject_1"
@@ -263,12 +295,9 @@ rule tckgen:
         step=config["step"],
         sl=config["sl_count"],
     output:
-        tck=bids(
-            root=mrtrix_dir,
-            datatype="tractography",
+        tck=bids_tractography_out(
             desc="iFOD2",
             suffix="tractography.tck",
-            **config["subj_wildcards"],
         ),
     threads: workflow.cores
     group:
@@ -286,19 +315,10 @@ rule tcksift2:
         fod=rules.mtnormalise.output.wm_fod,
     output:
         weights=bids(
-            root=mrtrix_dir,
-            datatype="tractography",
             desc="iFOD2",
-            suffix="tckweights.txt",
-            **config["subj_wildcards"],
+            suffix="tckWeights.txt",
         ),
-        mu=bids(
-            root=mrtrix_dir,
-            datatype="tractography",
-            desc="iFOD2",
-            suffix="mucoefficient.txt",
-            **config["subj_wildcards"],
-        ),
+        mu=bids(desc="iFOD2", suffix="muCoefficient.txt"),
     threads: workflow.cores
     group:
         "subject_2"
@@ -324,19 +344,13 @@ rule tck2connectome:
     params:
         radius=config["radial_search"],
     output:
-        sl_assignment=bids(
-            root=mrtix_dir,
-            datatype="tractography",
+        sl_assignment=bids_tractography_out(
             desc="subcortical",
-            suffix="nodeassignment.txt",
-            **config["subj_wildcards"],
+            suffix="nodeAssignment.txt",
         ),
-        node_weights=bids(
-            root=mrtrix_dir,
-            datatype="tractography",
+        node_weights=bids_tractography_out(
             desc="subcortical",
-            suffix="nodeweights.csv",
-            **config["subj_wildcards"],
+            suffix="nodeWeights.csv",
         ),
     threads: workflow.cores
     group:
@@ -356,21 +370,15 @@ rule connectome2tck:
         nodes=",".join(str(num) for num in range(2, 73)),
     output:
         edge_weight=temp(
-            bids(
-                root=mrtrix_dir,
-                datatype="tractography",
+            bids_tractography_out(
                 desc="subcortical",
-                suffix="tckweights",
-                **config["subj_wildcards"],
+                suffix="tckWeights",
             )
         ),
         edge_tck=temp(
             bids(
-                root=mrtix_dir,
-                datatype="tractography",
                 desc="subcortical",
                 suffix="from",
-                **config["subj_wildcards"],
             )
         ),
     threads: workflow.cores
@@ -389,12 +397,9 @@ rule create_roi_mask:
         subcortical_seg=rules.add_brainstem_new_seg.output.seg,
     output:
         roi_mask=temp(
-            bids(
-                root=mrtrix_dir,
-                datatype="anat",
+            bids_anat_out(
                 desc="{node1}",
                 suffix="mask.mif",
-                **config["subj_wildcards"]
             )
         ),
     threads: workflow.cores
@@ -409,64 +414,40 @@ rule create_roi_mask:
 rule filter_tck:
     # Node1 should be same as prev rule, need to iterate over node2
     input:
-        roi1=bids(
-            root=mrtrix_dir,
-            datatype="anat",
+        roi1=bids_anat_out(
             desc="{node1}",
             suffix="mask.mif",
-            **config["subj_wildcards"]
         ),
-        roi2=bids(
-            root=mrtrix_dir,
-            datatype="anat",
+        roi2=bids_anat_out(
             desc="{node2}",
             suffix="mask.mif",
-            **config["subj_wildcards"]
         ),
         # ZI rois (do these need to be separately defined in output?)
-        lZI=bids(
-            root=mrtrix_dir,
-            datatype="anat",
+        lZI=bids_anat_out(
             desc="21",
             suffix="mask.mif",
-            **config["subj_wildcards"]
         ),
-        rZI=bids(
-            root=mrtrix_dir,
-            datatype="anat",
-            desc="22",
-            suffix="mask.mif",
-            **config["subj_wildcards"]
-        ),
+        rZI=bids_anat_out(desc="22", suffix="mask.mif"),
         tck=rules.connectome2tck.output.edge_tck,
         weights=rules.tck2connectome.outputs.node_weights,
         subcortical_seg=rules.add_brainstem_new_seg.output.seg,
     output:
         filter_mask=temp(
-            bids(
-                root=mrtrix_dir,
-                datatype="anat",
+            bids_anat_out(
                 desc="exclude",
                 suffix="mask.mif",
-                **config["subj_wildcards"]
             )
         ),
         filtered_tck=temp(
-            bids(
-                root=mrtrix_dir,
-                datatype="tractography",
+            bids_tractography_out(
                 desc="from{node1}to{node2}",
                 suffix="tractography.tck",
-                **config["subj_wildcards"]
             )
         ),
         filtered_weights=temp(
-            bids(
-                root=mrtrix_dir,
-                datatype="tractography",
+            bids_tractography_out(
                 desc="from{node1}to{node2}",
                 suffix="weights.csv",
-                **config["subj_wildcards"]
             )
         ),
     threads: workflow.cores
@@ -492,19 +473,13 @@ rule combine_filtered:
             **config["input_zip_lists"]["dwi"]
         ),
     output:
-        combined_tck=bids(
-            root=mrtrix_dir,
-            datatype="tractography",
+        combined_tck=bids_tractography_out(
             desc="subcortical",
             suffix="tractography.tck",
-            **config["subj_wildcards"]
         ),
-        combined_weights=bids(
-            root=mrtrix_dir,
-            datatype="tractography",
+        combined_weights=bids_tractography_out(
             desc="subcortical",
-            suffix="tckweights.txt",
-            **config["subj_wildcards"]
+            suffix="tckWeights.txt",
         ),
     threads: workflow.cores
     group:
@@ -524,19 +499,13 @@ rule filtered_tck2connectome:
     params:
         radius=config["radial_search"],
     output:
-        sl_assignment=bids(
-            root=mrtrix_dir,
-            datatype="tractography",
+        sl_assignment=bids_tractography_out(
             desc="subcortical",
-            suffix="nodeassignment.txt",
-            **config["subj_wildcards"],
+            suffix="nodeAssignment.txt",
         ),
-        node_weights=bids(
-            root=mrtrix_dir,
-            datatype="tractography",
+        node_weights=bids_tractography_out(
             desc="subcortical",
-            suffix="nodeweights.csv",
-            **config["subj_wildcards"],
+            suffix="nodeWeights.csv",
         ),
     threads: workflow.core
     group:
