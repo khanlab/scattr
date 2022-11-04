@@ -38,7 +38,7 @@ rule xfm2native:
             datatype="anat",
             space="T1w",
             desc="ZonaBB",
-            suffix="seg.nii.gz",
+            suffix="dseg.nii.gz",
             **config["subj_wildcards"],
         ),
     container:
@@ -57,7 +57,7 @@ rule binarize:
             datatype="anat",
             space="T1w",
             desc="ZonaBB",
-            suffix="segbin.nii.gz",
+            suffix="mask.nii.gz",
             **config["subj_wildcards"],
         ),
     container:
@@ -76,7 +76,7 @@ rule add_brainstem:
             datatype="anat",
             space="T1w",
             desc="ZonaBBStem",
-            suffix="segbin.nii.gz",
+            suffix="mask.nii.gz",
             **config["subj_wildcards"],
         ),
     container:
@@ -250,7 +250,7 @@ rule create_convex_hull:
             datatype="anat",
             space="T1w",
             desc="ConvexHull",
-            suffix="segbin.nii.gz",
+            suffix="mask.nii.gz",
             **config["subj_wildcards"],
         ),
     script:
