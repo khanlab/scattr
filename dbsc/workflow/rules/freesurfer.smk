@@ -25,9 +25,9 @@ rule thalamic_segmentation:
         config["singularity"]["freesurfer"]
     shell:
         "FS_LICENSE={params.fs_license} "
-        "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={params.threads} "
+        "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} "
         "SUBJECTS_DIR={input.freesurfer_dir} "
-        "segmentThalamicNuclei.sh {{subject}}"
+        "segmentThalamicNuclei.sh {wildcards.subject}"
 
 
 fs_out = bids(
@@ -71,9 +71,9 @@ rule mgz2nii:
     shell:
         "FS_LICENSE={params.fs_license} "
         "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={params.threads} "
-        "mri_convert {input.thal} {output.thal} "
-        "mri_convert {input.aparcaseg} {output.aparcaseg} "
-        "mergeseg --src {input.lRibbon} --merge {input.rRibbon} --o {output.ribbon_mgz}"
+        "mri_convert {input.thal} {output.thal} &&"
+        "mri_convert {input.aparcaseg} {output.aparcaseg} &&"
+        "mergeseg --src {input.lRibbon} --merge {input.rRibbon} --o {output.ribbon_mgz} &&"
         "mri_convert {output.ribbon_mgz} {output.ribbon}"
 
 
@@ -98,6 +98,6 @@ rule fs_xfm_to_native:
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.thal} -r {input.ref} -o {output.thal} "
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} "
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.thal} -r {input.ref} -o {output.thal} &&"
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} &&"
         "antsApplyTransforms -d 3 -n MultiLabel -i {input.ribbon} -r {input.ref} -o {output.ribbon} "
