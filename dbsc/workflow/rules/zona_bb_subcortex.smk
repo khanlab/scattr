@@ -246,7 +246,7 @@ rule create_convex_hull:
         bin_seg=rules.add_brainstem_new_seg.output.seg,
     output:
         convex_hull=bids(
-            root=zon_dir,
+            root=zona_dir,
             datatype="anat",
             space="T1w",
             desc="ConvexHull",
