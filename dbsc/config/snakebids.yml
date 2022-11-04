@@ -29,7 +29,6 @@ pybids_inputs:
     wildcards:
       - subject
       - session
-      - desc
   mask:
     filters:
       suffix: "mask"
@@ -39,7 +38,6 @@ pybids_inputs:
     wildcards:
       - subject
       - session
-      - desc
 
 # Configuration for the command-line parameters to make available
 # passed on the argparse add_argument()
