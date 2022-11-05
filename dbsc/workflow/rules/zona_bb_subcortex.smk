@@ -1,4 +1,4 @@
-from os.path import join
+from pathlib import Path
 from functools import partial
 
 
@@ -7,7 +7,10 @@ include: "freesurfer.smk"
 
 
 # Directories
-zona_dir = join(config["output_dir"], "zona_bb_subcortex")
+zona_dir = str(Path(config["output_dir"]) / "zona_bb_subcortex")
+
+# Make directory if it doesn't exist
+Path(zona_dir).mkdir(parents=True)
 
 
 # BIDS partials
@@ -78,9 +81,9 @@ rule add_brainstem:
 
 rule xfm_zona_rois:
     input:
-        mask=join(
-            config["zona_bb_subcortex"][config["Space"]]["dir"],
-            f'sub-SNSX32Nlin2020Asym_space-{config["Space"]}_hemi-{{hemi}}_desc-{{struct}}_mask.nii.gz',
+        mask=str(
+            Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
+            / f'sub-SNSX32Nlin2020Asym_space-{config["Space"]}_hemi-{{hemi}}_desc-{{struct}}_mask.nii.gz'
         ),
         ref=rules.xfm2native.input.ref,
         xfm=rules.xfm2native.input.xfm,
@@ -107,7 +110,7 @@ rule rm_bb_thal:
         seg=rules.xfm2native.output.nii,
     output:
         seg=bids(
-            root=join(config["output_dir"], "zona_bb_subcortex"),
+            root=zona_dir,
             datatype="anat",
             space="T1w",
             desc="ZonaBBNoThal",
@@ -116,7 +119,7 @@ rule rm_bb_thal:
         ),
         non_thal=temp(
             bids(
-                root=join(config["output_dir"], "zona_bb_subcortex"),
+                root=zona_dir,
                 datatype="anat",
                 space="T1w",
                 desc="NonThal",
@@ -126,7 +129,7 @@ rule rm_bb_thal:
         ),
         rm_seg=temp(
             bids(
-                root=join(config["output_dir"], "zona_bb_subcortex"),
+                root=zona_dir,
                 datatype="anat",
                 space="T1w",
                 desc="rm",
@@ -152,7 +155,7 @@ rule add_new_thal:
         seg=rules.rm_bb_thal.output.rm_seg,
     output:
         seg=bids(
-            root=join(config["output_dir"], "zona_bb_subcortex"),
+            root=zona_dir,
             datatype="anat",
             space="T1w",
             desc="ZonaBBFSThal",
@@ -161,7 +164,7 @@ rule add_new_thal:
         ),
         label=temp(
             bids(
-                root=join(config["output_dir"], "zona_bb_subcortex"),
+                root=zona_dir,
                 datatype="anat",
                 space="T1w",
                 suffix="label.nii.gz",
@@ -189,7 +192,7 @@ rule bin_new_seg:
         seg=rules.add_new_thal.output.seg,
     output:
         seg=bids(
-            root=join(config["output_dir"], "zona_bb_subcortex"),
+            root=zona_dir,
             datatype="anat",
             space="T1w",
             desc="ZonaBBFSThal",
@@ -208,7 +211,7 @@ rule add_brainstem_new_seg:
         aparcaseg=rules.add_brainstem.input.aparcaseg,
     output:
         seg=bids(
-            root=join(config["output_dir"], "zona_bb_subcortex"),
+            root=zona_dir,
             datatype="anat",
             space="T1w",
             desc="ZonaBBFSThalStem",
