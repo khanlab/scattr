@@ -1,8 +1,11 @@
-from os.path import join
+from pathlib import Path
 from functools import partial
 
 # Directories
-freesurfer_dir = join(config["out_dir"], "freesurfer")
+freesurfer_dir = str(Path(config["out_dir"]) / "freesurfer")
+
+# Make directory if it doesn't exist
+Path(freesurfer_dir).mkdir(parents=True)
 
 # BIDS partials
 bids_fs_out = partial(
@@ -28,7 +31,7 @@ rule thalamic_segmentation:
     params:
         fs_license=config["fs_license"],
     output:
-        thal_seg=join(freesurfer_dir, "{subject}/mri/ThalamicNuclei.v12.T1.mgz"),
+        thal_seg=str(Path(freesurfer_dir) / "{subject}/mri/ThalamicNuclei.v12.T1.mgz"),
     threads: workflow.cores
     container:
         config["singularity"]["freesurfer"]
@@ -47,9 +50,9 @@ rule mgz2nii:
     """
     input:
         thal=rules.thalamic_segmentation.output.thal_seg,
-        aparcaseg=join(freesurfer_dir, "{subject}/mri/aparc+aseg.mgz"),
-        lRibbon=join(freesurfer_dir, "{subject}/mri/lh.ribbon.mgz"),
-        rRibbon=join(freesurfer_dir, "{subject}/mri/rh.ribbon.mgz"),
+        aparcaseg=str(Path(freesurfer_dir) / "{subject}/mri/aparc+aseg.mgz"),
+        lRibbon=str(Path(freesurfer_dir) / "{subject}/mri/lh.ribbon.mgz"),
+        rRibbon=str(Path(freesurfer_dir) / "{subject}/mri/rh.ribbon.mgz"),
     params:
         fs_license=config["fs_license"],
     output:
