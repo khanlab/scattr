@@ -1,4 +1,4 @@
-from os.path import join
+from pathlib import Path
 from functools import partial
 
 
@@ -7,7 +7,10 @@ include: "freesurfer.smk"
 
 
 # Directories
-mrtrix_dir = join(config["output_dir"], "mrtrix")
+mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
+
+# Make directory if it doesn't exist
+Path(mrtrix_dir).mkdir(parents=True)
 
 # Parameters
 responsemean_flag = config.get("responsemean_dir", None)
@@ -123,15 +126,15 @@ rule responsemean:
         csf_rf=expand(rules.dwi2response.output.csf_rf, subject=config["subjects"]),
     output:
         wm_avg_rf=bids_response_out(
-            root=join(mrtrix_dir, "avg"),
+            root=str(Path(mrtrix_dir) / "avg"),
             desc="wm",
         ),
         gm_avg_rf=bids_response_out(
-            root=join(mrtrix_dir, "avg"),
+            root=str(Path(mrtrix_dir) / "avg"),
             desc="gm",
         ),
         csf_avg_rf=bids_response_out(
-            root=join(mrtrix_dir, "avg"),
+            root=str(Path(mrtrix_dir) / "avg"),
             desc="csf",
         ),
     threads: workflow.cores
@@ -151,17 +154,17 @@ rule dwi2fod:
         dwi=rules.nii2mif.output.dwi,
         mask=rules.nii2mif.output.mask,
         wm_rf=(
-            join(config["responsemean_dir"], "desc-wm_response.txt")
+            str(Path(config["responsemean_dir"]) / "desc-wm_response.txt")
             if responsemean_flag
             else rules.responsemean.output.wm_avg_rf
         ),
         gm_rf=(
-            join(config["responsemean_dir"], "desc-gm_response.txt")
+            str(Path(config["responsemean_dir"]) / "desc-gm_response.txt")
             if responsemean_flag
             else rules.responsemean.output.gm_avg_rf
         ),
         csf_rf=(
-            join(config["responsemean_dir"], "desc-csf_response.txt")
+            str(Path(config["responsemean_dir"]) / "desc-csf_response.txt")
             if responsemean_flag
             else rules.responsemean.output.csf_avg_rf
         ),
