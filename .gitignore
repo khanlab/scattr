@@ -1,2 +1,7 @@
 # Tar files
 *.tar
+
+# Ignore files that are available in tar
+**/zona_bb_subcortex/MNI152
+**/zona_bb_subcortex/MNI2009b
+**/zona_bb_subcortex/transforms
