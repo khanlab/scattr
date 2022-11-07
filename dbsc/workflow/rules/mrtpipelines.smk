@@ -367,7 +367,7 @@ rule connectome2tck:
         sl_assignment=rules.tck2connectome.output.sl_assignment,
         tck=rules.tckgen.output.tck,
     params:
-        nodes=",".join(str(num) for num in range(2, 73)),
+        nodes=",".join(str(num) for num in range(1, 73)),
     output:
         edge_weight=temp(
             bids_tractography_out(
