@@ -96,17 +96,14 @@ rule dwi2response:
     output:
         wm_rf=bids_response_out(
             desc="wm",
-            suffix="response.txt",
             **config["subj_wildcards"],
         ),
         gm_rf=bids_response_out(
             desc="gm",
-            suffix="response.txt",
             **config["subj_wildcards"],
         ),
         csf_rf=bids_response_out(
             desc="csf",
-            suffix="response.txt",
             **config["subj_wildcards"],
         ),
     threads: workflow.cores
@@ -426,10 +423,7 @@ rule filter_tck:
             suffix="mask.mif",
         ),
         # ZI rois (do these need to be separately defined in output?)
-        lZI=bids_anat_out(
-            desc="21",
-            suffix="mask.mif",
-        ),
+        lZI=bids_anat_out(desc="21", suffix="mask.mif"),
         rZI=bids_anat_out(desc="22", suffix="mask.mif"),
         tck=rules.connectome2tck.output.edge_tck,
         weights=rules.tck2connectome.outputs.node_weights,
