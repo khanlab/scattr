@@ -25,4 +25,5 @@ wildcard_constraints:
 
 # Rules
 include: "rules/freesurfer.smk"
-include: "rules/zona_bb_subcortex"
+include: "rules/zona_bb_subcortex.smk"
+include: "rules/mrtpipelines.smk"

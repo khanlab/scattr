@@ -118,21 +118,14 @@ rule dwi2response:
 rule responsemean:
     """Compute average response function"""
     input:
-        wm_rf=expand(rules.dwi2response.output.wm_rf, subject=config["subjects"]),
-        gm_rf=expand(rules.dwi2response.output.gm_rf, subject=config["subjects"]),
-        csf_rf=expand(rules.dwi2response.output.csf_rf, subject=config["subjects"]),
+        subject_rf=bids_response_out(
+            desc="{tissue}",
+            **config["subj_wildcards"],
+        ),
     output:
-        wm_avg_rf=bids_response_out(
+        avg_rf=bids_response_out(
             root=str(Path(mrtrix_dir) / "avg"),
-            desc="wm",
-        ),
-        gm_avg_rf=bids_response_out(
-            root=str(Path(mrtrix_dir) / "avg"),
-            desc="gm",
-        ),
-        csf_avg_rf=bids_response_out(
-            root=str(Path(mrtrix_dir) / "avg"),
-            desc="csf",
+            desc="{tissue}",
         ),
     threads: workflow.cores
     group:
@@ -140,9 +133,7 @@ rule responsemean:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "responsemean {input.wm_rf} {output.wm_avg_rg} -nthreads {threads} &&"
-        "responsemean {input.gm_rf} {output.gm_avg_rg} -nthreads {threads} &&"
-        "responsemean {input.csf_rf} {output.csf_avg_rg} -nthreads {threads}"
+        "responsemean {input.subject_rf} {output.avg_rf} -nthreads {threads}"
 
 
 rule dwi2fod:
@@ -153,17 +144,17 @@ rule dwi2fod:
         wm_rf=(
             str(Path(config["responsemean_dir"]) / "desc-wm_response.txt")
             if responsemean_flag
-            else rules.responsemean.output.wm_avg_rf
+            else expand(rules.responsemean.output.avg_rf, tissue="wm")
         ),
         gm_rf=(
             str(Path(config["responsemean_dir"]) / "desc-gm_response.txt")
             if responsemean_flag
-            else rules.responsemean.output.gm_avg_rf
+            else expand(rules.responsemean.output.avg_rf, tissue="gm")
         ),
         csf_rf=(
             str(Path(config["responsemean_dir"]) / "desc-csf_response.txt")
             if responsemean_flag
-            else rules.responsemean.output.csf_avg_rf
+            else expand(rules.responsemean.output.csf_avg_rf, tissue="csf")
         ),
     params:
         shells=f"-shells {shells}" if shells else "",
@@ -250,10 +241,10 @@ rule dwinormalise:
     threads: workflow.cores
     container:
         config["singularity"]["mrtrix"]
-    shell:
-        "dwinormalise individual -nthreads {threads} {input.dwi} {input.mask} {output.dwi}"
     group:
         "subject_1"
+    shell:
+        "dwinormalise individual -nthreads {threads} {input.dwi} {input.mask} {output.dwi}"
 
 
 rule dwi2tensor:
@@ -376,7 +367,7 @@ rule connectome2tck:
             )
         ),
         edge_tck=temp(
-            bids(
+            bids_tractography_out(
                 desc="subcortical",
                 suffix="from",
             )
@@ -411,8 +402,7 @@ rule create_roi_mask:
         "mrcalc -nthreads {threads} {input.subcortical_seg} {wildcards.node1} -eq {output.roi_mask}"
 
 
-rule filter_tck:
-    # Node1 should be same as prev rule, need to iterate over node2
+rule create_exclude_mask:
     input:
         roi1=bids_anat_out(
             desc="{node1}",
@@ -422,29 +412,14 @@ rule filter_tck:
             desc="{node2}",
             suffix="mask.mif",
         ),
-        # ZI rois (do these need to be separately defined in output?)
         lZI=bids_anat_out(desc="21", suffix="mask.mif"),
         rZI=bids_anat_out(desc="22", suffix="mask.mif"),
-        tck=rules.connectome2tck.output.edge_tck,
-        weights=rules.tck2connectome.outputs.node_weights,
         subcortical_seg=rules.add_brainstem_new_seg.output.seg,
     output:
         filter_mask=temp(
             bids_anat_out(
-                desc="exclude",
+                desc="exclude{node1}AND{node2}",
                 suffix="mask.mif",
-            )
-        ),
-        filtered_tck=temp(
-            bids_tractography_out(
-                desc="from{node1}to{node2}",
-                suffix="tractography.tck",
-            )
-        ),
-        filtered_weights=temp(
-            bids_tractography_out(
-                desc="from{node1}to{node2}",
-                suffix="weights.csv",
             )
         ),
     threads: workflow.cores
@@ -453,8 +428,38 @@ rule filter_tck:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "mrcalc -nthreads {threads} {input.subcortical_seg} 0 -neq {input.roi1} -sub {input.roi2} -sub {input.lZI} -sub {input.rZI} -sub {output.filter_mask} &&"
-        "tckedit -nthreads {params.therads} -exclude {output.filter_mask} -tck_weights_in {input.weights} -tck_weights_out {output.filtered_weights} {input.tck} {output.filtered_tck} "
+        "mrcalc -nthreads {threads} {input.subcortical_seg} 0 -neq {input.roi1} -sub {input.roi2} -sub {input.lZI} -sub {input.rZI} -sub {output.filter_mask}"
+
+
+rule filter_tck:
+    input:
+        filter_mask=rules.create_exclude_mask.outputs.filter_mask,
+        tck=rules.connectome2tck.output.edge_tck,
+        weights=rules.tck2connectome.outputs.node_weights,
+        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+    output:
+        filtered_tck=temp(
+            bids_tractography_out(
+                desc="from{node1}to{node2}",
+                suffix="tractography.tck",
+            ),
+        ),
+        filtered_weights=temp(
+            bids_tractography_out(
+                desc="from{node1}to{node2}",
+                suffix="weights.csv",
+            ),
+        ),
+    threads: workflow.cores
+    group:
+        "subject_2"
+    container:
+        config["singularity"]["mrtrix"]
+    shell:
+        "tckedit -nthreads {threads} -exclude {input.filter_mask} -tck_weights_in {input.weights} -tck_weights_out {output.filtered_weights} {input.tck} {output.filtered_tck}"
+
+
+idxes = np.triu_indices(72, k=1)
 
 
 rule combine_filtered:
@@ -462,12 +467,14 @@ rule combine_filtered:
         tck=expand(
             rules.filter_tck.output.filtered_tck,
             zip,
-            **config["input_zip_lists"]["dwi"]
+            node1=list(idxes[0] + 1),
+            node2=list(idxes[1] + 1),
         ),
         weights=expand(
             rules.filter_tck.output.filtered_weights,
             zip,
-            **config["input_zip_lists"]["dwi"]
+            node1=list(idxes[0] + 1),
+            node2=list(idxes[1] + 1),
         ),
     output:
         combined_tck=bids_tractography_out(
