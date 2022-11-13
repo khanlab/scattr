@@ -12,15 +12,18 @@ config.update(
         pybids_inputs=config["pybids_inputs"],
         derivatives=config["derivatives"],
         participant_label=config["participant_label"],
+        exclude_participant_label=config["exclude_participant_label"],
+        use_bids_inputs=False,
     )
 )
 
 # this adds constraints to the bids naming
-wildcard_constraints:  **snakebids.get_wildcard_constraints(\
-    config["pybids_inputs"]\
-)
+wildcard_constraints:
+    **snakebids.get_wildcard_constraints(config["pybids_inputs"])
+
 #---- end snakebids boilerplate ------------------------------------------------
 
 # Rules
 include: "rules/freesurfer.smk"
-include: "rules/zona_bb_subcortex"
+include: "rules/zona_bb_subcortex.smk"
+include: "rules/mrtpipelines.smk"
