@@ -10,25 +10,31 @@ derivatives: False # Search in bids/derivatives if True; can also be path(s) to 
 # List of analysis levels in bids app
 analysis_levels: &analysis_levels
   - participant
-  - group
 
 # Mapping from analysis_level to set of target rules or files
 targets_by_analysis_level:
   participant:
     - "all" # if "", then the first rule is run
-  group:
-    - "all_group_tsv"
 
 # this configures the pybids grabber - create an entry for each type of input you want to grab
 # indexed by name of input dictionary for each input is passed directly to pybids get()
 # https://bids-standard.github.io/pybids/generated/bids.layout.BIDSLayout.html#bids.layout.BIDSLayout.get
 pybids_inputs:
-  T1w:
+  dwi:
     filters:
-      suffix: "T1w"
+      suffix: "dwi"
       extension: ".nii.gz"
-      datatype: "anat"
-      space: null
+      datatype: "dwi"
+      space: "T1w"
+    wildcards:
+      - subject
+      - session
+  mask:
+    filters:
+      suffix: "mask"
+      extension: ".nii.gz"
+      datatype: "dwi"
+      space: "T1w"
     wildcards:
       - subject
       - session
@@ -115,6 +121,11 @@ parse_args:
           node is found within this radius, the streamline endpoint is not
           assigned to any node. (default: 1.5mm)'
     default: 1.5
+
+  --responsemean_dir:
+    help: 'Provide directory containing average response functions. If not
+          provided, one will be computed from the subjects in the input
+          directory.'
 #-----------------------------------------------------#
 
 # Workflow specific config
@@ -137,6 +148,6 @@ freesurfer:
 singularity:
   freesurfer: "docker://pwighton/freesurfer:7.2.0"
   neuroglia-core: "docker://khanlab/neuroglia-core:latest"
-  mrtpipelines: "docker://kaitj/mrtpipelines:0.1.6"
+  mrtrix: "docker://brainlife/mrtrix:3.0.3"
 
 fs_license: /path/to/fs/license
