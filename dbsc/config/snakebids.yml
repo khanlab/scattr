@@ -3,21 +3,18 @@ output_dir: "/path/to/output/dir" # don't use "."
 
 snakebids_dir: "." # DO NOT MODIFY - used to refer to files need by workflow running with CLI
 
-debug: False # Enable printing of debug statements during parsing -- disable if generating dag visualizations 
+debug: False # Enable printing of debug statements during parsing -- disable if generating dag visualizations
 
 derivatives: False # Search in bids/derivatives if True; can also be path(s) to derivatives datasets
 
 # List of analysis levels in bids app
 analysis_levels: &analysis_levels
   - participant
-  - group
 
 # Mapping from analysis_level to set of target rules or files
 targets_by_analysis_level:
   participant:
     - "all" # if "", then the first rule is run
-  group:
-    - "all_group_tsv"
 
 # this configures the pybids grabber - create an entry for each type of input you want to grab
 # indexed by name of input dictionary for each input is passed directly to pybids get()
@@ -28,23 +25,41 @@ pybids_inputs:
       suffix: "T1w"
       extension: ".nii.gz"
       datatype: "anat"
-      space: null 
+      space: null
+    wildcards:
+      - subject
+      - session
+  dwi:
+    filters:
+      suffix: "dwi"
+      extension: ".nii.gz"
+      datatype: "dwi"
+      space: "T1w"
+    wildcards:
+      - subject
+      - session
+  mask:
+    filters:
+      suffix: "mask"
+      extension: ".nii.gz"
+      datatype: "dwi"
+      space: "T1w"
     wildcards:
       - subject
       - session
 
 # Configuration for the command-line parameters to make available
 # passed on the argparse add_argument()
-parse_args: 
+parse_args:
 
-#--- core BIDS-app options --- (do not modify below) ---# 
+#--- core BIDS-app options --- (do not modify below) ---#
   bids_dir:
-    help: The directory with the input dataset formatted according to the 
+    help: The directory with the input dataset formatted according to the
           BIDS standard.
 
   output_dir:
-    help: The directory where the output files should be stored. If you are 
-          running group level analysis, this folder should be prepopulated 
+    help: The directory where the output files should be stored. If you are
+          running group level analysis, this folder should be prepopulated
           with the results of the participant level analysis.
 
   analysis_level:
@@ -62,74 +77,76 @@ parse_args:
   --exclude_participant_label:
     help: The label(s) of the participant(s) that should be excluded. The label
           corresponds to sub-<participant_label> from the BIDS spec (so it does
-          not include "sub-"). If this parameter is not provided, all subjects 
+          not include "sub-"). If this parameter is not provided, all subjects
           will be analyzed. Multiple participants can be specified with a space
           sepearated list.
     nargs: "+"
-#-----------------------------------------------------# 
+#-----------------------------------------------------#
 
 #--- additional BIDS-app options --- (add in below) --#
   --shells:
-    help: '(Mrtrix3) specify one or more b-values to use during processing, as 
-          a comma-separated list of the desired approximate b-values (b-values 
-          are clustered to allow for small deviations). Note that some 
-          commands are incompatible with multiple b-values, and will report an 
-          error if more than one b-value is provided. 
+    help: '(Mrtrix3) specify one or more b-values to use during processing, as
+          a comma-separated list of the desired approximate b-values (b-values
+          are clustered to allow for small deviations). Note that some
+          commands are incompatible with multiple b-values, and will report an
+          error if more than one b-value is provided.
           WARNING: note that, even though b=0 volumes are never referred to as
-          shells in the literature, they still have to be explicitly included 
-          in the list of b-values as provided to the -shell option! Several 
-          algorithms which include the b=0 volumes in their computations may 
+          shells in the literature, they still have to be explicitly included
+          in the list of b-values as provided to the -shell option! Several
+          algorithms which include the b=0 volumes in their computations may
           otherwise return an undesired reuslt.'
     nargs: "+"
 
   --lmax:
-    help: '(Mrtrix3) the maximum spherical harmonic order for the output 
-          FOD(s). For algorithms with multiple outputs, this should be 
-          provided as a comma-sperated list of integers, one for each output 
-          image; for single-output algorithms, only a single integer 
-          should be provided. If omitted, commands will use the lmax of the 
-          corresponding response function (i.e. based on its number of 
+    help: '(Mrtrix3) the maximum spherical harmonic order for the output
+          FOD(s). For algorithms with multiple outputs, this should be
+          provided as a comma-sperated list of integers, one for each output
+          image; for single-output algorithms, only a single integer
+          should be provided. If omitted, commands will use the lmax of the
+          corresponding response function (i.e. based on its number of
           coefficients), up to a maximum of 8.'
     nargs: "+"
 
   --step:
     help: '(Mrtrix3) set the step size of the algorithm in mm. Should set to
-          4 steps per voxel (e.g. 1/4 * voxel size) in order to sample more 
+          4 steps per voxel (e.g. 1/4 * voxel size) in order to sample more
           frequently in compact region. (default: 0.35mm)'
     default: 0.35
 
   --sl_count:
-    help: '(Mrtrix3) set the desired number of streamlines to be selected, 
-          after all selection criteria has been applied (i.e. 
-          inclusion/exclusion ROIS, min/max length, etc. Streamlines will be 
-          seeded until this number of streamlines have been selected, or the 
-          maximum allowed number of seeds has been exceeded. Set to zero to 
+    help: '(Mrtrix3) set the desired number of streamlines to be selected,
+          after all selection criteria has been applied (i.e.
+          inclusion/exclusion ROIS, min/max length, etc. Streamlines will be
+          seeded until this number of streamlines have been selected, or the
+          maximum allowed number of seeds has been exceeded. Set to zero to
           disable, which will result in streamlines being seeded until
-          the maximum allowed number of seeds has been reached. 
+          the maximum allowed number of seeds has been reached.
           (default: 20,000,000 streamlines)'
     default: 20000000
 
   --radial_search:
-    help: '(Mrtrix3) perform a radial search from each streamline endpoint to 
-          locate the nearest node. Argument is the maximum radius in mm; if no 
-          node is found within this radius, the streamline endpoint is not 
+    help: '(Mrtrix3) perform a radial search from each streamline endpoint to
+          locate the nearest node. Argument is the maximum radius in mm; if no
+          node is found within this radius, the streamline endpoint is not
           assigned to any node. (default: 1.5mm)'
     default: 1.5
 #-----------------------------------------------------#
 
 # Workflow specific config
 # Spaces available (MNI152, MNINlin2009bAsym)
-space: MNI152
+Space: MNI152
 
 zona_bb_subcortex:
   MNI152:
     dir: 'resources/MNI152'
+    T1w: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNI152_T1w.nii.gz'
     seg: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNI152_ZonaBBSubCorSeg.nii.gz'
     exclude: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNI152_desc-exclude_ROI.nii.gz'
   MNI2009:
     dir: 'resources/MNI2009b'
+    T1w: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNI152_T1w.nii.gz'
     seg: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNINlin2009bAsym_ZonaBBSubCorSeg.nii.gz'
-    exclude: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNINlin2009bAsym_desc-exclude_ROI.nii.gz'
+    exclude: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNINlin2009bAsym_desc-exclude_ROI.nii.gz'
 
 # NOTE: This may not be needed with labelmerge
 freesurfer:
@@ -140,6 +157,6 @@ freesurfer:
 singularity:
   freesurfer: "docker://pwighton/freesurfer:7.2.0"
   neuroglia-core: "docker://khanlab/neuroglia-core:latest"
-  mrtpipelines: "docker://kaitj/mrtpipelines:0.1.6"
+  mrtrix: "docker://brainlife/mrtrix:3.0.3"
 
 fs_license: /path/to/fs/license
