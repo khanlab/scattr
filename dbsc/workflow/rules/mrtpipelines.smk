@@ -11,9 +11,9 @@ mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
 
 # Parameters
-responsemean_flag = config.get("responsemean_dir", None)
-shells = config.get("shells", None)
-lmax = config.get("lmax", None)
+responsemean_flag = config.get("responsemean_dir")
+shells = config.get("shells")
+lmax = config.get("lmax")
 
 # BIDS partials
 bids_response_out = partial(
@@ -276,9 +276,6 @@ rule dwi2tensor:
 
 
 # ------------ MRTRIX TRACTOGRAPHY BEGIN ----------#
-# TODO (v0.1): CHECK TO MAKE SURE RULES ARE IMPORTED CORRECTLY FROM OTHER SMK FILES
-
-
 rule tckgen:
     # Tournier, J.-D.; Calamante, F. & Connelly, A. Improved probabilistic streamlines tractography by 2nd order integration over fibre orientation distributions. Proceedings of the International Society for Magnetic Resonance in Medicine, 2010, 1670
     input:

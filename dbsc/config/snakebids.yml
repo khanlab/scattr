@@ -25,7 +25,6 @@ pybids_inputs:
       suffix: "T1w"
       extension: ".nii.gz"
       datatype: "anat"
-      space: null
     wildcards:
       - subject
       - session
@@ -84,6 +83,10 @@ parse_args:
 #-----------------------------------------------------#
 
 #--- additional BIDS-app options --- (add in below) --#
+  --freesurfer_dir:
+    help: The path to the freesurfer directory. If not provided, workflow
+          assumes the directory exists at <output_dir>/freesurfer.
+
   --shells:
     help: '(Mrtrix3) specify one or more b-values to use during processing, as
           a comma-separated list of the desired approximate b-values (b-values

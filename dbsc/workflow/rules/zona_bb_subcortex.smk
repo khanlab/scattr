@@ -1,6 +1,5 @@
 from pathlib import Path
 from functools import partial
-from os.path import join
 
 
 # Directories
@@ -22,20 +21,15 @@ bids_anat = partial(bids, root=zona_dir, datatype="anat", **config["subj_wildcar
 rule xfm2native:
     """Transform from Zona template space to subject native space"""
     input:
-        seg=join(
-            workflow.basedir,
-            "..",
-            config["zona_bb_subcortex"][config["Space"]]["seg"],
+        seg=str(
+            Path(workflow.basedir).parent
+            / Path(config["zona_bb_subcortex"][config["Space"]]["seg"])
         ),
-        seg_anat=join(
-            workflow.basedir,
-            "..",
-            config["zona_bb_subcortex"][config["Space"]]["T1w"],
+        seg_anat=str(
+            Path(workflow.basedir).parent
+            / Path(config["zona_bb_subcortex"][config["Space"]]["T1w"])
         ),
-        ref=bids_anat(
-            root=config["bids_dir"],
-            suffix="T1w.nii.gz",
-        ),
+        ref=config["input_path"]["T1w"],
     output:
         xfm=bids_anat(
             desc=f"from{config['Space']}toNative",
@@ -155,7 +149,7 @@ rule rm_bb_thal:
 rule add_new_thal:
     input:
         aparcaseg=rules.add_brainstem.input.aparcaseg,
-        labels=join(workflow.basedir, "..", config["freesurfer"]["labels"]),
+        labels=str(Path(workflow.basedir).parent / Path(config["freesurfer"]["labels"])),
         thal=rules.fs_xfm_to_native.output.thal,
         seg=rules.rm_bb_thal.output.rm_seg,
     output:

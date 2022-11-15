@@ -2,10 +2,11 @@ from pathlib import Path
 from functools import partial
 
 # Directories
-freesurfer_dir = str(Path(config["output_dir"]) / "freesurfer")
-
-# Make directory if it doesn't exist
-Path(freesurfer_dir).mkdir(parents=True, exist_ok=True)
+freesurfer_dir = (
+    config.get("freesurfer_dir")
+    if config.get("freesurfer_dir")
+    else str(Path(config["output_dir"]) / "freesurfer")
+)
 
 # BIDS partials
 bids_fs_out = partial(
@@ -17,6 +18,8 @@ bids_fs_out = partial(
 
 # Freesurfer references (with additional in rules as necessary)
 # B. Fischl, A. van der Kouwe, C. Destrieux, E. Halgren, F. Ségonne, D.H. Salat, E. Busa, L.J. Seidman, J. Goldstein, D. Kennedy, V. Caviness, N. Makris, B. Rosen, A.M. Dale. Automatically parcellating the human cerebral cortex. Cereb. Cortex, 14 (2004), pp. 11-22, 10.1093/cercor/bhg087
+
+print(freesurfer_dir)
 
 
 rule thalamic_segmentation:
