@@ -40,6 +40,8 @@ rule xfm2native:
             desc="ZonaBB",
             suffix="dseg.nii.gz",
         ),
+    resources:
+        mem_mb=16000,
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -72,6 +74,8 @@ rule add_brainstem:
             desc="ZonaBBStem",
             suffix="mask.nii.gz",
         ),
+    resources:
+        mem_mb=8000,
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -95,6 +99,8 @@ rule xfm_zona_rois:
             desc="{{struct,(fct|ft|fl|hfields)}}",
             suffix="mask.nii.gz",
         ),
+    resources:
+        mem_mb=8000,
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -235,5 +241,7 @@ rule create_convex_hull:
             desc="ConvexHull",
             suffix="mask.nii.gz",
         ),
+    resources:
+        mem_mb=8000,
     script:
         "../resources/zona_bb_subcortex/convexHull_roi.py"

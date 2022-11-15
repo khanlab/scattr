@@ -34,6 +34,8 @@ rule thalamic_segmentation:
     output:
         thal_seg=str(Path(freesurfer_dir) / "{subject}/mri/ThalamicNuclei.v12.T1.mgz"),
     threads: workflow.cores
+    resources:
+        mem_mb=8000,
     container:
         config["singularity"]["freesurfer"]
     shell:
@@ -62,6 +64,8 @@ rule mgz2nii:
         ribbon_mgz=bids_fs_out(space="Freesurfer", suffix="ribbon.mgz"),
         ribbon=bids_fs_out(space="Freesurfer", suffix="ribbon.nii.gz"),
     threads: workflow.cores
+    resources:
+        mem_mb=8000,
     container:
         config["singularity"]["freesurfer"]
     shell:
@@ -84,6 +88,8 @@ rule fs_xfm_to_native:
         thal=bids_fs_out(space="T1w", suffix="thalamus.nii.gz"),
         aparcaseg=bids_fs_out(space="T1w", suffix="aparcaseg.nii.gz"),
         ribbon=bids_fs_out(space="T1w", suffix="ribbon.nii.gz"),
+    resources:
+        mem_mb=8000,
     container:
         config["singularity"]["neuroglia-core"]
     shell:

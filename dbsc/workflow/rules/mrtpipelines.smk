@@ -292,7 +292,9 @@ rule tckgen:
             desc="iFOD2",
             suffix="tractography.tck",
         ),
-    threads: workflow.cores
+    threads: 32
+    resources:
+        mem_mb=128000,
     group:
         "subject_2"
     container:
@@ -312,7 +314,9 @@ rule tcksift2:
             suffix="tckWeights.txt",
         ),
         mu=bids_tractography_out(desc="iFOD2", suffix="muCoefficient.txt"),
-    threads: workflow.cores
+    threads: 32
+    resources:
+        mem_mb=128000,
     group:
         "subject_2"
     container:
@@ -345,7 +349,9 @@ rule tck2connectome:
             desc="subcortical",
             suffix="nodeWeights.csv",
         ),
-    threads: workflow.cores
+    threads: 32
+    resources:
+        mem_mb=128000,
     group:
         "subject_2"
     container:
@@ -374,7 +380,9 @@ rule connectome2tck:
                 suffix="from",
             )
         ),
-    threads: workflow.cores
+    threads: 32
+    resources:
+        mem_mb=128000,
     group:
         "subject_2"
     container:
@@ -452,7 +460,9 @@ rule filter_tck:
                 suffix="weights.csv",
             ),
         ),
-    threads: workflow.cores
+    threads: 32
+    resources:
+        mem_mb=128000,
     group:
         "subject_2"
     container:
@@ -490,6 +500,8 @@ rule combine_filtered:
             suffix="tckWeights.txt",
         ),
     threads: workflow.cores
+    resources:
+        mem_mb=128000,
     group:
         "subject_2"
     container:
@@ -515,7 +527,9 @@ rule filtered_tck2connectome:
             desc="filteredsubcortical",
             suffix="nodeWeights.csv",
         ),
-    threads: workflow.cores
+    threads: 32
+    resources:
+        mem_mb=128000,
     group:
         "subject_2"
     container:
