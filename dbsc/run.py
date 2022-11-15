@@ -1,4 +1,4 @@
-#!/bin//env python
+#!/bin/env python
 import os
 
 from snakebids.app import SnakeBidsApp
