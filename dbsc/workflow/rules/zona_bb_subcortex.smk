@@ -42,11 +42,13 @@ rule xfm2native:
         ),
     resources:
         mem_mb=16000,
+    log:
+        f"{config['output_dir']}/logs/zona_bb_subcortex/{{subject}}/xfm2native.log",
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "flirt -in {input.seg_anat} -r {input.ref} -omat {output.xfm} && "
-        "applywarp --rel --interp=nn -i {input.seg} -r {input.ref} -w {output.xfm} -o {output.nii}"
+        "flirt -in {input.seg_anat} -r {input.ref} -omat {output.xfm} &> {log} && "
+        "applywarp --rel --interp=nn -i {input.seg} -r {input.ref} -w {output.xfm} -o {output.nii} >> {log} 2>&1"
 
 
 rule binarize:
@@ -58,10 +60,12 @@ rule binarize:
             desc="ZonaBB",
             suffix="mask.nii.gz",
         ),
+    log:
+        f"{config['output_dir']}/logs/zona_bb_subcortex/{{subject}}/binarize.log",
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "fslmaths {input.nii} -bin {output.mask}"
+        "fslmaths {input.nii} -bin {output.mask} &> {log}"
 
 
 rule add_brainstem:
@@ -76,10 +80,12 @@ rule add_brainstem:
         ),
     resources:
         mem_mb=8000,
+    log:
+        f"{config['output_dir']}/logs/zona_bb_subcortex/{{subject}}/xfm2native.log",
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.binarize} {output.binarize}"
+        "fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.binarize} {output.binarize} &> {log}"
 
 
 rule xfm_zona_rois:
@@ -91,9 +97,7 @@ rule xfm_zona_rois:
         ref=rules.xfm2native.input.ref,
         xfm=rules.xfm2native.output.xfm,
     output:
-        mask=bids(
-            root=zona_dir,
-            datatype="anat",
+        mask=bids_anat(
             space="T1w",
             hemi="{{hemi,(L|R)}}",
             desc="{{struct,(fct|ft|fl|hfields)}}",
@@ -101,10 +105,12 @@ rule xfm_zona_rois:
         ),
     resources:
         mem_mb=8000,
+    log:
+        f"{config['output_dir']}/logs/zona_bb_subcortex/{{subject}}/xfm_zona_{{hemi}}_{{struct}}_roi.log",
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "applywarp --rel --interp=nn -i {input.mask} -r {input.ref} -w {input.xfm} -o {output.mask}"
+        "applywarp --rel --interp=nn -i {input.mask} -r {input.ref} -w {input.xfm} -o {output.mask} &> {log}"
 
 
 # Everything in the block below should be replaced by labelmerge
@@ -241,6 +247,8 @@ rule create_convex_hull:
             desc="ConvexHull",
             suffix="mask.nii.gz",
         ),
+    log:
+        f"{config['output_dir']}/logs/zona_bb_subcortex/{{subject}}/convex_hull.log",
     resources:
         mem_mb=8000,
     script:

@@ -36,13 +36,15 @@ rule thalamic_segmentation:
     threads: workflow.cores
     resources:
         mem_mb=8000,
+    log:
+        f"{config['output_dir']}/logs/freesurfer/{{subject}}/thalamic_segmentation.log",
     container:
         config["singularity"]["freesurfer"]
     shell:
         "FS_LICENSE={params.fs_license} && "
         "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
         "SUBJECTS_DIR={input.freesurfer_dir} && "
-        "segmentThalamicNuclei.sh {wildcards.subject}"
+        "segmentThalamicNuclei.sh {wildcards.subject} &> {log}"
 
 
 rule mgz2nii:
@@ -66,15 +68,17 @@ rule mgz2nii:
     threads: workflow.cores
     resources:
         mem_mb=8000,
+    log:
+        f"{config['output_dir']}/logs/freesurfer/{{subject}}/mgz2nii.log",
     container:
         config["singularity"]["freesurfer"]
     shell:
         "FS_LICENSE={params.fs_license} && "
         "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "mri_convert {input.thal} {output.thal} && "
-        "mri_convert {input.aparcaseg} {output.aparcaseg} && "
-        "mergeseg --src {input.lRibbon} --merge {input.rRibbon} --o {output.ribbon_mgz} && "
-        "mri_convert {output.ribbon_mgz} {output.ribbon}"
+        "mri_convert {input.thal} {output.thal} &> {log} && "
+        "mri_convert {input.aparcaseg} {output.aparcaseg} && >> {log} 2>&1"
+        "mergeseg --src {input.lRibbon} --merge {input.rRibbon} --o {output.ribbon_mgz} >> {log} 2&>1 && "
+        "mri_convert {output.ribbon_mgz} {output.ribbon} >> {log} 2>&1"
 
 
 rule fs_xfm_to_native:
@@ -90,9 +94,11 @@ rule fs_xfm_to_native:
         ribbon=bids_fs_out(space="T1w", suffix="ribbon.nii.gz"),
     resources:
         mem_mb=8000,
+    log:
+        f"{config['output_dir']}/logs/freesurfer/{{subject}}/fs_xfm_to_native.log",
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.thal} -r {input.ref} -o {output.thal} && "
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} && "
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.ribbon} -r {input.ref} -o {output.ribbon}"
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.thal} -r {input.ref} -o {output.thal} &> {log} && "
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} >> {log} 2>&1 && "
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.ribbon} -r {input.ref} -o {output.ribbon} >> {log} 2>&1"
