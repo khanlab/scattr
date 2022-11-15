@@ -87,6 +87,11 @@ parse_args:
     help: The path to the freesurfer directory. If not provided, workflow
           assumes the directory exists at <output_dir>/freesurfer.
 
+  --responsemean_dir:
+    help: 'Provide directory containing average response functions. If not
+          provided, one will be computed from the subjects in the input
+          directory.'
+
   --shells:
     help: '(Mrtrix3) specify one or more b-values to use during processing, as
           a comma-separated list of the desired approximate b-values (b-values
