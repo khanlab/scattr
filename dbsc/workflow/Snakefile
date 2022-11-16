@@ -1,9 +1,11 @@
-#---- begin snakebids boilerplate ----------------------------------------------
+# ---- begin snakebids boilerplate ----------------------------------------------
 
 import snakebids
 from snakebids import bids
 
-configfile: 'config/snakebids.yml'
+
+configfile: "config/snakebids.yml"
+
 
 # writes inputs_config.yml and updates config dict
 config.update(
@@ -12,15 +14,37 @@ config.update(
         pybids_inputs=config["pybids_inputs"],
         derivatives=config["derivatives"],
         participant_label=config["participant_label"],
+        exclude_participant_label=config["exclude_participant_label"],
+        use_bids_inputs=False,
     )
 )
 
+
 # this adds constraints to the bids naming
-wildcard_constraints:  **snakebids.get_wildcard_constraints(\
-    config["pybids_inputs"]\
-)
-#---- end snakebids boilerplate ------------------------------------------------
+wildcard_constraints:
+    **snakebids.get_wildcard_constraints(config["pybids_inputs"]),
+
+
+# ---- end snakebids boilerplate ------------------------------------------------
+
+from pathlib import Path
+
 
 # Rules
 include: "rules/freesurfer.smk"
-include: "rules/zona_bb_subcortex"
+include: "rules/zona_bb_subcortex.smk"
+include: "rules/mrtpipelines.smk"
+
+
+rule all:
+    input:
+        expand(
+            bids(
+                root=str(Path(config["output_dir"]) / "mrtrix"),
+                subject="{subject}",
+                datatype="tractography",
+                desc="filteredsubcortical",
+                suffix="nodeAssignment.txt",
+            ),
+            subject=config["input_lists"]["dwi"]["subject"],
+        ),

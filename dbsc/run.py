@@ -1,9 +1,12 @@
+#!/bin/env python
 import os
+
 from snakebids.app import SnakeBidsApp
+
 
 def get_parser():
     """Exposes parser for sphinx doc generation, cwd is the docs dir"""
-    app = SnakeBidsApp('../surftexture',skip_parse_args=True)
+    app = SnakeBidsApp("../dbsc", skip_parse_args=True)
     return app.parser
 
 

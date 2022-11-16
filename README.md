@@ -44,8 +44,9 @@ Please be sure they all pass before making a PR.
 * Original workflow had worked on HCP data which had transforms readily
 available. Transforms need to be computed to standard spaces used
 (MNI2009b is sufficient).
-* Current workflow assumes `prepdwi` and `Freesurfer` has already been run.
-Future implementation will include option to run these workflows.
+* Current workflow assumes dwi data has been preprocessed and `Freesurfer` has
+already been run. Future implementation will include option to run missing
+steps.
 * Original workflow was run using scripts similar to those in
 `resources/example_scripts`
 

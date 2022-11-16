@@ -1,11 +1,12 @@
 #!/bin/env python
-import nibabel as nib 
-import numpy as np 
-import scipy.spatial 
+import nibabel as nib
+import numpy as np
+import scipy.spatial
+
 
 def create_convex_hull(binary_seg, out_convex_hull):
-    # Load input  
-    print("Loading data...")   
+    # Load input
+    print("Loading data...")
     seg = nib.load(binary_seg)
     seg_affine = seg.affine
     seg_data = seg.get_fdata()
@@ -28,6 +29,6 @@ def create_convex_hull(binary_seg, out_convex_hull):
 
 if __name__ == "__main__":
     create_convex_hull(
-        binary_seg=snakemake.input.bin_seg,
-        out_convex_hull=snakemake.output.convex_hull,
+        binary_seg=snakemake.input.bin_seg,  # noqa: F821
+        out_convex_hull=snakemake.output.convex_hull,  # noqa: F821
     )
