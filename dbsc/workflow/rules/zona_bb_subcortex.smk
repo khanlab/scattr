@@ -10,7 +10,9 @@ Path(zona_dir).mkdir(parents=True, exist_ok=True)
 
 
 # BIDS partials
-bids_anat = partial(bids, root=zona_dir, datatype="anat", **config["subj_wildcards"])
+bids_anat = partial(
+    bids, root=zona_dir, datatype="anat", **config["subj_wildcards"]
+)
 
 # References:
 # J.C. Lau, Y. Xiao, R.A.M. Haast, G. Gilmore, K. Uludağ, K.W. MacDougall, R.S. Menon, A.G. Parrent, T.M. Peters, A.R. Khan. Direct visualization and characterization of the human zona incerta and surrounding structures. Hum. Brain Mapp., 41 (2020), pp. 4500-4517, 10.1002/hbm.25137
@@ -149,7 +151,10 @@ rule rm_bb_thal:
 rule add_new_thal:
     input:
         aparcaseg=rules.add_brainstem.input.aparcaseg,
-        labels=str(Path(workflow.basedir).parent / Path(config["freesurfer"]["labels"])),
+        labels=str(
+            Path(workflow.basedir).parent
+            / Path(config["freesurfer"]["labels"])
+        ),
         thal=rules.fs_xfm_to_native.output.thal,
         seg=rules.rm_bb_thal.output.rm_seg,
     output:

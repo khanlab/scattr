@@ -32,7 +32,9 @@ rule thalamic_segmentation:
     params:
         fs_license=config["fs_license"],
     output:
-        thal_seg=str(Path(freesurfer_dir) / "{subject}/mri/ThalamicNuclei.v12.T1.mgz"),
+        thal_seg=str(
+            Path(freesurfer_dir) / "{subject}/mri/ThalamicNuclei.v12.T1.mgz"
+        ),
     threads: workflow.cores
     container:
         config["singularity"]["freesurfer"]
@@ -51,7 +53,9 @@ rule mgz2nii:
     """
     input:
         thal=rules.thalamic_segmentation.output.thal_seg,
-        aparcaseg=str(Path(freesurfer_dir) / "sub-{subject}/mri/aparc+aseg.mgz"),
+        aparcaseg=str(
+            Path(freesurfer_dir) / "sub-{subject}/mri/aparc+aseg.mgz"
+        ),
         lRibbon=str(Path(freesurfer_dir) / "sub-{subject}/mri/lh.ribbon.mgz"),
         rRibbon=str(Path(freesurfer_dir) / "sub-{subject}/mri/rh.ribbon.mgz"),
     params:

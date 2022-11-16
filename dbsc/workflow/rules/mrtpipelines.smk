@@ -144,21 +144,27 @@ rule dwi2fod:
             str(Path(config["responsemean_dir"]) / "desc-wm_response.txt")
             if responsemean_flag
             else expand(
-                rules.responsemean.output.avg_rf, tissue="wm", allow_missing=True
+                rules.responsemean.output.avg_rf,
+                tissue="wm",
+                allow_missing=True,
             )
         ),
         gm_rf=(
             str(Path(config["responsemean_dir"]) / "desc-gm_response.txt")
             if responsemean_flag
             else expand(
-                rules.responsemean.output.avg_rf, tissue="gm", allow_missing=True
+                rules.responsemean.output.avg_rf,
+                tissue="gm",
+                allow_missing=True,
             )
         ),
         csf_rf=(
             str(Path(config["responsemean_dir"]) / "desc-csf_response.txt")
             if responsemean_flag
             else expand(
-                rules.responsemean.output.avg_rf, tissue="csf", allow_missing=True
+                rules.responsemean.output.avg_rf,
+                tissue="csf",
+                allow_missing=True,
             )
         ),
     params:
