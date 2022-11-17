@@ -167,7 +167,11 @@ zona_bb_subcortex:
 
 # NOTE: This may not be needed with labelmerge
 freesurfer:
+<<<<<<< HEAD
   tsv: 'resources/freesurfer/desc-FreesurferThal_dseg.tsv'
+=======
+  tsv: 'resources/freesurfer/desc-Freesurfer_dseg.tsv'
+>>>>>>> bfaf68d... Copy zona tsv to appropriate directory
 
 # Containers
 # NOTE: Update from latest to use specific tags
