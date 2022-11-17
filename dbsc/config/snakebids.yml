@@ -166,7 +166,7 @@ zona_bb_subcortex:
 
 # NOTE: This may not be needed with labelmerge
 freesurfer:
-  labels: 'resources/freesurfer/desc-Freesurfer_dseg.tsv'
+  tsv: 'resources/freesurfer/desc-Freesurfer_dseg.tsv'
 
 # Containers
 # NOTE: Update from latest to use specific tags

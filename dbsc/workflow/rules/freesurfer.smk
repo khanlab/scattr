@@ -15,6 +15,20 @@ bids_fs_out = partial(
 # B. Fischl, A. van der Kouwe, C. Destrieux, E. Halgren, F. Ségonne, D.H. Salat, E. Busa, L.J. Seidman, J. Goldstein, D. Kennedy, V. Caviness, N. Makris, B. Rosen, A.M. Dale. Automatically parcellating the human cerebral cortex. Cereb. Cortex, 14 (2004), pp. 11-22, 10.1093/cercor/bhg087
 
 
+rule cp_fs_tsv:
+    """Copy tsv to freesurfer dir
+    """
+    input:
+        fs_tsv=str(Path(workflow.basedir).parent / Path(config["freesurfer"]["tsv"])),
+    output:
+        fs_tsv=expand(
+            "{freesurfer_dir}/desc-FreesurferThal_dseg.tsv",
+            freesurfer_dir=freesurfer_dir,
+        ),
+    shell:
+        "cp -v {input.fs_tsv} {output.fs_tsv}"
+
+
 rule thalamic_segmentation:
     """Perform thalamus segmentation
 

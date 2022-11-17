@@ -42,7 +42,15 @@ include: "rules/mrtpipelines.smk"
 
 rule all:
     input:
-        expand(
+        files=expand(
             rules.filtered_tck2connectome.output.sl_assignment,
             subject=config["input_lists"]["T1w"]["subject"],
+        ),
+        fs_tsv=str(
+            Path(config["output_dir"]) / "freesurfer" / config["freesurfer"]["tsv"]
+        ),
+        zona_tsv=str(
+            Path(config["output_dir"])
+            / "zona_bb_subcortex"
+            / config["zona_bb_subcortex"]["tsv"]
         ),

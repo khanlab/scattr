@@ -16,6 +16,21 @@ bids_anat = partial(
 # Y. Xiao, J.C. Lau, T. Anderson, J. DeKraker, D.L. Collins, T. Peters, A.R. Khan. An accurate registration of the BigBrain dataset with the MNI PD25 and ICBM152 atlases. Sci. Data, 6 (2019), p. 210, 10.1038/s41597-019-0217-0
 
 
+rule cp_zona_tsv:
+    """Copy tsv to zona dir"""
+    input:
+        zona_tsv=str(
+            Path(workflow.basedir).parent / Path(config["zona_bb_subcortex"]["tsv"])
+        ),
+    output:
+        zona_tsv=expand(
+            "{zona_dir}/desc-ZonaBBSubcor_dseg.tsv",
+            zona_dir=zona_dir,
+        ),
+    shell:
+        "cp -v {input.fs_tsv} {output.fs_tsv}"
+
+
 rule xfm2native:
     """Transform from Zona template space to subject native space"""
     input:
