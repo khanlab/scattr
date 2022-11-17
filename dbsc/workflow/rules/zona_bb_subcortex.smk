@@ -99,51 +99,47 @@ rule xfm_zona_rois:
         "applywarp --rel --interp=nn -i {input.mask} -r {input.ref} -w {input.xfm} -o {output.mask}"
 
 
-# Everything in the block below should be replaced by labelmerge
-######################################################################
 rule rm_bb_thal:
-    """Removes existing thalamus"""
+    """Removes thalamus from existing parcellation
+
+    1. Grab labels following thalamus ROI
+    2. Remove existing thalamus from segmentation
+    3. Add labels following thalamus ROI back to segmentation
+    """
     input:
         seg=rules.fs_xfm_to_native.output.thal,
     output:
-        seg=bids(
-            root=zona_dir,
-            datatype="anat",
+        seg=bids_anat(
             space="T1w",
             desc="ZonaBBNoThal",
-            suffix="seg.nii.gz",
-            **config["subj_wildcards"],
+            suffix="dseg.nii.gz",
         ),
         non_thal=temp(
-            bids(
-                root=zona_dir,
-                datatype="anat",
+            bids_anat(
                 space="T1w",
                 desc="NonThal",
-                suffix="seg.nii.gz",
-                **config["subj_wildcards"],
+                suffix="dseg.nii.gz",
             )
         ),
         rm_seg=temp(
-            bids(
-                root=zona_dir,
-                datatype="anat",
+            bids_anat(
                 space="T1w",
                 desc="rm",
-                suffix="seg.nii.gz",
-                **config["subj_wildcards"],
+                suffix="dseg.nii.gz",
             )
         ),
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "fslmaths {input.seg} -sub 2 {output.non_thal} "
-        "fslmaths {output.non_thal} -thr 15 {output.non_thal} "
-        "fslmaths {input.seg} -thr 15 {output.rm_seg} "
-        "fslmaths {input.seg} -sub {output.rm_seg} {output.seg}"
+        "fslmaths {input.seg} -sub 2 {output.non_thal} && "
+        "fslmaths {output.non_thal} -thr 15 {output.non_thal} && "
+        "fslmaths {input.seg} -thr 15 {output.rm_seg} && "
+        "fslmaths {input.seg} -sub {output.rm_seg} {output.seg} && "
         "fslmaths {output.seg} -add {output.non_thal} {output.seg}"
 
 
+# Everything in the block below should be replaced by labelmerge
+######################################################################
 rule add_new_thal:
     input:
         aparcaseg=rules.add_brainstem.input.aparcaseg,
