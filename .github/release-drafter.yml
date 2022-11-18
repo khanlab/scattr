@@ -1,31 +1,32 @@
-name-template: '$RESOLVED_VERSION'
-tag-template: 'v$RESOLVED_VERSION'
+---
+name-template: $RESOLVED_VERSION
+tag-template: v$RESOLVED_VERSION
 filter-by-commitish: true
 
 template: |
   ## Changes
   $CHANGES
 categories:
-  - title: '🚀 Features'
+  - title: 🚀 Features
     labels:
-      - 'breaking'
-      - 'enhancement'
-  - title: '🐛 Bug Fixes'
+      - breaking
+      - enhancement
+  - title: 🐛 Bug Fixes
     labels:
-      - 'bug'
-  - title: '🧰 Maintenance'
+      - bug
+  - title: 🧰 Maintenance
     labels:
-      - 'maintenance'
-      - 'test'
-  - title: '📝 Documentation'
+      - maintenance
+      - test
+  - title: 📝 Documentation
     labels:
-      - 'documentation'
+      - documentation
 
 exclude-labels:
   - skip_changelog
 
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
-change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
+change-title-escapes: \<*_&    # You can add  # and @ to disable mentions, and add ` to disable code blocks.
 
 version-resolver:
   # major:
@@ -33,12 +34,12 @@ version-resolver:
   #     - 'breaking'
   minor:
     labels:
-      - 'breaking'
-      - 'enhancement'
+      - breaking
+      - enhancement
   patch:
     labels:
-      - 'maintenance'
-      - 'bug'
-      - 'test'
-      - 'documentation'
+      - maintenance
+      - bug
+      - test
+      - documentation
   default: patch

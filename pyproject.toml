@@ -28,6 +28,7 @@ isort = "^5.10.1"
 poethepoet = "^0.13.1"
 pre-commit = "^2.17.0"
 snakefmt = "^0.6.1"
+yamlfix = "^1.1.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -35,11 +36,12 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
 setup = "pre-commit install"
+yamlfix = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix {} \\;" }
 isort = "isort dbsc/*.py"
 black = "black dbsc -l 79"
 flake8 = "flake8 dbsc --ignore=E501"
 snakefmt = "snakefmt dbsc"
-quality = ["isort", "black", "flake8", "snakefmt"]
+quality = ["yamlfix", "isort", "black", "flake8", "snakefmt"]
 
 [tool.isort]
 profile = "black"
