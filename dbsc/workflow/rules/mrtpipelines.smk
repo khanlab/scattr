@@ -317,7 +317,7 @@ rule tckgen:
         mask=rules.nii2mif.output.mask,
         cortical_ribbon=rules.fs_xfm_to_native.output.ribbon,
         convex_hull=rules.create_convex_hull.output.convex_hull,
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     params:
         step=config["step"],
         sl=config["sl_count"],
@@ -367,7 +367,7 @@ rule tck2connectome:
     input:
         weights=rules.tcksift2.output.weights,
         tck=rules.tckgen.output.tck,
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     params:
         radius=config["radial_search"],
     output:
@@ -417,11 +417,9 @@ rule connectome2tck:
         "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -filters_per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {output.edge_weight} {input.tck} {input.sl_assignment} {output.edge_tck} "
 
 
-# NOTE: Use labelmerge split segs here?
 rule create_roi_mask:
-    # EXPAND OVER NODE1 IN RULE ALL
     input:
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     output:
         roi_mask=temp(
             bids_anat_out(
@@ -450,7 +448,7 @@ rule create_exclude_mask:
         ),
         lZI=bids_anat_out(desc="21", suffix="mask.mif"),
         rZI=bids_anat_out(desc="22", suffix="mask.mif"),
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     output:
         filter_mask=temp(
             bids_anat_out(
@@ -472,7 +470,7 @@ rule filter_tck:
         filter_mask=rules.create_exclude_mask.output.filter_mask,
         tck=rules.connectome2tck.output.edge_tck,
         weights=rules.tck2connectome.output.node_weights,
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     output:
         filtered_tck=temp(
             bids_tractography_out(
@@ -537,7 +535,7 @@ rule filtered_tck2connectome:
     input:
         weights=rules.combine_filtered.output.combined_weights,
         tck=rules.combine_filtered.output.combined_tck,
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     params:
         radius=config["radial_search"],
     output:

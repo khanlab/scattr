@@ -7,7 +7,10 @@ Path(zona_dir).mkdir(parents=True, exist_ok=True)
 
 # BIDS partials
 bids_anat = partial(
-    bids, root=zona_dir, datatype="anat", **config["subj_wildcards"]
+    bids,
+    root=zona_dir,
+    datatype="anat",
+    **config["subj_wildcards"],
 )
 
 # References:
@@ -23,10 +26,7 @@ rule cp_zona_tsv:
             Path(workflow.basedir).parent / Path(config["zona_bb_subcortex"]["tsv"])
         ),
     output:
-        zona_tsv=expand(
-            "{zona_dir}/desc-ZonaBBSubcor_dseg.tsv",
-            zona_dir=zona_dir,
-        ),
+        zona_tsv=f"{zona_dir}/desc-ZonaBBSubcor_dseg.tsv",
     shell:
         "cp -v {input.fs_tsv} {output.fs_tsv}"
 
@@ -60,58 +60,28 @@ rule xfm2native:
         "applywarp --rel --interp=nn -i {input.seg} -r {input.ref} -w {output.xfm} -o {output.nii}"
 
 
-rule binarize:
-    input:
-        nii=rules.xfm2native.output.nii,
-    output:
-        mask=bids_anat(
-            space="T1w",
-            desc="ZonaBB",
-            suffix="mask.nii.gz",
-        ),
-    container:
-        config["singularity"]["neuroglia-core"]
-    shell:
-        "fslmaths {input.nii} -bin {output.mask}"
-
-
-rule add_brainstem:
-    input:
-        binarize=rules.binarize.output.mask,
-        aparcaseg=rules.fs_xfm_to_native.output.aparcaseg,
-    output:
-        binarize=bids_anat(
-            space="T1w",
-            desc="ZonaBBStem",
-            suffix="mask.nii.gz",
-        ),
-    container:
-        config["singularity"]["neuroglia-core"]
-    shell:
-        "fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.binarize} {output.binarize}"
-
-
-rule xfm_zona_rois:
-    input:
-        mask=str(
-            Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
-            / f'sub-SNSX32Nlin2020Asym_space-{config["Space"]}_hemi-{{hemi}}_desc-{{struct}}_mask.nii.gz'
-        ),
-        ref=rules.xfm2native.input.ref,
-        xfm=rules.xfm2native.output.xfm,
-    output:
-        mask=bids(
-            root=zona_dir,
-            datatype="anat",
-            space="T1w",
-            hemi="{{hemi,(L|R)}}",
-            desc="{{struct,(fct|ft|fl|hfields)}}",
-            suffix="mask.nii.gz",
-        ),
-    container:
-        config["singularity"]["neuroglia-core"]
-    shell:
-        "applywarp --rel --interp=nn -i {input.mask} -r {input.ref} -w {input.xfm} -o {output.mask}"
+# TODO: Add back later on
+# rule xfm_zona_rois:
+#     input:
+#         mask=str(
+#             Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
+#             / f'sub-SNSX32Nlin2020Asym_space-{config["Space"]}_hemi-{{hemi}}_desc-{{struct}}_mask.nii.gz'
+#         ),
+#         ref=rules.xfm2native.input.ref,
+#         xfm=rules.xfm2native.output.xfm,
+#     output:
+#         mask=bids(
+#             root=zona_dir,
+#             datatype="anat",
+#             space="T1w",
+#             hemi="{{hemi,(L|R)}}",
+#             desc="{{struct,(fct|ft|fl|hfields)}}",
+#             suffix="mask.nii.gz",
+#         ),
+#     container:
+#         config["singularity"]["neuroglia-core"]
+#     shell:
+#         "applywarp --rel --interp=nn -i {input.mask} -r {input.ref} -w {input.xfm} -o {output.mask}"
 
 
 rule rm_bb_thal:
@@ -122,11 +92,11 @@ rule rm_bb_thal:
     3. Add labels following thalamus ROI back to segmentation
     """
     input:
-        seg=rules.fs_xfm_to_native.output.thal,
+        seg=rules.xfm2native.output.nii,
     output:
         seg=bids_anat(
             space="T1w",
-            desc="ZonaBBNoThal",
+            desc="ZonaBBSubcor",
             suffix="dseg.nii.gz",
         ),
         non_thal=temp(
@@ -139,7 +109,7 @@ rule rm_bb_thal:
         rm_seg=temp(
             bids_anat(
                 space="T1w",
-                desc="rm",
+                desc="ThalPost",
                 suffix="dseg.nii.gz",
             )
         ),
@@ -153,9 +123,10 @@ rule rm_bb_thal:
         "fslmaths {output.seg} -add {output.non_thal} {output.seg}"
 
 
-# Everything in the block below should be replaced by labelmerge
-######################################################################
-rule add_new_thal:
+# NEED TO PIPE FROM rm_bb_thal with labelmerge and PIPE TO binarize
+# Alternative option is to have a second target rule that performs everything
+# below with participant2 and everything above with participant1
+rule labelmerge:
     input:
         aparcaseg=rules.add_brainstem.input.aparcaseg,
         labels=str(
@@ -164,70 +135,50 @@ rule add_new_thal:
         ),
         thal=rules.fs_xfm_to_native.output.thal,
         seg=rules.rm_bb_thal.output.rm_seg,
+    params:
+        zona_desc="ZonaBBNoThal",
+        fs_desc="FreesurferThal",
     output:
-        seg=bids(
-            root=zona_dir,
-            datatype="anat",
+        labelmerge_dir=directory(str(Path(config["output_dir"]) / "labelmerge")),
+    # ADD CONTAINER
+    shell:
+        # TO BE UPDATED WITH APPROPRIATE COMMAND
+        "run.py {input.zona_dir} {output.labelmerge_dir} --overlay_bids_dir {input.fs_dir} --overlay_desc {params.fs_desc} --base_desc {params.zona_desc}"
+
+
+# Placeholder desc entity
+rule binarize:
+    input:
+        seg=bids_anat(
+            root=rules.labelmerge.output.labelmerge_dir,
             space="T1w",
-            desc="ZonaBBFSThal",
-            suffix="seg.nii.gz",
-            **config["subj_wildcards"],
+            desc="labelmerge",
+            suffix="dseg.nii.gz",
         ),
-        label=temp(
-            bids(
-                root=zona_dir,
-                datatype="anat",
-                space="T1w",
-                suffix="label.nii.gz",
-                **config["subj_wildcards"],
-            )
+    output:
+        mask=bids_anat(
+            root=rules.labelmerge.output.labelmerge_dir,
+            space="T1w",
+            desc="labelmerge",
+            suffix="mask.nii.gz",
         ),
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "labelIdx=23 "
-        "cp {input.seg} {output.seg} "
-        'while IFS=, read -r label hemi nuclei || [ -n "$label" ]; do '
-        '  if [ "$label" = "# Label" ]; then '
-        "    continue "
-        "  fi "
-        "  fslmaths {input.thal} -thr $label -uthr $label -bin {output.label} "
-        "  fslmaths {output.label} -mul $labelIdx {output.label} "
-        "  fslmaths {output.seg} -max {output.label} {output.seg} "
-        "  labelIdx=$((labelIdx+1)) "
-        " done < {input.labels}"
+        "fslmaths {input.seg} -bin {output.mask}"
 
 
-rule bin_new_seg:
+# Placeholder desc entity
+rule add_brainstem:
     input:
-        seg=rules.add_new_thal.output.seg,
+        mask=rules.binarize.output.mask,
+        aparcaseg=rules.fs_xfm_to_native.output.aparcaseg,
     output:
-        seg=bids(
-            root=zona_dir,
-            datatype="anat",
+        mask=bids_anat(
+            root=rules.labelmerge.output.labelmerge_dir,
             space="T1w",
-            desc="ZonaBBFSThal",
-            suffix="seg_bin.nii.gz",
-            **config["subj_wildcards"],
-        ),
-    container:
-        config["singularity"]["neuroglia-core"]
-    shell:
-        "fslmaths {input.seg} -bin {output.seg}"
-
-
-rule add_brainstem_new_seg:
-    input:
-        seg=rules.bin_new_seg.output.seg,
-        aparcaseg=rules.add_brainstem.input.aparcaseg,
-    output:
-        seg=bids(
-            root=zona_dir,
-            datatype="anat",
-            space="T1w",
-            desc="ZonaBBFSThalStem",
-            suffix="seg_bin.nii.gz",
-            **config["subj_wildcards"],
+            desc="labelmergeStem",
+            suffix="mask.nii.gz",
         ),
     container:
         config["singularity"]["neuroglia-core"]
@@ -235,14 +186,12 @@ rule add_brainstem_new_seg:
         "fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.seg} {output.seg}"
 
 
-###################BLOCK TO REPLACE WITH LABELMERGE############################
-
-
 rule create_convex_hull:
     input:
-        bin_seg=rules.add_brainstem_new_seg.output.seg,
+        bin_seg=rules.add_brainstem.output.mask,
     output:
         convex_hull=bids_anat(
+            root=rules.labelmerge.output.labelmerge_dir,
             space="T1w",
             desc="ConvexHull",
             suffix="mask.nii.gz",
