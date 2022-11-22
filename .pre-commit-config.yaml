@@ -36,4 +36,4 @@ repos:
     rev: 0.6.1
     hooks:
       - id: snakefmt
-        args: [--include=\.smk$|^Snakefile]
+        args: [--include=\.smk$|^Snakefile, --line-length=79]
