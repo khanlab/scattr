@@ -28,6 +28,7 @@ wildcard_constraints:
 # ---- end snakebids boilerplate ------------------------------------------------
 
 from pathlib import Path
+from functools import partial
 
 
 # Rules
@@ -39,12 +40,6 @@ include: "rules/mrtpipelines.smk"
 rule all:
     input:
         expand(
-            bids(
-                root=str(Path(config["output_dir"]) / "mrtrix"),
-                subject="{subject}",
-                datatype="tractography",
-                desc="filteredsubcortical",
-                suffix="nodeAssignment.txt",
-            ),
+            rules.filtered_tck2connectome.output.sl_assignment,
             subject=config["input_lists"]["dwi"]["subject"],
         ),

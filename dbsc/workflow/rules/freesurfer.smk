@@ -1,12 +1,16 @@
-from pathlib import Path
-from functools import partial
-
 # Directories
-freesurfer_dir = (
-    config.get("freesurfer_dir")
-    if config.get("freesurfer_dir")
-    else str(Path(config["output_dir"]) / "freesurfer")
-)
+freesurfer_dir = str(Path(config["output_dir"]) / "freesurfer")
+if config.get("freesurfer_dir"):
+    freesurfer_dir = str(Path(config.get("freesurfer_dir")))
+    # Add conditional for testing
+    if freesurfer_dir == "test/data/derivatives/freesurfer":
+        freesurfer_dir = str(
+            Path(workflow.basedir).parents[1] / freesurfer_dir
+        )
+    # Ensure path passed is absolute otherwise
+    elif not Path(freesurfer_dir).is_absolute():
+        raise ValueError("Please pass --freesurfer_dir as an absolute path.\n")
+
 
 # BIDS partials
 bids_fs_out = partial(
@@ -33,7 +37,8 @@ rule thalamic_segmentation:
         fs_license=config["fs_license"],
     output:
         thal_seg=str(
-            Path(freesurfer_dir) / "{subject}/mri/ThalamicNuclei.v12.T1.mgz"
+            Path(freesurfer_dir)
+            / "sub-{subject}/mri/ThalamicNuclei.v12.T1.mgz"
         ),
     threads: workflow.cores
     container:

@@ -1,7 +1,3 @@
-from pathlib import Path
-from functools import partial
-
-
 # Directories
 zona_dir = str(Path(config["output_dir"]) / "zona_bb_subcortex")
 
