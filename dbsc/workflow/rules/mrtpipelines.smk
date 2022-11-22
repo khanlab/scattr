@@ -63,7 +63,6 @@ bids_anat_out = partial(
 
 
 # ------------ MRTRIX PREPROC BEGIN ----------#
-print(config["input_path"])
 
 
 rule nii2mif:
