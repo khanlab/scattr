@@ -86,11 +86,19 @@ parse_args:
   --freesurfer_dir:
     help: The path to the freesurfer directory. If not provided, workflow
           assumes the directory exists at <output_dir>/freesurfer.
+    nargs: "?"
+
+  --dwi_dir:
+    help: The path to the directory containing pre-processed dwi data 
+          transformed to subject T1w space. If not provided, workflow assumes 
+          this data exists in <bids_dir>/<subject>/dwi.
+    nargs: "?"
 
   --responsemean_dir:
     help: 'Provide directory containing average response functions. If not
           provided, one will be computed from the subjects in the input
           directory.'
+    nargs: "?"
 
   --shells:
     help: '(Mrtrix3) specify one or more b-values to use during processing, as

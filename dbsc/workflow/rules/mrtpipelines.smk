@@ -2,11 +2,15 @@ import numpy as np
 
 
 # Directories
-mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
-
 responsemean_dir = check_dir_path(
     config_key="responsemean_dir", test_path="test/data/derivatives/mrtrix/avg"
 )
+dwi_dir = check_dir_path(
+    config_key="dwi_dir", test_path="test/data/derivatives/prepdwi"
+)
+
+mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
+
 
 # Make directory if it doesn't exist
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
@@ -16,6 +20,15 @@ shells = config.get("shells")
 lmax = config.get("lmax")
 
 # BIDS partials
+bids_dwi = partial(
+    bids,
+    root=dwi_dir,
+    datatype="dwi",
+    space="T1w",
+    desc="preproc",
+    **config["subj_wildcards"],
+)
+
 bids_response_out = partial(
     bids,
     root=mrtrix_dir,
@@ -50,12 +63,31 @@ bids_anat_out = partial(
 
 
 # ------------ MRTRIX PREPROC BEGIN ----------#
+print(config["input_path"])
+
+
 rule nii2mif:
     input:
-        dwi=config["input_path"]["dwi"],
-        bval=re.sub(".nii.gz", ".bval", config["input_path"]["dwi"]),
-        bvec=re.sub(".nii.gz", ".bvec", config["input_path"]["dwi"]),
-        mask=config["input_path"]["mask"],
+        dwi=(
+            bids_dwi(suffix="dwi.nii.gz")
+            if dwi_dir
+            else config["input_path"]["dwi"]
+        ),
+        bval=(
+            bids_dwi(suffix="dwi.bval")
+            if dwi_dir
+            else re.sub(".nii.gz", ".bval", config["input_path"]["dwi"])
+        ),
+        bvec=(
+            bids_dwi(suffix="dwi.bvec")
+            if dwi_dir
+            else re.sub(".nii.gz", ".bvec", config["input_path"]["dwi"])
+        ),
+        mask=(
+            bids_dwi(suffix="mask.nii.gz")
+            if dwi_dir
+            else config["input_path"]["mask"]
+        ),
     output:
         dwi=bids(
             root=mrtrix_dir,
