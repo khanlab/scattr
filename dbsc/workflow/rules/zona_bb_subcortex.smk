@@ -1,5 +1,6 @@
 # Directories
 zona_dir = str(Path(config["output_dir"]) / "zona_bb_subcortex")
+labelmerge_dir = str(Path(config["output_dir"]) / "labelmerge")
 
 # Make directory if it doesn't exist
 Path(zona_dir).mkdir(parents=True, exist_ok=True)
@@ -9,6 +10,13 @@ Path(zona_dir).mkdir(parents=True, exist_ok=True)
 bids_anat = partial(
     bids,
     root=zona_dir,
+    datatype="anat",
+    **config["subj_wildcards"],
+)
+
+bids_labelmerge = partial(
+    bids,
+    root=labelmerge_dir,
     datatype="anat",
     **config["subj_wildcards"],
 )
@@ -128,38 +136,58 @@ rule rm_bb_thal:
 # below with participant2 and everything above with participant1
 rule labelmerge:
     input:
-        aparcaseg=rules.add_brainstem.input.aparcaseg,
-        labels=str(
-            Path(workflow.basedir).parent
-            / Path(config["freesurfer"]["labels"])
+        seg=expand(
+            bids_anat(
+                subject="{subject}",
+                space="T1w",
+                desc="ZonaBBSubcor",
+                suffix="dseg.nii.gz",
+            ),
+            subject=config["input_lists"]["dwi"]["subject"],
         ),
-        thal=rules.fs_xfm_to_native.output.thal,
-        seg=rules.rm_bb_thal.output.rm_seg,
     params:
-        zona_desc="ZonaBBNoThal",
+        zona_dir=zona_dir,
+        fs_dir=str(Path(config["output_dir"]) / "freesurfer"),
+        zona_desc="ZonaBBSubcor",
         fs_desc="FreesurferThal",
     output:
-        labelmerge_dir=directory(str(Path(config["output_dir"]) / "labelmerge")),
+        labelmerge_dir=directory(labelmerge_dir),
+        seg=expand(
+            bids_labelmerge(
+                subject="{subject}",
+                space="T1w",
+                desc="combined",
+                suffix="dseg.nii.gz",
+            ),
+            subject=config["input_lists"]["dwi"]["subject"],
+        ),
+        tsv=expand(
+            bids_labelmerge(
+                subject="{subject}",
+                space="T1w",
+                desc="combined",
+                suffix="dseg.tsv",
+            ),
+            subject=config["input_lists"]["dwi"]["subject"],
+        ),
     # ADD CONTAINER
     shell:
         # TO BE UPDATED WITH APPROPRIATE COMMAND
-        "run.py {input.zona_dir} {output.labelmerge_dir} --overlay_bids_dir {input.fs_dir} --overlay_desc {params.fs_desc} --base_desc {params.zona_desc}"
+        "run.py {params.zona_dir} {output.labelmerge_dir} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --base_desc {params.zona_desc}"
 
 
 # Placeholder desc entity
 rule binarize:
     input:
-        seg=bids_anat(
-            root=rules.labelmerge.output.labelmerge_dir,
+        seg=bids_labelmerge(
             space="T1w",
-            desc="labelmerge",
+            desc="combined",
             suffix="dseg.nii.gz",
         ),
     output:
-        mask=bids_anat(
-            root=rules.labelmerge.output.labelmerge_dir,
+        mask=bids_labelmerge(
             space="T1w",
-            desc="labelmerge",
+            desc="combined",
             suffix="mask.nii.gz",
         ),
     container:

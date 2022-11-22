@@ -140,6 +140,7 @@ rule dwi2response:
 
 rule responsemean:
     """Compute average response function"""
+    # DOUBLE CHECK
     input:
         subject_rf=expand(
             bids_response_out(
