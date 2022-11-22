@@ -39,7 +39,7 @@ setup = "pre-commit install"
 yamlfix = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix {} \\;" }
 isort = "isort dbsc/*.py"
 black = "black dbsc"
-flake8 = "flake8 dbsc --ignore=E501"
+flake8 = "flake8 dbsc"
 snakefmt = "snakefmt dbsc"
 quality = ["yamlfix", "isort", "black", "flake8", "snakefmt"]
 
