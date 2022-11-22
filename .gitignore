@@ -1,4 +1,4 @@
 # Add testing folders to ignore
-test/**/.snakemake/
-test/**/config/
-test/**/.snakebids
+test/data/derivatives/.snakemake/
+test/data/derivatives/config/
+test/data/derivatives/.snakebids

@@ -7,9 +7,9 @@ if config.get("freesurfer_dir"):
         freesurfer_dir = str(
             Path(workflow.basedir).parents[1] / freesurfer_dir
         )
-    # Ensure path passed is absolute otherwise
+    # Ensure path passed is absolute
     elif not Path(freesurfer_dir).is_absolute():
-        raise ValueError("Please pass --freesurfer_dir as an absolute path.\n")
+        raise ValueError("Please pass --freesurfer_dir as an absolute path.")
 
 
 # BIDS partials

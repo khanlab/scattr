@@ -4,11 +4,22 @@ import numpy as np
 # Directories
 mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
 
+responsemean_dir = config.get("responsemean_dir")
+if responsemean_dir:
+    responsemean_dir = str(Path(config.get("responsemean_dir")))
+    # Add conditional for checking
+    if responsemean_dir == "test/data/derivatives/mrtrix/avg":
+        responsemean_dir = str(
+            Path(workflow.basedir).parents[1] / responsemean_dir
+        )
+    # Ensure path passed is absolute
+    elif not Path(responsemean_dir).is_absolute():
+        raise ValueError("Please pass --responsemean_dir as an absolute path.")
+
 # Make directory if it doesn't exist
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
 
 # Parameters
-responsemean_flag = config.get("responsemean_dir")
 shells = config.get("shells")
 lmax = config.get("lmax")
 
@@ -113,15 +124,18 @@ rule dwi2response:
 rule responsemean:
     """Compute average response function"""
     input:
-        subject_rf=bids_response_out(
-            desc="{tissue}",
-            **config["subj_wildcards"],
+        subject_rf=expand(
+            bids_response_out(
+                subject="{subject}",
+                desc="{tissue}",
+            ),
+            allow_missing=True,
+            subject=config["input_lists"]["dwi"]["subject"],
         ),
     output:
         avg_rf=bids_response_out(
             root=str(Path(mrtrix_dir) / "avg"),
             desc="{tissue}",
-            **config["subj_wildcards"],
         ),
     threads: workflow.cores
     group:
@@ -138,8 +152,8 @@ rule dwi2fod:
         dwi=rules.nii2mif.output.dwi,
         mask=rules.nii2mif.output.mask,
         wm_rf=(
-            str(Path(config["responsemean_dir"]) / "desc-wm_response.txt")
-            if responsemean_flag
+            str(Path(responsemean_dir) / "desc-wm_response.txt")
+            if responsemean_dir
             else expand(
                 rules.responsemean.output.avg_rf,
                 tissue="wm",
@@ -147,8 +161,8 @@ rule dwi2fod:
             )
         ),
         gm_rf=(
-            str(Path(config["responsemean_dir"]) / "desc-gm_response.txt")
-            if responsemean_flag
+            str(Path(responsemean_dir) / "desc-gm_response.txt")
+            if responsemean_dir
             else expand(
                 rules.responsemean.output.avg_rf,
                 tissue="gm",
@@ -156,8 +170,8 @@ rule dwi2fod:
             )
         ),
         csf_rf=(
-            str(Path(config["responsemean_dir"]) / "desc-csf_response.txt")
-            if responsemean_flag
+            str(Path(responsemean_dir) / "desc-csf_response.txt")
+            if responsemean_dir
             else expand(
                 rules.responsemean.output.avg_rf,
                 tissue="csf",
