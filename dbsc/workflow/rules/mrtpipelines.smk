@@ -4,17 +4,9 @@ import numpy as np
 # Directories
 mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
 
-responsemean_dir = config.get("responsemean_dir")
-if responsemean_dir:
-    responsemean_dir = str(Path(config.get("responsemean_dir")))
-    # Add conditional for checking
-    if responsemean_dir == "test/data/derivatives/mrtrix/avg":
-        responsemean_dir = str(
-            Path(workflow.basedir).parents[1] / responsemean_dir
-        )
-    # Ensure path passed is absolute
-    elif not Path(responsemean_dir).is_absolute():
-        raise ValueError("Please pass --responsemean_dir as an absolute path.")
+responsemean_dir = check_dir_path(
+    config_key="responsemean_dir", test_path="test/data/derivatives/mrtrix/avg"
+)
 
 # Make directory if it doesn't exist
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)

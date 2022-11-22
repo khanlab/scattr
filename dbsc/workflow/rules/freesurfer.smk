@@ -1,15 +1,9 @@
 # Directories
-freesurfer_dir = str(Path(config["output_dir"]) / "freesurfer")
-if config.get("freesurfer_dir"):
-    freesurfer_dir = str(Path(config.get("freesurfer_dir")))
-    # Add conditional for testing
-    if freesurfer_dir == "test/data/derivatives/freesurfer":
-        freesurfer_dir = str(
-            Path(workflow.basedir).parents[1] / freesurfer_dir
-        )
-    # Ensure path passed is absolute
-    elif not Path(freesurfer_dir).is_absolute():
-        raise ValueError("Please pass --freesurfer_dir as an absolute path.")
+freesurfer_dir = check_dir_path(
+    config_key="freesurfer_dir",
+    test_path="test/data/derivatives/freesurfer",
+    out_dirname="freesurfer",
+)
 
 
 # BIDS partials
