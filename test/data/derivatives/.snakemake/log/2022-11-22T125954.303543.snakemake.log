@@ -1,0 +1,9 @@
+Config file config/snakebids.yml is extended by additional config specified via the command line.
+Building DAG of jobs...
+Relative file path './dbsc/tests/data/derivatives/freesurfer' starts with './'. This is redundant and strongly discouraged. It can also lead to inconsistent results of the file-matching approach used by Snakemake. You can simply omit the './' for relative file paths.
+MissingInputException in rule thalamic_segmentation  in line 23 of /srv/khan/users/tkai/git/dbsc/dbsc/workflow/rules/freesurfer.smk:
+Missing input files for rule thalamic_segmentation:
+    output: dbsc/tests/data/derivatives/freesurfer/001/mri/ThalamicNuclei.v12.T1.mgz
+    wildcards: subject=001
+    affected files:
+        ./dbsc/tests/data/derivatives/freesurfer

@@ -1,0 +1,5 @@
+Config file config/snakebids.yml is extended by additional config specified via the command line.
+KeyError in line 82 of /srv/khan/users/tkai/git/dbsc/dbsc/workflow/rules/freesurfer.smk:
+'T1w'
+  File "/srv/khan/users/tkai/git/dbsc/dbsc/workflow/Snakefile", line 34, in <module>
+  File "/srv/khan/users/tkai/git/dbsc/dbsc/workflow/rules/freesurfer.smk", line 82, in <module>

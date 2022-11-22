@@ -1,0 +1,5 @@
+Config file config/snakebids.yml is extended by additional config specified via the command line.
+TokenError in line 35 of /srv/khan/users/tkai/git/dbsc/dbsc/workflow/Snakefile:
+('EOF in multi-line statement', (92, 0))
+  File "/srv/khan/users/tkai/git/dbsc/dbsc/workflow/Snakefile", line 35, in <module>
+  File "/usr/lib/python3.8/tokenize.py", line 521, in _tokenize

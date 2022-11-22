@@ -1,0 +1,5 @@
+Config file config/snakebids.yml is extended by additional config specified via the command line.
+NotImplementedError in line 6 of /srv/khan/users/tkai/git/dbsc/dbsc/workflow/rules/freesurfer.smk:
+Please use absolute paths
+  File "/srv/khan/users/tkai/git/dbsc/dbsc/workflow/Snakefile", line 35, in <module>
+  File "/srv/khan/users/tkai/git/dbsc/dbsc/workflow/rules/freesurfer.smk", line 6, in <module>
