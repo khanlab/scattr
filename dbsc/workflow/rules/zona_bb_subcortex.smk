@@ -36,7 +36,7 @@ rule cp_zona_tsv:
     output:
         zona_tsv=f"{zona_dir}/desc-ZonaBBSubcor_dseg.tsv",
     shell:
-        "cp -v {input.fs_tsv} {output.fs_tsv}"
+        "cp -v {input.zona_tsv} {output.zona_tsv}"
 
 
 rule xfm2native:
@@ -44,10 +44,12 @@ rule xfm2native:
     input:
         seg=str(
             Path(workflow.basedir).parent
+            / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
             / Path(config["zona_bb_subcortex"][config["Space"]]["seg"])
         ),
         seg_anat=str(
             Path(workflow.basedir).parent
+            / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
             / Path(config["zona_bb_subcortex"][config["Space"]]["T1w"])
         ),
         ref=config["input_path"]["T1w"],
@@ -131,9 +133,6 @@ rule rm_bb_thal:
         "fslmaths {output.seg} -add {output.non_thal} {output.seg}"
 
 
-# NEED TO PIPE FROM rm_bb_thal with labelmerge and PIPE TO binarize
-# Alternative option is to have a second target rule that performs everything
-# below with participant2 and everything above with participant1
 rule labelmerge:
     input:
         seg=expand(
@@ -150,8 +149,8 @@ rule labelmerge:
         fs_dir=str(Path(config["output_dir"]) / "freesurfer"),
         zona_desc="ZonaBBSubcor",
         fs_desc="FreesurferThal",
-    output:
         labelmerge_dir=directory(labelmerge_dir),
+    output:
         seg=expand(
             bids_labelmerge(
                 subject="{subject}",
@@ -173,10 +172,9 @@ rule labelmerge:
     # ADD CONTAINER
     shell:
         # TO BE UPDATED WITH APPROPRIATE COMMAND
-        "run.py {params.zona_dir} {output.labelmerge_dir} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --base_desc {params.zona_desc}"
+        "run.py {params.zona_dir} {params.labelmerge_dir} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --base_desc {params.zona_desc}"
 
 
-# Placeholder desc entity
 rule binarize:
     input:
         seg=bids_labelmerge(
@@ -196,14 +194,13 @@ rule binarize:
         "fslmaths {input.seg} -bin {output.mask}"
 
 
-# Placeholder desc entity
 rule add_brainstem:
     input:
         mask=rules.binarize.output.mask,
         aparcaseg=rules.fs_xfm_to_native.output.aparcaseg,
     output:
         mask=bids_anat(
-            root=rules.labelmerge.output.labelmerge_dir,
+            root=labelmerge_dir,
             space="T1w",
             desc="labelmergeStem",
             suffix="mask.nii.gz",
@@ -211,7 +208,7 @@ rule add_brainstem:
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.seg} {output.seg}"
+        "fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.mask} {output.mask}"
 
 
 rule create_convex_hull:
@@ -219,7 +216,7 @@ rule create_convex_hull:
         bin_seg=rules.add_brainstem.output.mask,
     output:
         convex_hull=bids_anat(
-            root=rules.labelmerge.output.labelmerge_dir,
+            root=labelmerge_dir,
             space="T1w",
             desc="ConvexHull",
             suffix="mask.nii.gz",

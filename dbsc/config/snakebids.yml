@@ -156,17 +156,18 @@ parse_args:
 Space: MNI152NLin6Asym
 
 zona_bb_subcortex:
+  tsv: 'resources/zona_bb_subcortex/desc-ZonaBBSubcor_dseg.tsv'
   MNI152NLin6Asym:
-    dir: 'resources/MNI152NLin6Asym/'
-    T1w: 'resources/MNI152NLin6Asym/tpl-MNI152NLin6Asm_res-04_desc-brain_T1w.nii.gz'
-    seg: 'resources/MNI152NLin6Asym/sub-SNSX32NLin2020Asym_space-MNI152NLin6Asym_desc-ZonaBBSubcor_dseg.nii.gz'
+    dir: 'resources/zona_bb_subcortex/MNI152NLin6Asym/'
+    T1w: 'tpl-MNI152NLin6Asym_res-04_desc-brain_T1w.nii.gz'
+    seg:  'sub-SNSX32NLin2020Asym_space-MNI152NLin6Asym_desc-ZonaBBSubcor_dseg.nii.gz'
   MNI152NLin2009bAsym:
-    dir: 'resources/MNI152NLin2009bAsym/'
-    seg: 'resources/MNI152NLin2009bAsym/sub-SNSX32NLin2020Asym_space-MNI152NLin2009bAsym_desc-ZonaBBSubcor_dseg.nii.gz'
+    dir: 'resources/zona_bb_subcortex/MNI152NLin2009bAsym/'
+    seg: 'sub-SNSX32NLin2020Asym_space-MNI152NLin2009bAsym_desc-ZonaBBSubcor_dseg.nii.gz'
 
 # NOTE: This may not be needed with labelmerge
 freesurfer:
-  tsv: 'resources/freesurfer/desc-Freesurfer_dseg.tsv'
+  tsv: 'resources/freesurfer/desc-FreesurferThal_dseg.tsv'
 
 # Containers
 # NOTE: Update from latest to use specific tags

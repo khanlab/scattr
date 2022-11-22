@@ -46,11 +46,5 @@ rule all:
             rules.filtered_tck2connectome.output.sl_assignment,
             subject=config["input_lists"]["T1w"]["subject"],
         ),
-        fs_tsv=str(
-            Path(config["output_dir"]) / "freesurfer" / config["freesurfer"]["tsv"]
-        ),
-        zona_tsv=str(
-            Path(config["output_dir"])
-            / "zona_bb_subcortex"
-            / config["zona_bb_subcortex"]["tsv"]
-        ),
+        fs_tsv=rules.cp_fs_tsv.output.fs_tsv,
+        zona_tsv=rules.cp_zona_tsv.output.zona_tsv,
