@@ -1,4 +1,0 @@
-Config file config/snakebids.yml is extended by additional config specified via the command line.
-AttributeError in line 43 of /srv/khan/users/tkai/git/dbsc/dbsc/workflow/Snakefile:
-'Rules' object has no attribute 'mrtpipelines'
-  File "/srv/khan/users/tkai/git/dbsc/dbsc/workflow/Snakefile", line 43, in <module>

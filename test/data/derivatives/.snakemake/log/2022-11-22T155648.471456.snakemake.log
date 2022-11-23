@@ -1,8 +1,0 @@
-Config file config/snakebids.yml is extended by additional config specified via the command line.
-Building DAG of jobs...
-MissingInputException in rule thalamic_segmentation  in line 24 of /srv/khan/users/tkai/git/dbsc/dbsc/workflow/rules/freesurfer.smk:
-Missing input files for rule thalamic_segmentation:
-    output: dbsc/tests/data/derivatives/freesurfer/sub-001/mri/ThalamicNuclei.v12.T1.mgz
-    wildcards: subject=001
-    affected files:
-        dbsc/tests/data/derivatives/freesurfer

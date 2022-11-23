@@ -1,5 +1,0 @@
-Config file config/snakebids.yml is extended by additional config specified via the command line.
-AttributeError in line 4 of /srv/khan/users/tkai/git/dbsc/dbsc/workflow/rules/freesurfer.smk:
-'str' object has no attribute 'parent'
-  File "/srv/khan/users/tkai/git/dbsc/dbsc/workflow/Snakefile", line 35, in <module>
-  File "/srv/khan/users/tkai/git/dbsc/dbsc/workflow/rules/freesurfer.smk", line 4, in <module>
