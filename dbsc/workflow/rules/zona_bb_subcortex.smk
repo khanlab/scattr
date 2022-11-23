@@ -40,7 +40,7 @@ rule cp_zona_tsv:
 
 
 rule xfm2native:
-    """Transform from Zona template space to subject native space"""
+    """Transform from subcortical parcellations from chosen template space to subject native space"""
     input:
         seg=str(
             Path(workflow.basedir).parent
