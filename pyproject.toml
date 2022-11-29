@@ -43,9 +43,9 @@ flake8 = "flake8 dbsc"
 snakefmt = "snakefmt dbsc"
 quality = ["yamlfix", "isort", "black", "flake8", "snakefmt"]
 test_base = { shell = "python ./dbsc/run.py ./test/data/bids ./test/data/derivatives/ participant -np --force-output" }
-test_freesurfer = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --freesurfer_dir test/data/derivatives/freesurfer -np --force-output" }
-test_responsemean = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --responsemean_dir test/data/derivatives/mrtrix/avg -np --force-output" }
-test_dwi = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --dwi_dir test/data/derivatives/prepdwi -np --force-output" }
+test_freesurfer = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --freesurfer_dir ./test/data/derivatives/freesurfer -np --force-output" }
+test_responsemean = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --responsemean_dir ./test/data/derivatives/mrtrix/avg -np --force-output" }
+test_dwi = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --dwi_dir ./test/data/derivatives/prepdwi -np --force-output" }
 test = ["test_base", "test_freesurfer", "test_responsemean", "test_dwi"]
 
 [tool.isort]

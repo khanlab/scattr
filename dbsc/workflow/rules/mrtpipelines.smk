@@ -2,15 +2,9 @@ import numpy as np
 
 
 # Directories
-responsemean_dir = check_dir_path(
-    config_key="responsemean_dir", test_path="test/data/derivatives/mrtrix/avg"
-)
-dwi_dir = check_dir_path(
-    config_key="dwi_dir", test_path="test/data/derivatives/prepdwi"
-)
-
+responsemean_dir = config.get("responsemean_dir")
+dwi_dir = config.get("dwi_dir")
 mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
-
 
 # Make directory if it doesn't exist
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)

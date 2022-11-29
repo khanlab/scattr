@@ -1,10 +1,7 @@
 # Directories
-freesurfer_dir = check_dir_path(
-    config_key="freesurfer_dir",
-    test_path="test/data/derivatives/freesurfer",
-    out_dirname="freesurfer",
-)
-
+freesurfer_dir = str(Path(config["output_dir"]) / "freesurfer")
+if config.get("freesurfer_dir"):
+    freesurfer_dir = config.get("freesurfer_dir")
 
 # BIDS partials
 bids_fs_out = partial(

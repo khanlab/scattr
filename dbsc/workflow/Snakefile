@@ -30,35 +30,6 @@ wildcard_constraints:
 from pathlib import Path
 from functools import partial
 
-# Function to to check if additional directories are absolute paths
-def check_dir_path(
-    config_key: str,
-    test_path: str,
-    out_dirname: str = None,
-) -> str:
-    """INPUTS
-    config_key - key in config dict to check
-    test_path - path to directory for testing purposes
-    out_dirname - directory name in output, relative to output_dir if no user input
-    """
-    extra_dir = config.get(config_key)
-    if extra_dir:
-        extra_dir = str(Path(extra_dir))
-        # Check if testing directory
-        if extra_dir == test_path:
-            extra_dir = str(Path(workflow.basedir).parents[1] / extra_dir)
-        # Ensure all other paths are absolute
-        elif not Path(extra_dir).is_absolute():
-            raise ValueError(
-                f"Please pass --{config_key} as an absolute path."
-            )
-
-        return extra_dir
-
-    return (
-        str(Path(config["output_dir"]) / out_dirname) if out_dirname else None
-    )
-
 
 # Rules
 include: "rules/freesurfer.smk"
