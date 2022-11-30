@@ -167,15 +167,7 @@ zona_bb_subcortex:
 
 # NOTE: This may not be needed with labelmerge
 freesurfer:
-<<<<<<< HEAD
-<<<<<<< HEAD
   tsv: 'resources/freesurfer/desc-FreesurferThal_dseg.tsv'
-=======
-  tsv: 'resources/freesurfer/desc-Freesurfer_dseg.tsv'
->>>>>>> bfaf68d... Copy zona tsv to appropriate directory
-=======
-  tsv: 'resources/freesurfer/desc-FreesurferThal_dseg.tsv'
->>>>>>> a87103b... add labelmerge placeholder
 
 # Containers
 # NOTE: Update from latest to use specific tags
@@ -184,5 +176,6 @@ singularity:
   neuroglia-core: "docker://khanlab/neuroglia-core:latest"
   mrtrix: "docker://brainlife/mrtrix:3.0.3"
   labelmerge: "docker://kaitj/labelmerge:v0.1.0"
+  dbsc: "docker:kaitj/dbsc:v0.1.0"
 
 fs_license: /path/to/fs/license
