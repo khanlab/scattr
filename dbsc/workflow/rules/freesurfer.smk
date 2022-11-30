@@ -19,7 +19,9 @@ rule cp_fs_tsv:
     """Copy tsv to freesurfer dir
     """
     input:
-        fs_tsv=str(Path(workflow.basedir).parent / Path(config["freesurfer"]["tsv"])),
+        fs_tsv=str(
+            Path(workflow.basedir).parent / Path(config["freesurfer"]["tsv"])
+        ),
     output:
         fs_tsv=expand(
             "{freesurfer_dir}/desc-FreesurferThal_dseg.tsv",

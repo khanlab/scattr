@@ -31,7 +31,8 @@ rule cp_zona_tsv:
     """Copy tsv to zona dir"""
     input:
         zona_tsv=str(
-            Path(workflow.basedir).parent / Path(config["zona_bb_subcortex"]["tsv"])
+            Path(workflow.basedir).parent
+            / Path(config["zona_bb_subcortex"]["tsv"])
         ),
     output:
         zona_tsv=f"{zona_dir}/desc-ZonaBBSubcor_dseg.tsv",
