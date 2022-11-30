@@ -175,5 +175,6 @@ singularity:
   freesurfer: "docker://pwighton/freesurfer:7.2.0"
   neuroglia-core: "docker://khanlab/neuroglia-core:latest"
   mrtrix: "docker://brainlife/mrtrix:3.0.3"
+  labelmerge: "docker://kaitj/labelmerge:v0.1.0"
 
 fs_license: /path/to/fs/license

@@ -150,6 +150,7 @@ rule labelmerge:
         zona_desc="ZonaBBSubcor",
         fs_desc="FreesurferThal",
         labelmerge_dir=directory(labelmerge_dir),
+        labelmerge_container=config["singularity"]["labelmerge"],
     output:
         seg=expand(
             bids_labelmerge(
@@ -169,10 +170,8 @@ rule labelmerge:
             ),
             subject=config["input_lists"]["dwi"]["subject"],
         ),
-    # ADD CONTAINER
     shell:
-        # TO BE UPDATED WITH APPROPRIATE COMMAND
-        "run.py {params.zona_dir} {params.labelmerge_dir} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --base_desc {params.zona_desc}"
+        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc}"
 
 
 rule binarize:
