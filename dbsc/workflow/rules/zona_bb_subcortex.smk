@@ -172,7 +172,7 @@ rule labelmerge:
             subject=config["input_lists"]["dwi"]["subject"],
         ),
     shell:
-        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc}"
+        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} -c1"
 
 
 rule binarize:
