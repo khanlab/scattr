@@ -30,6 +30,9 @@ wildcard_constraints:
 from pathlib import Path
 from functools import partial
 
+if config.get("dwi_dir"):
+    print(f"Searching {config.get('dwi_dir')} for dwi and mask images...")
+
 
 # Rules
 include: "rules/freesurfer.smk"
@@ -41,5 +44,5 @@ rule all:
     input:
         expand(
             rules.filtered_tck2connectome.output.sl_assignment,
-            subject=config["input_lists"]["dwi"]["subject"],
+            subject=config["input_lists"]["T1w"]["subject"],
         ),

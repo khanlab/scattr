@@ -147,7 +147,7 @@ rule responsemean:
                 desc="{tissue}",
             ),
             allow_missing=True,
-            subject=config["input_lists"]["dwi"]["subject"],
+            subject=config["input_lists"]["T1w"]["subject"],
         ),
     output:
         avg_rf=bids_response_out(
