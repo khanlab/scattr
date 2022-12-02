@@ -99,9 +99,8 @@ rule nii2mif:
         mem_mb=32000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/nii2mif.log",
-    group:
-        "subject_1"
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/nii2mif.log",
+    group: "mrtpipelines_1"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -139,9 +138,8 @@ rule dwi2response:
         mem_mb=32000,
         time=30,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/dwi2responsemif.log",
-    group:
-        "subject_1"
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2responsemif.log",
+    group: "mrtpipelines_1"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -170,8 +168,7 @@ rule responsemean:
         time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/{{tissue}}_responsemean.log",
-    group:
-        "group"
+    group: "mrtpipelines_group"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -236,9 +233,8 @@ rule dwi2fod:
         mem_mb=32000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/dwi2fod.log",
-    group:
-        "subject_2"
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2fod.log",
+    group: "mrtpipelines_2"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -280,9 +276,8 @@ rule mtnormalise:
         mem_mb=32000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/mtnormalise.log",
-    group:
-        "subject_2"
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/mtnormalise.log",
+    group: "mrtpipelines_2"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -307,11 +302,10 @@ rule dwinormalise:
         mem_mb=32000,
         time=30,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/dwinormalise.log",
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwinormalise.log",
     container:
         config["singularity"]["mrtrix"]
-    group:
-        "subject_1"
+    group: "mrtpipelines_1"
     shell:
         "dwinormalise individual -nthreads {threads} {input.dwi} {input.mask} {output.dwi} &> {log}"
 
@@ -331,9 +325,8 @@ rule dwi2tensor:
         mem_mb=32000,
         time=30,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/dwi2tensor.log",
-    group:
-        "subject_1"
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2tensor.log",
+    group: "mrtpipelines_1"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -366,9 +359,7 @@ rule tckgen:
         mem_mb=128000,
         time=1440,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/tckgen.log",
-    group:
-        "subject_2"
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tckgen.log",
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -391,9 +382,7 @@ rule tcksift2:
         mem_mb=128000,
         time=1440,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/tcksift2.log",
-    group:
-        "subject_2"
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tcksift2.log",
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -429,9 +418,8 @@ rule tck2connectome:
         mem_mb=128000,
         time=120,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/tck2connectome.log",
-    group:
-        "subject_2"
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tck2connectome.log",
+    group: "mrtpipelines_3"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -462,8 +450,7 @@ rule connectome2tck:
     resources:
         mem_mb=128000,
         time=120,
-    group:
-        "subject_2"
+    group: "mrtpipelines_3"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -484,8 +471,7 @@ rule create_roi_mask:
     resources:
         mem_mb=32000,
         time=10,
-    group:
-        "subject_2"
+    group: "mrtpipelines_3"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -516,8 +502,7 @@ rule create_exclude_mask:
     resources:
         mem_mb=32000,
         time=10,
-    group:
-        "subject_2"
+    group: "mrtpipelines_3"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -588,7 +573,7 @@ rule combine_filtered:
         mem_mb=128000,
         time=120,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/combine_filtered.log",
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/combine_filtered.log",
     group:
         "subject_2"
     container:
@@ -619,7 +604,7 @@ rule filtered_tck2connectome:
         mem_mb=128000,
         time=120,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{subject}}/filtered_tck2connectome.log",
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/filtered_tck2connectome.log",
     group:
         "subject_2"
     container:
