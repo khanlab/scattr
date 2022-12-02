@@ -94,14 +94,19 @@ rule nii2mif:
             suffix="brainmask.mif",
             **config["subj_wildcards"]
         ),
-    threads: workflow.cores
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=10,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/nii2mif.log",
     group:
         "subject_1"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "mrconvert -nthreads {threads} -fslgrad {input.bvec} {input.bval} {input.dwi} {output.dwi} && "
-        "mrconvert -nthreads {threads} {input.mask} {output.mask}"
+        "mrconvert -nthreads {threads} -fslgrad {input.bvec} {input.bval} {input.dwi} {output.dwi} &> {log} && "
+        "mrconvert -nthreads {threads} {input.mask} {output.mask} >> {log} 2>&1"
 
 
 rule dwi2response:
@@ -129,18 +134,22 @@ rule dwi2response:
             desc="csf",
             **config["subj_wildcards"],
         ),
-    threads: workflow.cores
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=30,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/dwi2responsemif.log",
     group:
         "subject_1"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "dwi2response dhollander {input.dwi} {output.wm_rf} {output.gm_rf} {output.csf_rf} -nthreads {threads} -mask {input.mask} {params.shells} {params.lmax} "
+        "dwi2response dhollander {input.dwi} {output.wm_rf} {output.gm_rf} {output.csf_rf} -nthreads {threads} -mask {input.mask} {params.shells} {params.lmax} &> {log}"
 
 
 rule responsemean:
     """Compute average response function"""
-    # DOUBLE CHECK
     input:
         subject_rf=expand(
             bids_response_out(
@@ -155,13 +164,18 @@ rule responsemean:
             root=str(Path(mrtrix_dir) / "avg"),
             desc="{tissue}",
         ),
-    threads: workflow.cores
+    threads: 16
+    resources:
+        mem_mb=64000,
+        time=60,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{tissue}}_responsemean.log",
     group:
         "group"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "responsemean {input.subject_rf} {output.avg_rf} -nthreads {threads}"
+        "responsemean {input.subject_rf} {output.avg_rf} -nthreads {threads} &> {log}"
 
 
 rule dwi2fod:
@@ -217,13 +231,18 @@ rule dwi2fod:
             suffix="fod.mif",
             **config["subj_wildcards"],
         ),
-    threads: workflow.cores
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=60,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/dwi2fod.log",
     group:
         "subject_2"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "dwi2fod -nthreads {threads} {params.shells} -mask {input.mask} msmt_csd {input.dwi} {input.wm_rf} {output.wm_fod} {input.gm_rf} {output.gm_fod} {input.csf_rf} {output.csf_fod}"
+        "dwi2fod -nthreads {threads} {params.shells} -mask {input.mask} msmt_csd {input.dwi} {input.wm_rf} {output.wm_fod} {input.gm_rf} {output.gm_fod} {input.csf_rf} {output.csf_fod} &> {log}"
 
 
 rule mtnormalise:
@@ -256,13 +275,18 @@ rule mtnormalise:
             suffix="fodNormalized.mif",
             **config["subj_wildcards"],
         ),
-    threads: workflow.cores
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=60,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/mtnormalise.log",
     group:
         "subject_2"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "mtnormalise -nthreads {threads} -mask {input.mask} {input.wm_fod} {output.wm_fod} {input.gm_fod} {output.gm_fod} {input.csf_fod} {output.csf_fod}"
+        "mtnormalise -nthreads {threads} -mask {input.mask} {input.wm_fod} {output.wm_fod} {input.gm_fod} {output.gm_fod} {input.csf_fod} {output.csf_fod} &> {log}"
 
 
 # DTI (Tensor) Processing
@@ -278,13 +302,18 @@ rule dwinormalise:
             suffix="dwi.mif",
             **config["subj_wildcards"],
         ),
-    threads: workflow.cores
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=30,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/dwinormalise.log",
     container:
         config["singularity"]["mrtrix"]
     group:
         "subject_1"
     shell:
-        "dwinormalise individual -nthreads {threads} {input.dwi} {input.mask} {output.dwi}"
+        "dwinormalise individual -nthreads {threads} {input.dwi} {input.mask} {output.dwi} &> {log}"
 
 
 rule dwi2tensor:
@@ -297,14 +326,19 @@ rule dwi2tensor:
         ad=bids_dti_out(suffix="ad.mif"),
         rd=bids_dti_out(suffix="rd.mif"),
         md=bids_dti_out(suffix="md.mif"),
-    threads: workflow.cores
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=30,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/dwi2tensor.log",
     group:
         "subject_1"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "dwi2tensor -nthreads {threads} -mask {input.mask} {input.dwi} {output.dti} && "
-        "tensor2metric -nthreads {threads} -mask {input.mask} {output.dti} -fa {output.fa} -ad {output.ad} -rd {output.rd} -adc {output.md}"
+        "dwi2tensor -nthreads {threads} -mask {input.mask} {input.dwi} {output.dti} &> {log} && "
+        "tensor2metric -nthreads {threads} -mask {input.mask} {output.dti} -fa {output.fa} -ad {output.ad} -rd {output.rd} -adc {output.md} >> {log} 2>&1"
 
 
 # --------------- MRTRIX PREPROC END --------------#
@@ -327,13 +361,18 @@ rule tckgen:
             desc="iFOD2",
             suffix="tractography.tck",
         ),
-    threads: workflow.cores
+    threads: workflow.cores,
+    resources:
+        mem_mb=128000,
+        time=1440,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/tckgen.log",
     group:
         "subject_2"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.cortical_ribbon} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {output.tck}"
+        "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.cortical_ribbon} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {output.tck} &> {log}"
 
 
 rule tcksift2:
@@ -347,13 +386,18 @@ rule tcksift2:
             suffix="tckWeights.txt",
         ),
         mu=bids_tractography_out(desc="iFOD2", suffix="muCoefficient.txt"),
-    threads: workflow.cores
+    threads: workflow.cores,
+    resources:
+        mem_mb=128000,
+        time=1440,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/tcksift2.log",
     group:
         "subject_2"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tcksift2 -nthreads {threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights}"
+        "tcksift2 -nthreads {threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights} &> {log}"
 
 
 # TODO (v0.2): ADD OPTION TO OUTPUT TDI MAP
@@ -381,12 +425,17 @@ rule tck2connectome:
             suffix="nodeWeights.csv",
         ),
     threads: workflow.cores
+    resources:
+        mem_mb=128000,
+        time=120,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/tck2connectome.log",
     group:
         "subject_2"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} "
+        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} &> {log}"
 
 
 rule connectome2tck:
@@ -410,12 +459,15 @@ rule connectome2tck:
             )
         ),
     threads: workflow.cores
+    resources:
+        mem_mb=128000,
+        time=120,
     group:
         "subject_2"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -filters_per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {output.edge_weight} {input.tck} {input.sl_assignment} {output.edge_tck} "
+        "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -filters_per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {output.edge_weight} {input.tck} {input.sl_assignment} {output.edge_tck}"
 
 
 rule create_roi_mask:
@@ -428,7 +480,10 @@ rule create_roi_mask:
                 suffix="mask.mif",
             )
         ),
-    threads: workflow.cores
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=10,
     group:
         "subject_2"
     container:
@@ -457,7 +512,10 @@ rule create_exclude_mask:
                 suffix="mask.mif",
             )
         ),
-    threads: workflow.cores
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=10,
     group:
         "subject_2"
     container:
@@ -486,6 +544,9 @@ rule filter_tck:
             ),
         ),
     threads: workflow.cores
+    resources:
+        mem_mb=128000,
+        time=60,
     group:
         "subject_2"
     container:
@@ -523,13 +584,18 @@ rule combine_filtered:
             suffix="tckWeights.txt",
         ),
     threads: workflow.cores
+    resources:
+        mem_mb=128000,
+        time=120,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/combine_filtered.log",
     group:
         "subject_2"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tckedit {input.tck} {output.combined_tck} && "
-        "cat {input.weights} >> {output.combined_weights} "
+        "tckedit {input.tck} {output.combined_tck} &> {log} && "
+        "cat {input.weights} >> {output.combined_weights} >> {log} 2>&1"
 
 
 rule filtered_tck2connectome:
@@ -549,12 +615,17 @@ rule filtered_tck2connectome:
             suffix="nodeWeights.csv",
         ),
     threads: workflow.cores
+    resources:
+        mem_mb=128000,
+        time=120,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{subject}}/filtered_tck2connectome.log",
     group:
         "subject_2"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} -force"
+        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} -force &> {log}"
 
 
 # ------------ MRTRIX TRACTOGRAPHY END ----------#
