@@ -36,6 +36,10 @@ rule cp_zona_tsv:
         ),
     output:
         zona_tsv=f"{zona_dir}/desc-ZonaBBSubcor_dseg.tsv",
+    threads: 4
+    resources:
+        mem_mb=8000,
+        time=10,
     shell:
         "cp -v {input.zona_tsv} {output.zona_tsv}"
 
@@ -64,11 +68,17 @@ rule xfm2native:
             desc="ZonaBB",
             suffix="dseg.nii.gz",
         ),
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=60,
+    log:
+        f"{config['output_dir']}/logs/zona_bb_subcortex/{{subject}}/xfm2native.log",
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "flirt -in {input.seg_anat} -r {input.ref} -omat {output.xfm} && "
-        "applywarp --rel --interp=nn -i {input.seg} -r {input.ref} -w {output.xfm} -o {output.nii}"
+        "flirt -in {input.seg_anat} -r {input.ref} -omat {output.xfm} &> {log} && "
+        "applywarp --rel --interp=nn -i {input.seg} -r {input.ref} -w {output.xfm} -o {output.nii} >> {log} 2>&1"
 
 
 # TODO: Add back later on
@@ -124,14 +134,20 @@ rule rm_bb_thal:
                 suffix="dseg.nii.gz",
             )
         ),
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=10,
+    log:
+        f"{config['output_dir']}/logs/zona_bb_subcortex/{{subject}}/rm_bb_thal.log",
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "fslmaths {input.seg} -sub 2 {output.non_thal} && "
-        "fslmaths {output.non_thal} -thr 15 {output.non_thal} && "
-        "fslmaths {input.seg} -thr 15 {output.rm_seg} && "
-        "fslmaths {input.seg} -sub {output.rm_seg} {output.seg} && "
-        "fslmaths {output.seg} -add {output.non_thal} {output.seg}"
+        "fslmaths {input.seg} -sub 2 {output.non_thal} &> {log} && "
+        "fslmaths {output.non_thal} -thr 15 {output.non_thal} >> {log} 2>&1 && "
+        "fslmaths {input.seg} -thr 15 {output.rm_seg} >> {log} 2>&1 && "
+        "fslmaths {input.seg} -sub {output.rm_seg} {output.seg} >> {log} 2>&1 && "
+        "fslmaths {output.seg} -add {output.non_thal} {output.seg} >> {log} 2>&1"
 
 
 rule labelmerge:
@@ -171,8 +187,14 @@ rule labelmerge:
             ),
             subject=config["input_lists"]["T1w"]["subject"],
         ),
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=10,
+    log:
+        f"{config['output_dir']}/logs/labelmerge/{{wildcard.subject}}/labelmerge.log",
     shell:
-        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} -c1"
+        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} -c1 &> {log}"
 
 
 rule binarize:
@@ -188,10 +210,16 @@ rule binarize:
             desc="combined",
             suffix="mask.nii.gz",
         ),
+    threads: 8
+    resources:
+        mem_mb=16000,
+        time=10,
+    log:
+        f"{config['output_dir']}/logs/labelmerge/{{subject}}/binarize.log",
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "fslmaths {input.seg} -bin {output.mask}"
+        "fslmaths {input.seg} -bin {output.mask} &> {log}"
 
 
 rule add_brainstem:
@@ -205,10 +233,16 @@ rule add_brainstem:
             desc="labelmergeStem",
             suffix="mask.nii.gz",
         ),
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=10,
+    log:
+        f"{config['output_dir']}/logs/labelmerge/{{subject}}/add_brainstem.log",
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.mask} {output.mask}"
+        "fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.mask} {output.mask} &> {log}"
 
 
 rule create_convex_hull:
@@ -221,6 +255,12 @@ rule create_convex_hull:
             desc="ConvexHull",
             suffix="mask.nii.gz",
         ),
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=30,
+    log:
+        f"{config['output_dir']}/logs/labelmerge/{{subject}}/create_convex_hull.log",
     container:
         config["singularity"]["dbsc"]
     script:

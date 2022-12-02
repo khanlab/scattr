@@ -27,6 +27,10 @@ rule cp_fs_tsv:
             "{freesurfer_dir}/desc-FreesurferThal_dseg.tsv",
             freesurfer_dir=freesurfer_dir,
         ),
+    threads: 4
+    resources:
+        mem_mb=8000,
+        time=10,
     shell:
         "cp -v {input.fs_tsv} {output.fs_tsv}"
 
@@ -47,14 +51,19 @@ rule thalamic_segmentation:
             Path(freesurfer_dir)
             / "sub-{subject}/mri/ThalamicNuclei.v12.T1.mgz"
         ),
-    threads: workflow.cores
+    threads: 8
+    resources:
+        mem_mb=16000,
+        time=30,
+    log:
+        f"{config['output_dir']}/logs/freesurfer/{{subject}}/thalamic_segmentation.log",
     container:
         config["singularity"]["freesurfer"]
     shell:
         "FS_LICENSE={params.fs_license} && "
         "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
         "SUBJECTS_DIR={input.freesurfer_dir} && "
-        "segmentThalamicNuclei.sh {wildcards.subject}"
+        "segmentThalamicNuclei.sh {wildcards.subject} &> {log}"
 
 
 rule mgz2nii:
@@ -77,16 +86,21 @@ rule mgz2nii:
         aparcaseg=bids_fs_out(space="Freesurfer", suffix="aparcaseg.nii.gz"),
         ribbon_mgz=bids_fs_out(space="Freesurfer", suffix="ribbon.mgz"),
         ribbon=bids_fs_out(space="Freesurfer", suffix="ribbon.nii.gz"),
-    threads: workflow.cores
+    threads: 8
+    resources:
+        mem_mb=16000,
+        time=10,
+    log:
+        f"{config['output_dir']}/logs/freesurfer/{{subject}}/mgz2nii.log",
     container:
         config["singularity"]["freesurfer"]
     shell:
         "FS_LICENSE={params.fs_license} && "
         "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "mri_convert {input.thal} {output.thal} && "
-        "mri_convert {input.aparcaseg} {output.aparcaseg} && "
-        "mergeseg --src {input.lRibbon} --merge {input.rRibbon} --o {output.ribbon_mgz} && "
-        "mri_convert {output.ribbon_mgz} {output.ribbon}"
+        "mri_convert {input.thal} {output.thal} &> {log} &&  "
+        "mri_convert {input.aparcaseg} {output.aparcaseg} >> {log} 2>&1 && "
+        "mergeseg --src {input.lRibbon} --merge {input.rRibbon} --o {output.ribbon_mgz} >> {log} 2>&1 && "
+        "mri_convert {output.ribbon_mgz} {output.ribbon} >> {log} 2>&1"
 
 
 rule fs_xfm_to_native:
@@ -100,9 +114,15 @@ rule fs_xfm_to_native:
         thal=bids_fs_out(space="T1w", suffix="thalamus.nii.gz"),
         aparcaseg=bids_fs_out(space="T1w", suffix="aparcaseg.nii.gz"),
         ribbon=bids_fs_out(space="T1w", suffix="ribbon.nii.gz"),
+    threads: 8
+    resources:
+        mem_mb=16000,
+        time=30,
+    log:
+        f"{config['output_dir']}/logs/freesurfer/{{subject}}/fs_xfm_to_native.log",
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.thal} -r {input.ref} -o {output.thal} && "
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} && "
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.ribbon} -r {input.ref} -o {output.ribbon}"
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.thal} -r {input.ref} -o {output.thal} &> {log} && "
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} >> {log} 2>&1 && "
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.ribbon} -r {input.ref} -o {output.ribbon} >> {log} 2>&1"
