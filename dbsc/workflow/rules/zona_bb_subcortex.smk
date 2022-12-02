@@ -73,11 +73,12 @@ rule xfm2native:
         mem_mb=32000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/zona_bb_subcortex/{{subject}}/xfm2native.log",
+        f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/xfm2native.log",
+    group: "subcortical"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "flirt -in {input.seg_anat} -r {input.ref} -omat {output.xfm} &> {log} && "
+        "flirt -in {input.seg_anat} -ref {input.ref} -omat {output.xfm} &> {log} && "
         "applywarp --rel --interp=nn -i {input.seg} -r {input.ref} -w {output.xfm} -o {output.nii} >> {log} 2>&1"
 
 
@@ -139,7 +140,8 @@ rule rm_bb_thal:
         mem_mb=32000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/zona_bb_subcortex/{{subject}}/rm_bb_thal.log",
+        f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/rm_bb_thal.log",
+    group: "subcortical"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -192,7 +194,8 @@ rule labelmerge:
         mem_mb=32000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/labelmerge/{{wildcard.subject}}/labelmerge.log",
+        f"{config['output_dir']}/logs/labelmerge/sub-{{wildcard.subject}}/labelmerge.log",
+    group: "subcortical"
     shell:
         "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} -c1 &> {log}"
 
@@ -215,7 +218,8 @@ rule binarize:
         mem_mb=16000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/labelmerge/{{subject}}/binarize.log",
+        f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/binarize.log",
+    group: "subcortical"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -238,7 +242,8 @@ rule add_brainstem:
         mem_mb=32000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/labelmerge/{{subject}}/add_brainstem.log",
+        f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/add_brainstem.log",
+    group: "subcortical"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -260,7 +265,8 @@ rule create_convex_hull:
         mem_mb=32000,
         time=30,
     log:
-        f"{config['output_dir']}/logs/labelmerge/{{subject}}/create_convex_hull.log",
+        f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/create_convex_hull.log",
+    group: "subcortical"
     container:
         config["singularity"]["dbsc"]
     script:

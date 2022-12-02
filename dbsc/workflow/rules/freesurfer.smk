@@ -56,14 +56,14 @@ rule thalamic_segmentation:
         mem_mb=16000,
         time=30,
     log:
-        f"{config['output_dir']}/logs/freesurfer/{{subject}}/thalamic_segmentation.log",
+        f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/thalamic_segmentation.log",
+    group: "freesurfer"
     container:
         config["singularity"]["freesurfer"]
     shell:
         "FS_LICENSE={params.fs_license} && "
         "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "SUBJECTS_DIR={input.freesurfer_dir} && "
-        "segmentThalamicNuclei.sh {wildcards.subject} &> {log}"
+        "segmentThalamicNuclei.sh sub-{wildcards.subject} {input.freesurfer_dir} &> {log}"
 
 
 rule mgz2nii:
@@ -92,6 +92,7 @@ rule mgz2nii:
         time=10,
     log:
         f"{config['output_dir']}/logs/freesurfer/{{subject}}/mgz2nii.log",
+    group: "freesurfer"
     container:
         config["singularity"]["freesurfer"]
     shell:
@@ -120,6 +121,7 @@ rule fs_xfm_to_native:
         time=30,
     log:
         f"{config['output_dir']}/logs/freesurfer/{{subject}}/fs_xfm_to_native.log",
+    group: "freesurfer"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
