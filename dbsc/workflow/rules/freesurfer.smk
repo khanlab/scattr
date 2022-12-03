@@ -53,8 +53,8 @@ rule thalamic_segmentation:
         ),
     threads: 8
     resources:
-        mem_mb=16000,
-        time=30,
+        mem_mb=32000,
+        time=60,
     log:
         f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/thalamic_segmentation.log",
     group: "freesurfer"
@@ -62,8 +62,10 @@ rule thalamic_segmentation:
         config["singularity"]["freesurfer"]
     shell:
         "FS_LICENSE={params.fs_license} && "
-        "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "segmentThalamicNuclei.sh sub-{wildcards.subject} {input.freesurfer_dir} &> {log}"
+        "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
+        "export SUBJECTS_DIR={input.freesurfer_dir} && "
+        "mkdir -p {input.freesurfer_dir}/sub-{wildcards.subject}/scripts && "
+        "segmentThalamicNuclei.sh sub-{wildcards.subject} &> {log}"
 
 
 rule mgz2nii:
@@ -80,25 +82,43 @@ rule mgz2nii:
         lRibbon=str(Path(freesurfer_dir) / "sub-{subject}/mri/lh.ribbon.mgz"),
         rRibbon=str(Path(freesurfer_dir) / "sub-{subject}/mri/rh.ribbon.mgz"),
     params:
+        freesurfer_dir=freesurfer_dir,
         fs_license=config["fs_license"],
     output:
-        thal=bids_fs_out(space="Freesurfer", suffix="thalamus.nii.gz"),
-        aparcaseg=bids_fs_out(space="Freesurfer", suffix="aparcaseg.nii.gz"),
-        ribbon_mgz=bids_fs_out(space="Freesurfer", suffix="ribbon.mgz"),
-        ribbon=bids_fs_out(space="Freesurfer", suffix="ribbon.nii.gz"),
+        thal=bids_fs_out(
+            space="Freesurfer",
+            desc="FreesurferThal",
+            suffix="dseg.nii.gz",
+        ),
+        aparcaseg=bids_fs_out(
+            space="Freesurfer", 
+            desc="aparcaseg",
+            suffix="dseg.nii.gz",
+        ),
+        ribbon_mgz=bids_fs_out(
+            space="Freesurfer",
+            desc="ribbon",
+            suffix="mask.mgz", 
+        ),
+        ribbon=bids_fs_out(
+            space="Freesurfer", 
+            desc="ribbon",
+            suffix="mask.nii.gz",
+        ),
     threads: 8
     resources:
         mem_mb=16000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/freesurfer/{{subject}}/mgz2nii.log",
+        f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/mgz2nii.log",
     group: "freesurfer"
     container:
         config["singularity"]["freesurfer"]
     shell:
         "FS_LICENSE={params.fs_license} && "
-        "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "mri_convert {input.thal} {output.thal} &> {log} &&  "
+        "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
+        "export SUBJECTS_DIR={params.freesurfer_dir} && "
+        "mri_convert {input.thal} {output.thal} &> {log} && "
         "mri_convert {input.aparcaseg} {output.aparcaseg} >> {log} 2>&1 && "
         "mergeseg --src {input.lRibbon} --merge {input.rRibbon} --o {output.ribbon_mgz} >> {log} 2>&1 && "
         "mri_convert {output.ribbon_mgz} {output.ribbon} >> {log} 2>&1"
@@ -112,15 +132,27 @@ rule fs_xfm_to_native:
         ribbon=rules.mgz2nii.output.ribbon,
         ref=config["input_path"]["T1w"],
     output:
-        thal=bids_fs_out(space="T1w", suffix="thalamus.nii.gz"),
-        aparcaseg=bids_fs_out(space="T1w", suffix="aparcaseg.nii.gz"),
-        ribbon=bids_fs_out(space="T1w", suffix="ribbon.nii.gz"),
+        thal=bids_fs_out(
+            space="T1w", 
+            desc="FreesurferThal", 
+            suffix="dseg.nii.gz",
+        ),
+        aparcaseg=bids_fs_out(
+            space="T1w",
+            desc="aparcaseg",
+            suffix="dseg.nii.gz",
+        ),
+        ribbon=bids_fs_out(
+            space="T1w", 
+            desc="ribbon",
+            suffix="dseg.nii.gz",
+        ),
     threads: 8
     resources:
         mem_mb=16000,
         time=30,
     log:
-        f"{config['output_dir']}/logs/freesurfer/{{subject}}/fs_xfm_to_native.log",
+        f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/fs_xfm_to_native.log",
     group: "freesurfer"
     container:
         config["singularity"]["neuroglia-core"]
