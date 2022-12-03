@@ -16,8 +16,7 @@ bids_anat = partial(
 
 bids_labelmerge = partial(
     bids,
-    root=labelmerge_dir,
-    datatype="anat",
+    root=str(Path(labelmerge_dir) / "combined"),
     **config["subj_wildcards"],
 )
 
@@ -44,42 +43,77 @@ rule cp_zona_tsv:
         "cp -v {input.zona_tsv} {output.zona_tsv}"
 
 
-rule xfm2native:
-    """Transform from subcortical parcellations from chosen template space to subject native space"""
+rule reg2native:
+    """Create transfroms from chosen template space to subject native space via ANTsRegistrationSyNQuick"""
     input:
-        seg=str(
-            Path(workflow.basedir).parent
-            / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
-            / Path(config["zona_bb_subcortex"][config["Space"]]["seg"])
-        ),
-        seg_anat=str(
+        template=str(
             Path(workflow.basedir).parent
             / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
             / Path(config["zona_bb_subcortex"][config["Space"]]["T1w"])
         ),
-        ref=config["input_path"]["T1w"],
-    output:
-        xfm=bids_anat(
-            desc=f"from{config['Space']}toNative",
-            suffix="xfm.mat",
+        target=config["input_path"]["T1w"], 
+    params:
+        out_dir=directory(bids_anat(root=zona_dir)),
+        out_prefix=bids_anat(
+            desc=f"from{config['Space']}toNative_",
         ),
-        nii=bids_anat(
-            space="T1w",
-            desc="ZonaBB",
-            suffix="dseg.nii.gz",
+    output:
+        warp = bids_anat(
+            desc=f"from{config['Space']}toNative",
+            suffix="1Warp.nii.gz",
+        ),
+        affine = bids_anat(
+            desc=f"from{config['Space']}toNative",
+            suffix="0GenericAffine.mat",
         ),
     threads: 8
     resources:
         mem_mb=32000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/xfm2native.log",
+        f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/reg2native.log",
     group: "subcortical"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "flirt -in {input.seg_anat} -ref {input.ref} -omat {output.xfm} &> {log} && "
-        "applywarp --rel --interp=nn -i {input.seg} -r {input.ref} -w {output.xfm} -o {output.nii} >> {log} 2>&1"
+        "mkdir -p {params.out_dir} && "
+        "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
+        "antsRegistrationSyNQuick.sh -n {threads} -d 3 " 
+        "-f {input.target} -m {input.template} "
+        "-o {params.out_prefix} &> {log}"
+
+rule warp2native:
+    """Warp subcortical parcellations to subject native space"""
+    input:
+        dseg=str(
+            Path(workflow.basedir).parent
+            / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
+            / Path(config["zona_bb_subcortex"][config["Space"]]["seg"])
+        ),
+        target=rules.reg2native.input.target,
+        warp=rules.reg2native.output.warp,
+        affine=rules.reg2native.output.affine,
+    output:
+        nii=bids_anat(
+            space="T1w",
+            desc="ZonaBB",
+            suffix="dseg.nii.gz",
+        )
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=10,
+    log:
+        f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/warp2native.log",
+    group: "subcortical"
+    container:
+        config["singularity"]["ants"]
+    shell:
+        "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
+        "antsApplyTransforms -v -d 3 -n MultiLabel "
+        "-i {input.dseg} -r {input.target} "
+        "-t {input.warp} -t {input.affine} "
+        "-o {output.nii} &> {log}" 
 
 
 # TODO: Add back later on
@@ -114,7 +148,7 @@ rule rm_bb_thal:
     3. Add labels following thalamus ROI back to segmentation
     """
     input:
-        seg=rules.xfm2native.output.nii,
+        seg=rules.warp2native.output.nii,
     output:
         seg=bids_anat(
             space="T1w",
@@ -165,7 +199,7 @@ rule labelmerge:
         ),
     params:
         zona_dir=zona_dir,
-        fs_dir=str(Path(config["output_dir"]) / "freesurfer"),
+        fs_dir=rules.thalamic_segmentation.input.freesurfer_dir,
         zona_desc="ZonaBBSubcor",
         fs_desc="FreesurferThal",
         labelmerge_dir=directory(labelmerge_dir),
@@ -193,11 +227,9 @@ rule labelmerge:
     resources:
         mem_mb=32000,
         time=10,
-    log:
-        f"{config['output_dir']}/logs/labelmerge/sub-{{wildcard.subject}}/labelmerge.log",
     group: "subcortical"
     shell:
-        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} -c1 &> {log}"
+        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} -c all --force-output"
 
 
 rule binarize:
@@ -270,4 +302,4 @@ rule create_convex_hull:
     container:
         config["singularity"]["dbsc"]
     script:
-        "../resources/zona_bb_subcortex/convexHull_roi.py"
+        "../scripts/zona_bb_subcortex/convexHull_roi.py"
