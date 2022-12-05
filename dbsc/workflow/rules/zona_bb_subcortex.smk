@@ -143,7 +143,7 @@ rule labelmerge:
                 desc="ZonaBBSubcor",
                 suffix="dseg.nii.gz",
             ),
-            subject=config["input_lists"]["dwi"]["subject"],
+            subject=config["input_lists"]["T1w"]["subject"],
         ),
     params:
         zona_dir=zona_dir,
@@ -160,7 +160,7 @@ rule labelmerge:
                 desc="combined",
                 suffix="dseg.nii.gz",
             ),
-            subject=config["input_lists"]["dwi"]["subject"],
+            subject=config["input_lists"]["T1w"]["subject"],
         ),
         tsv=expand(
             bids_labelmerge(
@@ -169,7 +169,7 @@ rule labelmerge:
                 desc="combined",
                 suffix="dseg.tsv",
             ),
-            subject=config["input_lists"]["dwi"]["subject"],
+            subject=config["input_lists"]["T1w"]["subject"],
         ),
     shell:
         "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} -c1"
