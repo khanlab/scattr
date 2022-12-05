@@ -153,23 +153,21 @@ parse_args:
 
 # Workflow specific config
 # Spaces available (MNI152, MNINlin2009bAsym)
-Space: MNI152
+Space: MNI152NLin6Asym
 
 zona_bb_subcortex:
-  MNI152:
-    dir: 'resources/MNI152'
-    T1w: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNI152_T1w.nii.gz'
-    seg: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNI152_ZonaBBSubCorSeg.nii.gz'
-    exclude: 'resources/MNI152/sub-SNSX32NLin2020Asym_space-MNI152_desc-exclude_ROI.nii.gz'
-  MNI2009:
-    dir: 'resources/MNI2009b'
-    T1w: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNI152_T1w.nii.gz'
-    seg: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNINlin2009bAsym_ZonaBBSubCorSeg.nii.gz'
-    exclude: 'resources/MNI2009b/sub-SNSX32NLin2020Asym_space-MNINlin2009bAsym_desc-exclude_ROI.nii.gz'
+  tsv: 'resources/zona_bb_subcortex/desc-ZonaBBSubcor_dseg.tsv'
+  MNI152NLin6Asym:
+    dir: 'resources/zona_bb_subcortex/MNI152NLin6Asym/'
+    T1w: 'tpl-MNI152NLin6Asym_res-04_desc-brain_T1w.nii.gz'
+    seg:  'sub-SNSX32NLin2020Asym_space-MNI152NLin6Asym_desc-ZonaBBSubcor_dseg.nii.gz'
+  MNI152NLin2009bAsym:
+    dir: 'resources/zona_bb_subcortex/MNI152NLin2009bAsym/'
+    seg: 'sub-SNSX32NLin2020Asym_space-MNI152NLin2009bAsym_desc-ZonaBBSubcor_dseg.nii.gz'
 
 # NOTE: This may not be needed with labelmerge
 freesurfer:
-  labels: 'resources/freesurfer/fs_labels.csv'
+  tsv: 'resources/freesurfer/desc-FreesurferThal_dseg.tsv'
 
 # Containers
 # NOTE: Update from latest to use specific tags
@@ -177,5 +175,6 @@ singularity:
   freesurfer: "docker://pwighton/freesurfer:7.2.0"
   neuroglia-core: "docker://khanlab/neuroglia-core:latest"
   mrtrix: "docker://brainlife/mrtrix:3.0.3"
+  labelmerge: "docker://kaitj/labelmerge:v0.1.0"
 
 fs_license: /path/to/fs/license
