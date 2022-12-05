@@ -1,21 +1,28 @@
-from pathlib import Path
-from functools import partial
-
 import numpy as np
 
 
 # Directories
+responsemean_dir = config.get("responsemean_dir")
+dwi_dir = config.get("dwi_dir")
 mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
 
 # Make directory if it doesn't exist
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
 
 # Parameters
-responsemean_flag = config.get("responsemean_dir")
 shells = config.get("shells")
 lmax = config.get("lmax")
 
 # BIDS partials
+bids_dwi = partial(
+    bids,
+    root=dwi_dir,
+    datatype="dwi",
+    space="T1w",
+    desc="preproc",
+    **config["subj_wildcards"],
+)
+
 bids_response_out = partial(
     bids,
     root=mrtrix_dir,
@@ -50,12 +57,30 @@ bids_anat_out = partial(
 
 
 # ------------ MRTRIX PREPROC BEGIN ----------#
+
+
 rule nii2mif:
     input:
-        dwi=config["input_path"]["dwi"],
-        bval=re.sub(".nii.gz", ".bval", config["input_path"]["dwi"]),
-        bvec=re.sub(".nii.gz", ".bvec", config["input_path"]["dwi"]),
-        mask=config["input_path"]["mask"],
+        dwi=(
+            bids_dwi(suffix="dwi.nii.gz")
+            if dwi_dir
+            else config["input_path"]["dwi"]
+        ),
+        bval=(
+            bids_dwi(suffix="dwi.bval")
+            if dwi_dir
+            else re.sub(".nii.gz", ".bval", config["input_path"]["dwi"])
+        ),
+        bvec=(
+            bids_dwi(suffix="dwi.bvec")
+            if dwi_dir
+            else re.sub(".nii.gz", ".bvec", config["input_path"]["dwi"])
+        ),
+        mask=(
+            bids_dwi(suffix="mask.nii.gz")
+            if dwi_dir
+            else config["input_path"]["mask"]
+        ),
     output:
         dwi=bids(
             root=mrtrix_dir,
@@ -115,16 +140,20 @@ rule dwi2response:
 
 rule responsemean:
     """Compute average response function"""
+    # DOUBLE CHECK
     input:
-        subject_rf=bids_response_out(
-            desc="{tissue}",
-            **config["subj_wildcards"],
+        subject_rf=expand(
+            bids_response_out(
+                subject="{subject}",
+                desc="{tissue}",
+            ),
+            allow_missing=True,
+            subject=config["input_lists"]["T1w"]["subject"],
         ),
     output:
         avg_rf=bids_response_out(
             root=str(Path(mrtrix_dir) / "avg"),
             desc="{tissue}",
-            **config["subj_wildcards"],
         ),
     threads: workflow.cores
     group:
@@ -141,24 +170,30 @@ rule dwi2fod:
         dwi=rules.nii2mif.output.dwi,
         mask=rules.nii2mif.output.mask,
         wm_rf=(
-            str(Path(config["responsemean_dir"]) / "desc-wm_response.txt")
-            if responsemean_flag
+            str(Path(responsemean_dir) / "desc-wm_response.txt")
+            if responsemean_dir
             else expand(
-                rules.responsemean.output.avg_rf, tissue="wm", allow_missing=True
+                rules.responsemean.output.avg_rf,
+                tissue="wm",
+                allow_missing=True,
             )
         ),
         gm_rf=(
-            str(Path(config["responsemean_dir"]) / "desc-gm_response.txt")
-            if responsemean_flag
+            str(Path(responsemean_dir) / "desc-gm_response.txt")
+            if responsemean_dir
             else expand(
-                rules.responsemean.output.avg_rf, tissue="gm", allow_missing=True
+                rules.responsemean.output.avg_rf,
+                tissue="gm",
+                allow_missing=True,
             )
         ),
         csf_rf=(
-            str(Path(config["responsemean_dir"]) / "desc-csf_response.txt")
-            if responsemean_flag
+            str(Path(responsemean_dir) / "desc-csf_response.txt")
+            if responsemean_dir
             else expand(
-                rules.responsemean.output.avg_rf, tissue="csf", allow_missing=True
+                rules.responsemean.output.avg_rf,
+                tissue="csf",
+                allow_missing=True,
             )
         ),
     params:
@@ -283,7 +318,7 @@ rule tckgen:
         mask=rules.nii2mif.output.mask,
         cortical_ribbon=rules.fs_xfm_to_native.output.ribbon,
         convex_hull=rules.create_convex_hull.output.convex_hull,
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     params:
         step=config["step"],
         sl=config["sl_count"],
@@ -333,7 +368,7 @@ rule tck2connectome:
     input:
         weights=rules.tcksift2.output.weights,
         tck=rules.tckgen.output.tck,
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     params:
         radius=config["radial_search"],
     output:
@@ -383,11 +418,9 @@ rule connectome2tck:
         "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -filters_per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {output.edge_weight} {input.tck} {input.sl_assignment} {output.edge_tck} "
 
 
-# NOTE: Use labelmerge split segs here?
 rule create_roi_mask:
-    # EXPAND OVER NODE1 IN RULE ALL
     input:
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     output:
         roi_mask=temp(
             bids_anat_out(
@@ -416,7 +449,7 @@ rule create_exclude_mask:
         ),
         lZI=bids_anat_out(desc="21", suffix="mask.mif"),
         rZI=bids_anat_out(desc="22", suffix="mask.mif"),
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     output:
         filter_mask=temp(
             bids_anat_out(
@@ -438,7 +471,7 @@ rule filter_tck:
         filter_mask=rules.create_exclude_mask.output.filter_mask,
         tck=rules.connectome2tck.output.edge_tck,
         weights=rules.tck2connectome.output.node_weights,
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     output:
         filtered_tck=temp(
             bids_tractography_out(
@@ -503,7 +536,7 @@ rule filtered_tck2connectome:
     input:
         weights=rules.combine_filtered.output.combined_weights,
         tck=rules.combine_filtered.output.combined_tck,
-        subcortical_seg=rules.add_brainstem_new_seg.output.seg,
+        subcortical_seg=rules.add_brainstem.output.mask,
     params:
         radius=config["radial_search"],
     output:

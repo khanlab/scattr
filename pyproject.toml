@@ -28,6 +28,7 @@ isort = "^5.10.1"
 poethepoet = "^0.13.1"
 pre-commit = "^2.17.0"
 snakefmt = "^0.6.1"
+yamlfix = "^1.1.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -35,14 +36,28 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
 setup = "pre-commit install"
+yamlfix = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix {} \\;" }
 isort = "isort dbsc/*.py"
-black = "black dbsc -l 79"
+black = "black dbsc"
+flake8 = "flake8 dbsc"
 snakefmt = "snakefmt dbsc"
-quality = ["isort", "black", "snakefmt"]
+quality = ["yamlfix", "isort", "black", "flake8", "snakefmt"]
+test_base = { shell = "python ./dbsc/run.py ./test/data/bids ./test/data/derivatives/ participant -np --force-output" }
+test_freesurfer = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --freesurfer_dir ./test/data/derivatives/freesurfer -np --force-output" }
+test_responsemean = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --responsemean_dir ./test/data/derivatives/mrtrix/avg -np --force-output" }
+test_dwi = { shell = "python ./dbsc/run.py ./test/data/bids_nodwi test/data/derivatives/ participant --dwi_dir ./test/data/derivatives/prepdwi -np --force-output" }
+test = ["test_base", "test_freesurfer", "test_responsemean", "test_dwi"]
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
 
+[tool.black]
+line-length = 79
+
+[tool.flake8]
+ignore = 'E501'
+
 [tool.snakefmt]
+line_length = 79
 include = '\.smk$|^Snakefile'

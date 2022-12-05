@@ -1,12 +1,7 @@
-from pathlib import Path
-from functools import partial
-
 # Directories
-freesurfer_dir = (
-    config.get("freesurfer_dir")
-    if config.get("freesurfer_dir")
-    else str(Path(config["output_dir"]) / "freesurfer")
-)
+freesurfer_dir = str(Path(config["output_dir"]) / "freesurfer")
+if config.get("freesurfer_dir"):
+    freesurfer_dir = config.get("freesurfer_dir")
 
 # BIDS partials
 bids_fs_out = partial(
@@ -18,6 +13,22 @@ bids_fs_out = partial(
 
 # Freesurfer references (with additional in rules as necessary)
 # B. Fischl, A. van der Kouwe, C. Destrieux, E. Halgren, F. Ségonne, D.H. Salat, E. Busa, L.J. Seidman, J. Goldstein, D. Kennedy, V. Caviness, N. Makris, B. Rosen, A.M. Dale. Automatically parcellating the human cerebral cortex. Cereb. Cortex, 14 (2004), pp. 11-22, 10.1093/cercor/bhg087
+
+
+rule cp_fs_tsv:
+    """Copy tsv to freesurfer dir
+    """
+    input:
+        fs_tsv=str(
+            Path(workflow.basedir).parent / Path(config["freesurfer"]["tsv"])
+        ),
+    output:
+        fs_tsv=expand(
+            "{freesurfer_dir}/desc-FreesurferThal_dseg.tsv",
+            freesurfer_dir=freesurfer_dir,
+        ),
+    shell:
+        "cp -v {input.fs_tsv} {output.fs_tsv}"
 
 
 rule thalamic_segmentation:
@@ -32,7 +43,10 @@ rule thalamic_segmentation:
     params:
         fs_license=config["fs_license"],
     output:
-        thal_seg=str(Path(freesurfer_dir) / "{subject}/mri/ThalamicNuclei.v12.T1.mgz"),
+        thal_seg=str(
+            Path(freesurfer_dir)
+            / "sub-{subject}/mri/ThalamicNuclei.v12.T1.mgz"
+        ),
     threads: workflow.cores
     container:
         config["singularity"]["freesurfer"]
@@ -51,7 +65,9 @@ rule mgz2nii:
     """
     input:
         thal=rules.thalamic_segmentation.output.thal_seg,
-        aparcaseg=str(Path(freesurfer_dir) / "sub-{subject}/mri/aparc+aseg.mgz"),
+        aparcaseg=str(
+            Path(freesurfer_dir) / "sub-{subject}/mri/aparc+aseg.mgz"
+        ),
         lRibbon=str(Path(freesurfer_dir) / "sub-{subject}/mri/lh.ribbon.mgz"),
         rRibbon=str(Path(freesurfer_dir) / "sub-{subject}/mri/rh.ribbon.mgz"),
     params:

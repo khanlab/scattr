@@ -28,6 +28,10 @@ wildcard_constraints:
 # ---- end snakebids boilerplate ------------------------------------------------
 
 from pathlib import Path
+from functools import partial
+
+if config.get("dwi_dir"):
+    print(f"Searching {config.get('dwi_dir')} for dwi and mask images...")
 
 
 # Rules
@@ -38,13 +42,9 @@ include: "rules/mrtpipelines.smk"
 
 rule all:
     input:
-        expand(
-            bids(
-                root=str(Path(config["output_dir"]) / "mrtrix"),
-                subject="{subject}",
-                datatype="tractography",
-                desc="filteredsubcortical",
-                suffix="nodeAssignment.txt",
-            ),
-            subject=config["input_lists"]["dwi"]["subject"],
+        files=expand(
+            rules.filtered_tck2connectome.output.sl_assignment,
+            subject=config["input_lists"]["T1w"]["subject"],
         ),
+        fs_tsv=rules.cp_fs_tsv.output.fs_tsv,
+        zona_tsv=rules.cp_zona_tsv.output.zona_tsv,
