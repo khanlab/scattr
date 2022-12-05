@@ -39,6 +39,7 @@ rule cp_zona_tsv:
     resources:
         mem_mb=8000,
         time=10,
+    group: "dseg_tsv"
     shell:
         "cp -v {input.zona_tsv} {output.zona_tsv}"
 
