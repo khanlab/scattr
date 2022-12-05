@@ -100,7 +100,7 @@ rule nii2mif:
         time=10,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/nii2mif.log",
-    group: "mrtpipelines_1"
+    group: "dwiproc"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -139,7 +139,7 @@ rule dwi2response:
         time=30,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2responsemif.log",
-    group: "mrtpipelines_1"
+    group: "dwiproc"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -168,7 +168,7 @@ rule responsemean:
         time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/{{tissue}}_responsemean.log",
-    group: "mrtpipelines_group"
+    group: "dwiproc_group"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -234,7 +234,7 @@ rule dwi2fod:
         time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2fod.log",
-    group: "mrtpipelines_2"
+    group: "diffmodel"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -277,7 +277,7 @@ rule mtnormalise:
         time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/mtnormalise.log",
-    group: "mrtpipelines_2"
+    group: "diffmodel"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -305,7 +305,7 @@ rule dwinormalise:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwinormalise.log",
     container:
         config["singularity"]["mrtrix"]
-    group: "mrtpipelines_1"
+    group: "dwiproc"
     shell:
         "dwinormalise individual -nthreads {threads} {input.dwi} {input.mask} {output.dwi} &> {log}"
 
@@ -326,7 +326,7 @@ rule dwi2tensor:
         time=30,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2tensor.log",
-    group: "mrtpipelines_1"
+    group: "dwiproc"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -345,7 +345,7 @@ rule tckgen:
         mask=rules.nii2mif.output.mask,
         cortical_ribbon=rules.fs_xfm_to_native.output.ribbon,
         convex_hull=rules.create_convex_hull.output.convex_hull,
-        subcortical_seg=rules.add_brainstem.output.mask,
+        subcortical_seg=rules.labelmerge.output.seg,
     params:
         step=config["step"],
         sl=config["sl_count"],
@@ -357,7 +357,7 @@ rule tckgen:
     threads: workflow.cores,
     resources:
         mem_mb=128000,
-        time=1440,
+        time=60*24,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tckgen.log",
     container:
@@ -380,7 +380,7 @@ rule tcksift2:
     threads: workflow.cores,
     resources:
         mem_mb=128000,
-        time=1440,
+        time=60*3,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tcksift2.log",
     container:
@@ -389,77 +389,12 @@ rule tcksift2:
         "tcksift2 -nthreads {threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights} &> {log}"
 
 
-# TODO (v0.2): ADD OPTION TO OUTPUT TDI MAP
-
-
-rule tck2connectome:
-    """
-    Smith, R. E.; Tournier, J.-D.; Calamante, F. & Connelly, A. The effects of SIFT on the reproducibility and biological accuracy of the structural connectome. NeuroImage, 2015, 104, 253-265"
-
-    TODO (v0.2): ADD OPTION TO MULTIPLY BY MU COEFFICIENT
-    """
-    input:
-        weights=rules.tcksift2.output.weights,
-        tck=rules.tckgen.output.tck,
-        subcortical_seg=rules.add_brainstem.output.mask,
-    params:
-        radius=config["radial_search"],
-    output:
-        sl_assignment=bids_tractography_out(
-            desc="subcortical",
-            suffix="nodeAssignment.txt",
-        ),
-        node_weights=bids_tractography_out(
-            desc="subcortical",
-            suffix="nodeWeights.csv",
-        ),
-    threads: workflow.cores
-    resources:
-        mem_mb=128000,
-        time=120,
-    log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tck2connectome.log",
-    group: "mrtpipelines_3"
-    container:
-        config["singularity"]["mrtrix"]
-    shell:
-        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} &> {log}"
-
-
-rule connectome2tck:
-    input:
-        node_weights=rules.tck2connectome.output.node_weights,
-        sl_assignment=rules.tck2connectome.output.sl_assignment,
-        tck=rules.tckgen.output.tck,
-    params:
-        nodes=",".join(str(num) for num in range(1, 73)),
-    output:
-        edge_weight=temp(
-            bids_tractography_out(
-                desc="subcortical",
-                suffix="tckWeights",
-            )
-        ),
-        edge_tck=temp(
-            bids_tractography_out(
-                desc="subcortical",
-                suffix="from",
-            )
-        ),
-    threads: workflow.cores
-    resources:
-        mem_mb=128000,
-        time=120,
-    group: "mrtpipelines_3"
-    container:
-        config["singularity"]["mrtrix"]
-    shell:
-        "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -filters_per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {output.edge_weight} {input.tck} {input.sl_assignment} {output.edge_tck}"
+idxes = np.triu_indices(72, k=1)
 
 
 rule create_roi_mask:
     input:
-        subcortical_seg=rules.add_brainstem.output.mask,
+        subcortical_seg=rules.labelmerge.output.seg,
     output:
         roi_mask=temp(
             bids_anat_out(
@@ -471,7 +406,7 @@ rule create_roi_mask:
     resources:
         mem_mb=32000,
         time=10,
-    group: "mrtpipelines_3"
+    group: "tract_masks"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -490,7 +425,7 @@ rule create_exclude_mask:
         ),
         lZI=bids_anat_out(desc="21", suffix="mask.mif"),
         rZI=bids_anat_out(desc="22", suffix="mask.mif"),
-        subcortical_seg=rules.add_brainstem.output.mask,
+        subcortical_seg=rules.labelmerge.output.seg,
     output:
         filter_mask=temp(
             bids_anat_out(
@@ -502,11 +437,103 @@ rule create_exclude_mask:
     resources:
         mem_mb=32000,
         time=10,
-    group: "mrtpipelines_3"
+    group: "tract_masks"
     container:
         config["singularity"]["mrtrix"]
     shell:
         "mrcalc -nthreads {threads} {input.subcortical_seg} 0 -neq {input.roi1} -sub {input.roi2} -sub {input.lZI} -sub {input.rZI} -sub {output.filter_mask}"
+
+# TODO (v0.2): ADD OPTION TO OUTPUT TDI MAP
+
+
+rule tck2connectome:
+    """
+    Smith, R. E.; Tournier, J.-D.; Calamante, F. & Connelly, A. The effects of SIFT on the reproducibility and biological accuracy of the structural connectome. NeuroImage, 2015, 104, 253-265"
+
+    TODO (v0.2): ADD OPTION TO MULTIPLY BY MU COEFFICIENT
+    """
+    input:
+        weights=rules.tcksift2.output.weights,
+        tck=rules.tckgen.output.tck,
+        subcortical_seg=rules.labelmerge.output.seg,
+    params:
+        radius=config["radial_search"],
+    output:
+        sl_assignment=bids_tractography_out(
+            desc="subcortical",
+            suffix="nodeAssignment.txt",
+        ),
+        node_weights=bids_tractography_out(
+            desc="subcortical",
+            suffix="nodeWeights.csv",
+        ),
+    threads: workflow.cores
+    resources:
+        mem_mb=128000,
+        time=30,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tck2connectome.log",
+    group: "tractography_update"
+    container:
+        config["singularity"]["mrtrix"]
+    shell:
+        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} &> {log}"
+
+
+rule connectome2tck:
+    input:
+        node_weights=rules.tck2connectome.output.node_weights,
+        sl_assignment=rules.tck2connectome.output.sl_assignment,
+        tck=rules.tckgen.output.tck,
+    params:
+        nodes=",".join(str(num) for num in range(1, 73)),
+        edge_weight_prefix=temp(
+            bids_tractography_out(
+                desc="subcortical",
+                suffix="tckWeights",
+            )
+        ),
+        edge_tck_prefix=temp(
+            bids_tractography_out(
+                desc="subcortical",
+                suffix="from",
+            )
+        ),
+    output:
+        edge_weight=temp(
+            expand(
+                bids_tractography_out(
+                    desc="subcortical",
+                    suffix="tckWeights{node1}to{node2}.csv",
+                ),
+                zip,
+                node1=list(idxes[0] + 1),
+                node2=list(idxes[1] + 1),
+                allow_missing=True,
+            ),
+        ),
+        edge_tck=temp(
+            expand(
+                bids_tractography_out(
+                    desc="subcortical",
+                    suffix="from{node1}to{node2}.tck",
+                ),
+                zip,
+                node1=list(idxes[0] + 1),
+                node2=list(idxes[1] + 1),
+                allow_missing=True,
+            ),
+        ),
+    threads: workflow.cores
+    resources:
+        mem_mb=128000,
+        time=60,
+    group: "tractography_update"
+    container:
+        config["singularity"]["mrtrix"]
+    shell:
+        "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -files per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {params.edge_weight_prefix} {input.tck} {input.sl_assignment} {params.edge_tck_prefix}"
+
 
 
 rule filter_tck:
@@ -514,7 +541,7 @@ rule filter_tck:
         filter_mask=rules.create_exclude_mask.output.filter_mask,
         tck=rules.connectome2tck.output.edge_tck,
         weights=rules.tck2connectome.output.node_weights,
-        subcortical_seg=rules.add_brainstem.output.mask,
+        subcortical_seg=rules.labelmerge.output.seg,
     output:
         filtered_tck=temp(
             bids_tractography_out(
@@ -530,17 +557,14 @@ rule filter_tck:
         ),
     threads: workflow.cores
     resources:
-        mem_mb=128000,
-        time=60,
+        mem_mb=64000,
+        time=120,
     group:
-        "subject_2"
+        "tractography_update"
     container:
         config["singularity"]["mrtrix"]
     shell:
         "tckedit -nthreads {threads} -exclude {input.filter_mask} -tck_weights_in {input.weights} -tck_weights_out {output.filtered_weights} {input.tck} {output.filtered_tck}"
-
-
-idxes = np.triu_indices(72, k=1)
 
 
 rule combine_filtered:
@@ -575,7 +599,7 @@ rule combine_filtered:
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/combine_filtered.log",
     group:
-        "subject_2"
+        "tractography_update"
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -587,7 +611,7 @@ rule filtered_tck2connectome:
     input:
         weights=rules.combine_filtered.output.combined_weights,
         tck=rules.combine_filtered.output.combined_tck,
-        subcortical_seg=rules.add_brainstem.output.mask,
+        subcortical_seg=rules.labelmerge.output.seg,
     params:
         radius=config["radial_search"],
     output:
@@ -606,7 +630,7 @@ rule filtered_tck2connectome:
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/filtered_tck2connectome.log",
     group:
-        "subject_2"
+        "tractography_update"
     container:
         config["singularity"]["mrtrix"]
     shell:

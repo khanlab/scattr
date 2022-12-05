@@ -31,6 +31,7 @@ rule cp_fs_tsv:
     resources:
         mem_mb=8000,
         time=10,
+    group: "dseg_tsv"
     shell:
         "cp -v {input.fs_tsv} {output.fs_tsv}"
 

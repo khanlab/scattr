@@ -25,6 +25,7 @@ pybids_inputs:
       suffix: "T1w"
       extension: ".nii.gz"
       datatype: "anat"
+      desc: "brain" # Reequire a skull-stripped brain
     wildcards:
       - subject
       - session
@@ -174,6 +175,7 @@ freesurfer:
 singularity:
   freesurfer: "docker://pwighton/freesurfer:7.2.0"
   neuroglia-core: "docker://khanlab/neuroglia-core:latest"
+  ants: "docker://kaczmarj/ants:2.3.4"
   mrtrix: "docker://brainlife/mrtrix:3.0.3"
   labelmerge: "docker://kaitj/labelmerge:v0.1.0"
   dbsc: "docker:kaitj/dbsc:v0.1.0"
