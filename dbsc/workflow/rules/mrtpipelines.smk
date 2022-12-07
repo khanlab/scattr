@@ -359,7 +359,8 @@ rule tckgen:
     threads: workflow.cores,
     resources:
         mem_mb=128000,
-        time=60*24,
+        # time=60*24,
+        time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tckgen.log",
     container:
@@ -397,53 +398,73 @@ idxes = np.triu_indices(72, k=1)
 rule create_roi_mask:
     input:
         subcortical_seg=rules.labelmerge.output.seg,
+    params:
+        roi_labels = list(idxes[0] + 1)
     output:
         roi_mask=temp(
-            bids_anat_out(
-                desc="{node1}",
-                suffix="mask.mif",
-            )
+            expand(
+                bids_anat_out(
+                    desc="{node1}",
+                    suffix="mask.mif",
+                ),
+            node1=list(idxes[0] + 1),
+            allow_missing=True,
+            ),
         ),
     threads: 8
     resources:
         mem_mb=32000,
-        time=10,
+        time=30,
     group: "tract_masks"
     container:
         config["singularity"]["mrtrix"]
-    shell:
-        "mrcalc -nthreads {threads} {input.subcortical_seg} {wildcards.node1} -eq {output.roi_mask}"
+    shell: # Parallelization within a single job
+        "parallel --jobs {threads} mrcalc {input.subcortical_seg} {{1}} -eq {{2}} ::: {params.roi_labels} :::+ {output.roi_mask}"
 
 
 rule create_exclude_mask:
     input:
-        roi1=bids_anat_out(
-            desc="{node1}",
-            suffix="mask.mif",
+        roi1=expand(
+            bids_anat_out(
+                desc="{node1}",
+                suffix="mask.mif",
+            ),
+            node1=list(idxes[0] + 1),
+            allow_missing=True,
         ),
-        roi2=bids_anat_out(
-            desc="{node2}",
-            suffix="mask.mif",
+        roi2=expand(
+            bids_anat_out(
+                desc="{node2}",
+                suffix="mask.mif",
+            ),
+            node2=list(idxes[1] + 1),
+            allow_missing=True,
         ),
         lZI=bids_anat_out(desc="21", suffix="mask.mif"),
         rZI=bids_anat_out(desc="22", suffix="mask.mif"),
         subcortical_seg=rules.labelmerge.output.seg,
     output:
         filter_mask=temp(
-            bids_anat_out(
-                desc="exclude{node1}AND{node2}",
-                suffix="mask.mif",
-            )
+            expand(
+                bids_anat_out(
+                    desc="exclude{node1}AND{node2}",
+                    suffix="mask.mif",
+                ),
+            zip,
+            node1=list(idxes[0] + 1),
+            node2=list(idxes[1] + 1),
+            allow_missing=True,
+            ),
         ),
     threads: 8
     resources:
         mem_mb=32000,
-        time=10,
+        time=30,
     group: "tract_masks"
     container:
         config["singularity"]["mrtrix"]
-    shell:
-        "mrcalc -nthreads {threads} {input.subcortical_seg} 0 -neq {input.roi1} -sub {input.roi2} -sub {input.lZI} -sub {input.rZI} -sub {output.filter_mask}"
+    shell: # Parallelization within a single job 
+        "parallel --jobs {threads} mrcalc {input.subcortical_seg} 0 -neq {{1}} -sub {{2}} -sub {input.lZI} -sub {input.rZI} -sub {{3}} ::: {input.roi1} :::+ {input.roi2} :::+ {output.filter_mask}"
 
 # TODO (v0.2): ADD OPTION TO OUTPUT TDI MAP
 
@@ -537,10 +558,12 @@ rule connectome2tck:
         "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -files per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {params.edge_weight_prefix} {input.tck} {input.sl_assignment} {params.edge_tck_prefix}"
 
 
-
 rule filter_tck:
     input:
-        filter_mask=rules.create_exclude_mask.output.filter_mask,
+        filter_mask=bids_anat_out(
+            desc="exclude{node1}AND{node2}",
+            suffix="mask.mif",
+        ),
         tck=rules.connectome2tck.output.edge_tck,
         weights=rules.tck2connectome.output.node_weights,
         subcortical_seg=rules.labelmerge.output.seg,
@@ -560,7 +583,7 @@ rule filter_tck:
     threads: workflow.cores
     resources:
         mem_mb=64000,
-        time=120,
+        time=60,
     group:
         "tractography_update"
     container:
@@ -597,7 +620,7 @@ rule combine_filtered:
     threads: workflow.cores
     resources:
         mem_mb=128000,
-        time=120,
+        time=60*3,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/combine_filtered.log",
     group:
@@ -628,7 +651,7 @@ rule filtered_tck2connectome:
     threads: workflow.cores
     resources:
         mem_mb=128000,
-        time=120,
+        time=60*3,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/filtered_tck2connectome.log",
     group:
