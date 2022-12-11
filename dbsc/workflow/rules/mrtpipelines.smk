@@ -1,3 +1,4 @@
+import nibabel as nib 
 import numpy as np
 
 
@@ -359,8 +360,7 @@ rule tckgen:
     threads: workflow.cores,
     resources:
         mem_mb=128000,
-        # time=60*24,
-        time=60,
+        time=60*24,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tckgen.log",
     container:
@@ -392,23 +392,34 @@ rule tcksift2:
         "tcksift2 -nthreads {threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights} &> {log}"
 
 
-idxes = np.triu_indices(72, k=1)
+# TODO: Implement within a rule
+def get_num_labels(img):
+    """Dynamically grab max number of labels for"""
+    img = nib.load(str(img))
+    img_data = img.get_fdata()
+
+    return len(np.unique(img_data[img_data>0]))
+
+
+num_labels = get_num_labels(rules.labelmerge.output.seg)
+idxes = np.triu_indices(num_labels, k=1)
 
 
 rule create_roi_mask:
     input:
         subcortical_seg=rules.labelmerge.output.seg,
     params:
-        roi_labels = list(idxes[0] + 1)
+        roi_labels=[str(i) for i in range(1, num_labels+1)],
+        out_dir=directory(bids_anat_out()),
     output:
         roi_mask=temp(
             expand(
                 bids_anat_out(
-                    desc="{node1}",
+                    desc="{node}",
                     suffix="mask.mif",
                 ),
-            node1=list(idxes[0] + 1),
-            allow_missing=True,
+                node=[i for i in range(1, num_labels+1)],
+                allow_missing=True,
             ),
         ),
     threads: 8
@@ -419,8 +430,8 @@ rule create_roi_mask:
     container:
         config["singularity"]["mrtrix"]
     shell: # Parallelization within a single job
+        "mkdir -p {params.out_dir} && "
         "parallel --jobs {threads} mrcalc {input.subcortical_seg} {{1}} -eq {{2}} ::: {params.roi_labels} :::+ {output.roi_mask}"
-
 
 rule create_exclude_mask:
     input:
@@ -459,7 +470,7 @@ rule create_exclude_mask:
     threads: 8
     resources:
         mem_mb=32000,
-        time=30,
+        time=60,
     group: "tract_masks"
     container:
         config["singularity"]["mrtrix"]
@@ -493,7 +504,7 @@ rule tck2connectome:
     threads: workflow.cores
     resources:
         mem_mb=128000,
-        time=30,
+        time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tck2connectome.log",
     group: "tractography_update"
@@ -505,11 +516,11 @@ rule tck2connectome:
 
 rule connectome2tck:
     input:
-        node_weights=rules.tck2connectome.output.node_weights,
+        node_weights=rules.tcksift2.output.weights,
         sl_assignment=rules.tck2connectome.output.sl_assignment,
         tck=rules.tckgen.output.tck,
     params:
-        nodes=",".join(str(num) for num in range(1, 73)),
+        nodes=",".join(str(num) for num in range(1, num_labels+1)),
         edge_weight_prefix=temp(
             bids_tractography_out(
                 desc="subcortical",
@@ -527,7 +538,7 @@ rule connectome2tck:
             expand(
                 bids_tractography_out(
                     desc="subcortical",
-                    suffix="tckWeights{node1}to{node2}.csv",
+                    suffix="tckWeights{node1}-{node2}.csv",
                 ),
                 zip,
                 node1=list(idxes[0] + 1),
@@ -539,7 +550,7 @@ rule connectome2tck:
             expand(
                 bids_tractography_out(
                     desc="subcortical",
-                    suffix="from{node1}to{node2}.tck",
+                    suffix="from{node1}-{node2}.tck",
                 ),
                 zip,
                 node1=list(idxes[0] + 1),
@@ -558,55 +569,35 @@ rule connectome2tck:
         "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -files per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {params.edge_weight_prefix} {input.tck} {input.sl_assignment} {params.edge_tck_prefix}"
 
 
-rule filter_tck:
+rule filter_combine_tck:
     input:
-        filter_mask=bids_anat_out(
-            desc="exclude{node1}AND{node2}",
-            suffix="mask.mif",
-        ),
+        filter_mask=rules.create_exclude_mask.output.filter_mask,
         tck=rules.connectome2tck.output.edge_tck,
-        weights=rules.tck2connectome.output.node_weights,
-        subcortical_seg=rules.labelmerge.output.seg,
-    output:
+        weights=rules.connectome2tck.output.edge_weight,
+    params:
         filtered_tck=temp(
-            bids_tractography_out(
-                desc="from{node1}to{node2}",
-                suffix="tractography.tck",
+            expand(
+                bids_tractography_out(
+                    desc="from{node1}-{node2}",
+                    suffix="tractography.tck",
+                ),
+                zip,
+                node1=list(idxes[0] + 1),
+                node2=list(idxes[1] + 1),
+                allow_missing=True,
             ),
         ),
         filtered_weights=temp(
-            bids_tractography_out(
-                desc="from{node1}to{node2}",
-                suffix="weights.csv",
+            expand(
+                bids_tractography_out(
+                    desc="from{node1}-{node2}",
+                    suffix="weights.csv",
+                ),
+                zip,
+                node1=list(idxes[0] + 1),
+                node2=list(idxes[1] + 1),
+                allow_missing=True,
             ),
-        ),
-    threads: workflow.cores
-    resources:
-        mem_mb=64000,
-        time=60,
-    group:
-        "tractography_update"
-    container:
-        config["singularity"]["mrtrix"]
-    shell:
-        "tckedit -nthreads {threads} -exclude {input.filter_mask} -tck_weights_in {input.weights} -tck_weights_out {output.filtered_weights} {input.tck} {output.filtered_tck}"
-
-
-rule combine_filtered:
-    input:
-        tck=expand(
-            rules.filter_tck.output.filtered_tck,
-            zip,
-            node1=list(idxes[0] + 1),
-            node2=list(idxes[1] + 1),
-            allow_missing=True,
-        ),
-        weights=expand(
-            rules.filter_tck.output.filtered_weights,
-            zip,
-            node1=list(idxes[0] + 1),
-            node2=list(idxes[1] + 1),
-            allow_missing=True,
         ),
     output:
         combined_tck=bids_tractography_out(
@@ -620,22 +611,26 @@ rule combine_filtered:
     threads: workflow.cores
     resources:
         mem_mb=128000,
-        time=60*3,
+        time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/combine_filtered.log",
     group:
         "tractography_update"
     container:
         config["singularity"]["mrtrix"]
-    shell:
-        "tckedit {input.tck} {output.combined_tck} &> {log} && "
-        "cat {input.weights} >> {output.combined_weights} >> {log} 2>&1"
+    shell: # Parallel tckedit hangs on its own, include combination rule to bypass
+        "parallel --jobs {threads} cp {{1}} {{2}} ::: {input.weights} :::+ {params.filtered_weights} && "
+        "parallel --jobs {threads} cp {{1}} {{2}} ::: {input.tck} :::+ {params.filtered_tck} && "
+        "parallel --jobs {threads} tckedit -force -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && " # 'true' to overcome smk bash strict 
+        "tckedit {params.filtered_tck} {output.combined_tck} &> {log} && "
+        "cat {params.filtered_weights} >> {output.combined_weights} && "
+        "rm *from*_weights.csv *from*_tractography.tck"
 
 
 rule filtered_tck2connectome:
     input:
-        weights=rules.combine_filtered.output.combined_weights,
-        tck=rules.combine_filtered.output.combined_tck,
+        weights=rules.filter_combine_tck.output.combined_weights,
+        tck=rules.filter_combine_tck.output.combined_tck,
         subcortical_seg=rules.labelmerge.output.seg,
     params:
         radius=config["radial_search"],
@@ -659,7 +654,7 @@ rule filtered_tck2connectome:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} -force &> {log}"
+        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} &> {log}"
 
 
 # ------------ MRTRIX TRACTOGRAPHY END ----------#

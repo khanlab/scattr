@@ -54,7 +54,7 @@ rule reg2native:
         ),
         target=config["input_path"]["T1w"], 
     params:
-        out_dir=directory(bids_anat(root=zona_dir)),
+        out_dir=directory(bids_anat()),
         out_prefix=bids_anat(
             desc=f"from{config['Space']}toNative_",
         ),
