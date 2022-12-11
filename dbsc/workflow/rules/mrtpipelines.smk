@@ -398,18 +398,25 @@ def get_num_labels(img):
     img = nib.load(str(img))
     img_data = img.get_fdata()
 
-    return len(np.unique(img_data[img_data>0]))
+    num_labels = len(np.unique(img_data[img_data>0]))
+
+    return num_labels
 
 
-num_labels = get_num_labels(rules.labelmerge.output.seg)
-idxes = np.triu_indices(num_labels, k=1)
+def get_nodes(num_labels):
+    """Grab pairs of indices for nodes"""
+    return np.triu_indices(num_labels, k=1)
 
 
 rule create_roi_mask:
     input:
         subcortical_seg=rules.labelmerge.output.seg,
     params:
-        roi_labels=[str(i) for i in range(1, num_labels+1)],
+        roi_labels=[
+            str(i) for i in range(
+                1, get_num_labels(rules.labelmerge.output.seg)+1
+            )
+        ],
         out_dir=directory(bids_anat_out()),
     output:
         roi_mask=temp(
