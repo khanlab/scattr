@@ -392,42 +392,13 @@ rule tcksift2:
         "tcksift2 -nthreads {threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights} &> {log}"
 
 
-# TODO: Implement within a rule
-def get_num_labels(img):
-    """Dynamically grab max number of labels for"""
-    img = nib.load(str(img))
-    img_data = img.get_fdata()
-
-    num_labels = len(np.unique(img_data[img_data>0]))
-
-    return num_labels
-
-
-def get_nodes(num_labels):
-    """Grab pairs of indices for nodes"""
-    return np.triu_indices(num_labels, k=1)
-
-
-rule create_roi_mask:
+checkpoint create_roi_mask:
     input:
         subcortical_seg=rules.labelmerge.output.seg,
-    params:
-        roi_labels=[
-            str(i) for i in range(
-                1, get_num_labels(rules.labelmerge.output.seg)+1
-            )
-        ],
-        out_dir=directory(bids_anat_out()),
+        num_labels=rules.get_num_nodes.output.num_labels,
     output:
-        roi_mask=temp(
-            expand(
-                bids_anat_out(
-                    desc="{node}",
-                    suffix="mask.mif",
-                ),
-                node=[i for i in range(1, num_labels+1)],
-                allow_missing=True,
-            ),
+        out_dir=directory(bids_anat_out(
+            root=str(Path(mrtrix_dir) / "roi_masks"))
         ),
     threads: 8
     resources:
@@ -436,44 +407,84 @@ rule create_roi_mask:
     group: "tract_masks"
     container:
         config["singularity"]["mrtrix"]
-    shell: # Parallelization within a single job
-        "mkdir -p {params.out_dir} && "
-        "parallel --jobs {threads} mrcalc {input.subcortical_seg} {{1}} -eq {{2}} ::: {params.roi_labels} :::+ {output.roi_mask}"
+    run:
+        # Create output directory
+        Path(output.out_dir).mkdir(parents=True, exist_ok=True)
 
-rule create_exclude_mask:
-    input:
-        roi1=expand(
+        # Read number of labels
+        with open(input.num_labels, "r") as f:
+            num_labels = int(f.read().strip())
+
+        # Build mask list
+        roi_mask_list, label_list = [], []
+        for node_idx in range(1, num_labels+1):
+            label_list.append(node_idx)
+            roi_mask_list.append(
+                expand(
+                    bids_anat_out(desc=node_idx, suffix="mask.mif"), 
+                    **wildcards,
+                )
+            )
+
+        # Get individual masks - parallelize within job
+        shell("parallel --jobs {threads} mrcalc {input.subcortical_seg} {{1}} -eq {{2}} ::: {label_list} :::+ {roi_mask_list}")
+
+
+def aggregate_rois(wildcards):
+    """Grab all created roi masks"""
+    out_dir = checkpoints.create_roi_mask.get(**wildcards).output.out_dir
+    roi_masks = expand(
+        bids_anat_out(
+            root=str(Path(mrtrix_dir) / "roi_masks"), 
+            desc="{node}", 
+            suffix="mask.mif"
+        ),
+        **wildcards,
+        allow_missing=True,
+    )
+    bids_anat_out(root=str(Path(mrtrix_dir) / "exclude_mask"))
+    # Get node label wildcard
+    node = glob_wildcards(roi_masks).node
+    
+    # Build node pairs
+    node_pairs = np.triu_indices(len(idx), k=1)
+
+    return {
+        "roi1": expand(
             bids_anat_out(
+                root=str(Path(mrtrix_dir) / "roi_masks"),
                 desc="{node1}",
                 suffix="mask.mif",
             ),
-            node1=list(idxes[0] + 1),
+            node1=list(node_pairs[0]+1),
             allow_missing=True,
         ),
-        roi2=expand(
+        "roi2": expand(
             bids_anat_out(
+                root=str(Path(mrtrix_dir) / "roi_masks"),
                 desc="{node2}",
                 suffix="mask.mif",
             ),
-            node2=list(idxes[1] + 1),
+            node2=list(node_pairs[1]+1),
             allow_missing=True,
-        ),
+        )
+    }
+
+
+checkpoint create_exclude_mask:
+    input:
+        unpack(aggregate_rois),
         lZI=bids_anat_out(desc="21", suffix="mask.mif"),
         rZI=bids_anat_out(desc="22", suffix="mask.mif"),
         subcortical_seg=rules.labelmerge.output.seg,
+    params:
+        mask_dir=bids_anat_out(
+            root=str(Path(mrtrix_dir) / "roi_masks"),
+        )
     output:
-        filter_mask=temp(
-            expand(
-                bids_anat_out(
-                    desc="exclude{node1}AND{node2}",
-                    suffix="mask.mif",
-                ),
-            zip,
-            node1=list(idxes[0] + 1),
-            node2=list(idxes[1] + 1),
-            allow_missing=True,
-            ),
-        ),
+        out_dir=directory(
+            bids_anat_out(root=str(Path(mrtrix_dir) / "exclude_mask"))
+        )
     threads: 8
     resources:
         mem_mb=32000,
@@ -481,8 +492,28 @@ rule create_exclude_mask:
     group: "tract_masks"
     container:
         config["singularity"]["mrtrix"]
-    shell: # Parallelization within a single job 
-        "parallel --jobs {threads} mrcalc {input.subcortical_seg} 0 -neq {{1}} -sub {{2}} -sub {input.lZI} -sub {input.rZI} -sub {{3}} ::: {input.roi1} :::+ {input.roi2} :::+ {output.filter_mask}"
+    run: 
+        Path(output.out_dir).mkdir(parents=True, exist_ok=True)
+        
+        # Build exclude mask list
+        exclude_mask_list = [] 
+        for node1, node2 in [*zip(input.roi1, input.roi2)]:
+            exclude_mask_list.append(
+                expand(
+                    bids_anat_out(
+                        root=str(output.out_dir),
+                        desc=f"from{node1}-{node2}",
+                        suffix="mask.mif",
+                    ),
+                    **wildcards,
+                ),
+            )
+
+        # Create masks - parallelizes within a single job
+        shell("parallel --jobs {threads} mrcalc {input.subcortical_seg} 0 -neq {{1}} -sub {{2}} -sub {{input.lZI}} -sub {{input.rZI}} {{3}}} ::: {input.roi1} :::+ {input.roi2} :::+ {exclude_mask_list}")
+        shell("rm -r {params.mask_dir}")
+
+
 
 # TODO (v0.2): ADD OPTION TO OUTPUT TDI MAP
 
@@ -576,35 +607,79 @@ rule connectome2tck:
         "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -files per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {params.edge_weight_prefix} {input.tck} {input.sl_assignment} {params.edge_tck_prefix}"
 
 
+def aggregate_exclude_masks(wildcards):
+    """Grab all exclude masks"""
+    out_dir = checkpoints.create_exclude_mask.get(**wildcards).output.out_dir
+
+    # Build list of files
+    exclude_mask = expand(
+        bids_anat_out(
+            root=str(output.out_dir),
+            desc="{desc}",
+            suffix="mask.mif",
+        ),
+        **wildcards,
+        allow_missing=True,
+    )
+
+    # Get desc wildcard
+    desc = glob_wildcards(exclude_mask).desc
+
+    return expand(
+        exclude_mask,
+        desc=desc,
+    )
+
+
+def aggregate_tck_params(wildcards):
+    """Build param list"""
+    out_dir = checkpoints.create_exclude_mask.get(**wildcards).output.out_dir
+
+    # Get desc wildcards
+    exclude_mask = expand(
+        bids_anat_out(
+            root=str(output.out_dir),
+            desc="{desc}",
+            suffix="mask.mif",
+        ),
+        **wildcards,
+        allow_missing=True,
+    )
+    desc = glob.wildcards(exclude_mask).desc
+
+    # Create params lists 
+    filtered_tck = expand(
+        bids_anat_out(
+            root=str(output.out_dir),
+            desc="{desc}",
+            suffix="tractography.tck",
+        ),
+        **wildcards,
+    )
+    filtered_weights = expand(
+        bids_anat_out(
+            root=str(output.out_dir),
+            desc="{desc}",
+            suffix="weights.csv",
+        ),
+        **wildcards,
+    )
+
+    return {
+        "filtered_tck": filtered_tck,
+        "filtered_weights": filtered_weights,
+    }
+
+
 rule filter_combine_tck:
     input:
-        filter_mask=rules.create_exclude_mask.output.filter_mask,
+        filter_mask=aggregate_exclude_masks,
         tck=rules.connectome2tck.output.edge_tck,
         weights=rules.connectome2tck.output.edge_weight,
     params:
-        filtered_tck=temp(
-            expand(
-                bids_tractography_out(
-                    desc="from{node1}-{node2}",
-                    suffix="tractography.tck",
-                ),
-                zip,
-                node1=list(idxes[0] + 1),
-                node2=list(idxes[1] + 1),
-                allow_missing=True,
-            ),
-        ),
-        filtered_weights=temp(
-            expand(
-                bids_tractography_out(
-                    desc="from{node1}-{node2}",
-                    suffix="weights.csv",
-                ),
-                zip,
-                node1=list(idxes[0] + 1),
-                node2=list(idxes[1] + 1),
-                allow_missing=True,
-            ),
+        unpack(aggregate_tck_params),
+        exclude_mask_dir=bids_anat_out(
+            root=str(Path(mrtrix_dir) / "exclude_mask")
         ),
     output:
         combined_tck=bids_tractography_out(
@@ -625,13 +700,11 @@ rule filter_combine_tck:
         "tractography_update"
     container:
         config["singularity"]["mrtrix"]
-    shell: # Parallel tckedit hangs on its own, include combination rule to bypass
-        "parallel --jobs {threads} cp {{1}} {{2}} ::: {input.weights} :::+ {params.filtered_weights} && "
-        "parallel --jobs {threads} cp {{1}} {{2}} ::: {input.tck} :::+ {params.filtered_tck} && "
-        "parallel --jobs {threads} tckedit -force -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && " # 'true' to overcome smk bash strict 
+    shell: 
+        "parallel --jobs {threads} tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && " # 'true' to overcome smk bash strict 
         "tckedit {params.filtered_tck} {output.combined_tck} &> {log} && "
         "cat {params.filtered_weights} >> {output.combined_weights} && "
-        "rm *from*_weights.csv *from*_tractography.tck"
+        "rm -r {params.exclude_mask_dir}"
 
 
 rule filtered_tck2connectome:

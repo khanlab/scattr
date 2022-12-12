@@ -233,6 +233,34 @@ rule labelmerge:
         "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} -c all --force-output"
 
 
+rule get_num_nodes:
+    input:
+        seg=rules.labelmerge.output.seg,
+    output:
+        num_labels=bids_labelmerge(
+            space="T1w",
+            desc="combined",
+            suffix="numNodes.txt",
+        )
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=10,
+    group: "subcortical"
+    run:
+        import nibabel as nib
+        import numpy as np
+        
+        # Get number of labels
+        img = nib.load(str(input.seg))
+        img_data = img.get_fdata()
+        num_labels = len(np.unique(img_data[img_data>0]))
+
+        # Write to file
+        with open(out.num_labels, "w") as f:
+            f.write(num_labels)
+
+
 rule binarize:
     input:
         seg=bids_labelmerge(
