@@ -189,7 +189,7 @@ rule rm_bb_thal:
 
 rule labelmerge:
     input:
-        seg=expand(
+        zona_seg=expand(
             bids_anat(
                 subject="{subject}",
                 space="T1w",
@@ -198,6 +198,10 @@ rule labelmerge:
             ),
             subject=config["input_lists"]["T1w"]["subject"],
         ),
+        fs_seg=expand(
+            rules.fs_xfm_to_native.output.thal, 
+            subject=config["input_lists"]["T1w"]["subject"],
+        )
     params:
         zona_dir=zona_dir,
         fs_dir=rules.thalamic_segmentation.input.freesurfer_dir,
@@ -237,29 +241,22 @@ rule get_num_nodes:
     input:
         seg=rules.labelmerge.output.seg,
     output:
-        num_labels=bids_labelmerge(
-            space="T1w",
-            desc="combined",
-            suffix="numNodes.txt",
+        num_labels=temp(
+            bids_labelmerge(
+                space="T1w",
+                desc="combined",
+                suffix="numNodes.txt",
+            )
         )
     threads: 4
     resources:
         mem_mb=16000,
         time=10,
     group: "subcortical"
-    run:
-        import nibabel as nib
-        import numpy as np
-        
-        # Get number of labels
-        img = nib.load(str(input.seg))
-        img_data = img.get_fdata()
-        num_labels = len(np.unique(img_data[img_data>0]))
-
-        # Write to file
-        with open(out.num_labels, "w") as f:
-            f.write(num_labels)
-
+    container:
+        config["singularity"]["dbsc"]
+    script:
+        "../scripts/zona_bb_subcortex/get_num_labels.py"
 
 rule binarize:
     input:

@@ -141,7 +141,7 @@ rule dwi2response:
         mem_mb=32000,
         time=30,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2responsemif.log",
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2response.log",
     group: "dwiproc"
     container:
         config["singularity"]["mrtrix"]
@@ -396,77 +396,59 @@ checkpoint create_roi_mask:
     input:
         subcortical_seg=rules.labelmerge.output.seg,
         num_labels=rules.get_num_nodes.output.num_labels,
+    params:
+        base_dir=mrtrix_dir,
+        container=config["singularity"]["mrtrix"],
+        subj_wildcards=config["subj_wildcards"],
     output:
-        out_dir=directory(bids_anat_out(
-            root=str(Path(mrtrix_dir) / "roi_masks"))
+        out_dir=directory(
+            bids_anat_out(
+                datatype="roi_masks"
+            )
         ),
     threads: 8
     resources:
         mem_mb=32000,
         time=30,
     group: "tract_masks"
-    container:
-        config["singularity"]["mrtrix"]
-    run:
-        # Create output directory
-        Path(output.out_dir).mkdir(parents=True, exist_ok=True)
-
-        # Read number of labels
-        with open(input.num_labels, "r") as f:
-            num_labels = int(f.read().strip())
-
-        # Build mask list
-        roi_mask_list, label_list = [], []
-        for node_idx in range(1, num_labels+1):
-            label_list.append(node_idx)
-            roi_mask_list.append(
-                expand(
-                    bids_anat_out(desc=node_idx, suffix="mask.mif"), 
-                    **wildcards,
-                )
-            )
-
-        # Get individual masks - parallelize within job
-        shell("parallel --jobs {threads} mrcalc {input.subcortical_seg} {{1}} -eq {{2}} ::: {label_list} :::+ {roi_mask_list}")
+    script:
+        "../scripts/mrtpipelines/create_roi_mask.py"
 
 
 def aggregate_rois(wildcards):
     """Grab all created roi masks"""
-    out_dir = checkpoints.create_roi_mask.get(**wildcards).output.out_dir
     roi_masks = expand(
         bids_anat_out(
-            root=str(Path(mrtrix_dir) / "roi_masks"), 
+            datatype="roi_masks", 
             desc="{node}", 
             suffix="mask.mif"
         ),
         **wildcards,
         allow_missing=True,
     )
-    bids_anat_out(root=str(Path(mrtrix_dir) / "exclude_mask"))
+
     # Get node label wildcard
     node = glob_wildcards(roi_masks).node
     
     # Build node pairs
-    node_pairs = np.triu_indices(len(idx), k=1)
+    node_pairs = np.triu_indices(len(node), k=1)
 
     return {
         "roi1": expand(
             bids_anat_out(
-                root=str(Path(mrtrix_dir) / "roi_masks"),
+                datatype="roi_masks",
                 desc="{node1}",
                 suffix="mask.mif",
             ),
             node1=list(node_pairs[0]+1),
-            allow_missing=True,
         ),
         "roi2": expand(
             bids_anat_out(
-                root=str(Path(mrtrix_dir) / "roi_masks"),
+                datatype="roi_masks",
                 desc="{node2}",
                 suffix="mask.mif",
             ),
             node2=list(node_pairs[1]+1),
-            allow_missing=True,
         )
     }
 
@@ -474,45 +456,25 @@ def aggregate_rois(wildcards):
 checkpoint create_exclude_mask:
     input:
         unpack(aggregate_rois),
-        lZI=bids_anat_out(desc="21", suffix="mask.mif"),
-        rZI=bids_anat_out(desc="22", suffix="mask.mif"),
         subcortical_seg=rules.labelmerge.output.seg,
     params:
+        base_dir=mrtrix_dir,
         mask_dir=bids_anat_out(
-            root=str(Path(mrtrix_dir) / "roi_masks"),
-        )
+            datatype="roi_masks",
+        ),
+        container=config["singularity"]["mrtrix"],
+        subj_wildcards=config["subj_wildcards"],
     output:
         out_dir=directory(
-            bids_anat_out(root=str(Path(mrtrix_dir) / "exclude_mask"))
+            bids_anat_out(datatype="exclude_mask")
         )
     threads: 8
     resources:
         mem_mb=32000,
         time=60,
     group: "tract_masks"
-    container:
-        config["singularity"]["mrtrix"]
-    run: 
-        Path(output.out_dir).mkdir(parents=True, exist_ok=True)
-        
-        # Build exclude mask list
-        exclude_mask_list = [] 
-        for node1, node2 in [*zip(input.roi1, input.roi2)]:
-            exclude_mask_list.append(
-                expand(
-                    bids_anat_out(
-                        root=str(output.out_dir),
-                        desc=f"from{node1}-{node2}",
-                        suffix="mask.mif",
-                    ),
-                    **wildcards,
-                ),
-            )
-
-        # Create masks - parallelizes within a single job
-        shell("parallel --jobs {threads} mrcalc {input.subcortical_seg} 0 -neq {{1}} -sub {{2}} -sub {{input.lZI}} -sub {{input.rZI}} {{3}}} ::: {input.roi1} :::+ {input.roi2} :::+ {exclude_mask_list}")
-        shell("rm -r {params.mask_dir}")
-
+    script:
+        "../scripts/mrtpipelines/create_exclude_mask.py"
 
 
 # TODO (v0.2): ADD OPTION TO OUTPUT TDI MAP
@@ -552,50 +514,27 @@ rule tck2connectome:
         "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} &> {log}"
 
 
-rule connectome2tck:
+checkpoint connectome2tck:
     input:
         node_weights=rules.tcksift2.output.weights,
         sl_assignment=rules.tck2connectome.output.sl_assignment,
         tck=rules.tckgen.output.tck,
+        num_labels=rules.get_num_nodes.output.num_labels,
     params:
-        nodes=",".join(str(num) for num in range(1, num_labels+1)),
-        edge_weight_prefix=temp(
-            bids_tractography_out(
-                desc="subcortical",
-                suffix="tckWeights",
-            )
+        edge_weight_prefix=bids_tractography_out(
+            datatype="unfiltered",
+            desc="subcortical",
+            suffix="tckWeights",
         ),
-        edge_tck_prefix=temp(
-            bids_tractography_out(
-                desc="subcortical",
-                suffix="from",
-            )
+        edge_tck_prefix=bids_tractography_out(
+            datatype="unfiltered",
+            desc="subcortical",
+            suffix="from",
         ),
     output:
-        edge_weight=temp(
-            expand(
-                bids_tractography_out(
-                    desc="subcortical",
-                    suffix="tckWeights{node1}-{node2}.csv",
-                ),
-                zip,
-                node1=list(idxes[0] + 1),
-                node2=list(idxes[1] + 1),
-                allow_missing=True,
-            ),
-        ),
-        edge_tck=temp(
-            expand(
-                bids_tractography_out(
-                    desc="subcortical",
-                    suffix="from{node1}-{node2}.tck",
-                ),
-                zip,
-                node1=list(idxes[0] + 1),
-                node2=list(idxes[1] + 1),
-                allow_missing=True,
-            ),
-        ),
+        output_dir=bids_tractography_out(
+            datatype="unfiltered",
+        )
     threads: workflow.cores
     resources:
         mem_mb=128000,
@@ -604,17 +543,47 @@ rule connectome2tck:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -files per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {params.edge_weight_prefix} {input.tck} {input.sl_assignment} {params.edge_tck_prefix}"
+        "mkdir -p {output.output_dir} && "
+        "num_labels=$(cat {input.num_labels}) && "
+        "connectome2tck -nthreads {threads} -nodes `seq 1 $((num_labels+1))` -exclusive -files per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {params.edge_weight_prefix} {input.tck} {input.sl_assignment} {params.edge_tck_prefix}"
+
+
+def aggregate_tck_files(wildcards):
+    """Grab all files associated with unfilted tck"""
+    # Build list of files
+    unfiltered_weights = expand(
+        bids_tractography_out(
+            datatype="unfiltered",
+            desc="subcortical",
+            suffix="tckWeights{suffix}.csv",
+        ),
+        **wildcards,
+        allow_missing=True,
+    )
+
+    suffix = glob_wildcards(exclude_mask).suffix
+
+    unfiltered_tck = expand(
+        bids_tractography_out(
+            datatype="unfiltered",
+            desc="subcortical",
+            suffix="from{suffix}.tck",
+        ),
+        suffix=suffix,
+    )
+
+    return {
+        "weights": unfiltered_weights,
+        "tck": unfiltered_tck,
+    }
 
 
 def aggregate_exclude_masks(wildcards):
     """Grab all exclude masks"""
-    out_dir = checkpoints.create_exclude_mask.get(**wildcards).output.out_dir
-
     # Build list of files
     exclude_mask = expand(
         bids_anat_out(
-            root=str(output.out_dir),
+            datatype="exclude_mask",
             desc="{desc}",
             suffix="mask.mif",
         ),
@@ -633,36 +602,32 @@ def aggregate_exclude_masks(wildcards):
 
 def aggregate_tck_params(wildcards):
     """Build param list"""
-    out_dir = checkpoints.create_exclude_mask.get(**wildcards).output.out_dir
-
     # Get desc wildcards
     exclude_mask = expand(
         bids_anat_out(
-            root=str(output.out_dir),
+            datatype="exclude_mask",
             desc="{desc}",
             suffix="mask.mif",
         ),
         **wildcards,
         allow_missing=True,
     )
-    desc = glob.wildcards(exclude_mask).desc
+    desc = glob_wildcards(exclude_mask).desc
 
     # Create params lists 
     filtered_tck = expand(
-        bids_anat_out(
-            root=str(output.out_dir),
+        bids_tractography_out(
             desc="{desc}",
             suffix="tractography.tck",
         ),
-        **wildcards,
+        desc=desc,
     )
     filtered_weights = expand(
-        bids_anat_out(
-            root=str(output.out_dir),
+        bids_tractography_out(
             desc="{desc}",
             suffix="weights.csv",
         ),
-        **wildcards,
+        desc=desc,
     )
 
     return {
@@ -673,13 +638,15 @@ def aggregate_tck_params(wildcards):
 
 rule filter_combine_tck:
     input:
+        unpack(aggregate_tck_files),
         filter_mask=aggregate_exclude_masks,
-        tck=rules.connectome2tck.output.edge_tck,
-        weights=rules.connectome2tck.output.edge_weight,
     params:
         unpack(aggregate_tck_params),
         exclude_mask_dir=bids_anat_out(
-            root=str(Path(mrtrix_dir) / "exclude_mask")
+            datatype="exclude_mask",
+        ),
+        unfiltered_tck_dir=bids_tractography_out(
+            datatype="unfiltered",
         ),
     output:
         combined_tck=bids_tractography_out(
@@ -704,7 +671,7 @@ rule filter_combine_tck:
         "parallel --jobs {threads} tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && " # 'true' to overcome smk bash strict 
         "tckedit {params.filtered_tck} {output.combined_tck} &> {log} && "
         "cat {params.filtered_weights} >> {output.combined_weights} && "
-        "rm -r {params.exclude_mask_dir}"
+        "rm -r {params.exclude_mask_dir} {params.unfiltered_tck_dir}"
 
 
 rule filtered_tck2connectome:
