@@ -426,7 +426,6 @@ def aggregate_rois(wildcards):
         **wildcards,
         allow_missing=True,
     )
-
     # Get node label wildcard
     node = glob_wildcards(roi_masks).node
     
@@ -561,7 +560,7 @@ def aggregate_tck_files(wildcards):
         allow_missing=True,
     )
 
-    suffix = glob_wildcards(exclude_mask).suffix
+    suffix = glob_wildcards(unfiltered_weights).suffix
 
     unfiltered_tck = expand(
         bids_tractography_out(
@@ -612,7 +611,7 @@ def aggregate_tck_params(wildcards):
         **wildcards,
         allow_missing=True,
     )
-    desc = glob_wildcards(exclude_mask).desc
+    desc = glob.wildcards(exclude_mask).desc
 
     # Create params lists 
     filtered_tck = expand(
@@ -620,14 +619,14 @@ def aggregate_tck_params(wildcards):
             desc="{desc}",
             suffix="tractography.tck",
         ),
-        desc=desc,
+        **wildcards,
     )
     filtered_weights = expand(
         bids_tractography_out(
             desc="{desc}",
             suffix="weights.csv",
         ),
-        desc=desc,
+        **wildcards,
     )
 
     return {
@@ -671,7 +670,7 @@ rule filter_combine_tck:
         "parallel --jobs {threads} tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && " # 'true' to overcome smk bash strict 
         "tckedit {params.filtered_tck} {output.combined_tck} &> {log} && "
         "cat {params.filtered_weights} >> {output.combined_weights} && "
-        "rm -r {params.exclude_mask_dir} {params.unfiltered_tck_dir}"
+        "rm -r {params.exclude_mask_dir} {params.unfiltered_tck_dir} {params.filtered_tck} {params.filtered_weights}"
 
 
 rule filtered_tck2connectome:

@@ -53,6 +53,7 @@ def create_exclude_mask(
 
     shell("rm -r {mask_dir}")
 
+
 if __name__ == "__main__":
     create_roi_mask(
         container=snakemake.params.container, #noqa: F821
