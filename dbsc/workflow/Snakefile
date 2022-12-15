@@ -40,8 +40,12 @@ include: "rules/mrtpipelines.smk"
 
 rule all:
     input:
-        files=expand(
+        tck_files=expand(
             rules.filtered_tck2connectome.output.sl_assignment,
+            subject=config["input_lists"]["T1w"]["subject"],
+        ),
+        dti_files=expand(
+            rules.dwi2tensor.output.dti,
             subject=config["input_lists"]["T1w"]["subject"],
         ),
         fs_tsv=rules.cp_fs_tsv.output.fs_tsv,

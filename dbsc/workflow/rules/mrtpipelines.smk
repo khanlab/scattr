@@ -417,18 +417,15 @@ checkpoint create_roi_mask:
 
 def aggregate_rois(wildcards):
     """Grab all created roi masks"""
-    roi_masks = expand(
-        bids_anat_out(
-            datatype="roi_masks", 
-            desc="{node}", 
-            suffix="mask.mif"
-        ),
+    roi_masks = bids_anat_out(
+        datatype="roi_masks", 
+        desc="{node}", 
+        suffix="mask.mif",
         **wildcards,
-        allow_missing=True,
     )
     # Get node label wildcard
     node = glob_wildcards(roi_masks).node
-    
+
     # Build node pairs
     node_pairs = np.triu_indices(len(node), k=1)
 
@@ -440,6 +437,7 @@ def aggregate_rois(wildcards):
                 suffix="mask.mif",
             ),
             node1=list(node_pairs[0]+1),
+            allow_missing=True,
         ),
         "roi2": expand(
             bids_anat_out(
@@ -448,6 +446,7 @@ def aggregate_rois(wildcards):
                 suffix="mask.mif",
             ),
             node2=list(node_pairs[1]+1),
+            allow_missing=True,
         )
     }
 
@@ -455,7 +454,9 @@ def aggregate_rois(wildcards):
 checkpoint create_exclude_mask:
     input:
         unpack(aggregate_rois),
+        rules.create_roi_mask.output.out_dir,
         subcortical_seg=rules.labelmerge.output.seg,
+        num_labels=rules.get_num_nodes.output.num_labels,
     params:
         base_dir=mrtrix_dir,
         mask_dir=bids_anat_out(
@@ -531,8 +532,10 @@ checkpoint connectome2tck:
             suffix="from",
         ),
     output:
-        output_dir=bids_tractography_out(
-            datatype="unfiltered",
+        output_dir=directory(
+            bids_tractography_out(
+                datatype="unfiltered",
+            )
         )
     threads: workflow.cores
     resources:
@@ -544,11 +547,11 @@ checkpoint connectome2tck:
     shell:
         "mkdir -p {output.output_dir} && "
         "num_labels=$(cat {input.num_labels}) && "
-        "connectome2tck -nthreads {threads} -nodes `seq 1 $((num_labels+1))` -exclusive -files per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {params.edge_weight_prefix} {input.tck} {input.sl_assignment} {params.edge_tck_prefix}"
+        "connectome2tck -nthreads {threads} -nodes `seq -s, 1 $((num_labels))` -exclusive -files per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {params.edge_weight_prefix} {input.tck} {input.sl_assignment} {params.edge_tck_prefix}"
 
 
 def aggregate_tck_files(wildcards):
-    """Grab all files associated with unfilted tck"""
+    """Grab all files associated with unfiltered tck"""
     # Build list of files
     unfiltered_weights = expand(
         bids_tractography_out(
@@ -558,22 +561,31 @@ def aggregate_tck_files(wildcards):
         ),
         **wildcards,
         allow_missing=True,
-    )
+    )[0]
 
     suffix = glob_wildcards(unfiltered_weights).suffix
 
     unfiltered_tck = expand(
-        bids_tractography_out(
-            datatype="unfiltered",
-            desc="subcortical",
-            suffix="from{suffix}.tck",
-        ),
-        suffix=suffix,
-    )
+            bids_tractography_out(
+                datatype="unfiltered",
+                desc="subcortical",
+                suffix="from{suffix}.tck",
+            ),
+            suffix=suffix,
+            allow_missing=True,
+        )
 
     return {
-        "weights": unfiltered_weights,
-        "tck": unfiltered_tck,
+        "weights": expand(
+            bids_tractography_out(
+                datatype="unfiltered",
+                desc="subcortical",
+                suffix="tckWeights{suffix}.csv",
+            ),
+            suffix=suffix,
+            allow_missing=True
+        ),
+        "tck": unfiltered_tck, 
     }
 
 
@@ -591,7 +603,7 @@ def aggregate_exclude_masks(wildcards):
     )
 
     # Get desc wildcard
-    desc = glob_wildcards(exclude_mask).desc
+    desc = glob_wildcards(exclude_mask[0]).desc
 
     return expand(
         exclude_mask,
@@ -610,8 +622,8 @@ def aggregate_tck_params(wildcards):
         ),
         **wildcards,
         allow_missing=True,
-    )
-    desc = glob.wildcards(exclude_mask).desc
+    )[0]
+    desc = glob_wildcards(exclude_mask).desc
 
     # Create params lists 
     filtered_tck = expand(
@@ -619,14 +631,16 @@ def aggregate_tck_params(wildcards):
             desc="{desc}",
             suffix="tractography.tck",
         ),
-        **wildcards,
+        desc=desc,
+        allow_missing=True,
     )
     filtered_weights = expand(
         bids_tractography_out(
             desc="{desc}",
             suffix="weights.csv",
         ),
-        **wildcards,
+        desc=desc,
+        allow_missing=True,
     )
 
     return {
@@ -638,9 +652,11 @@ def aggregate_tck_params(wildcards):
 rule filter_combine_tck:
     input:
         unpack(aggregate_tck_files),
+        rules.connectome2tck.output.output_dir,
+        rules.create_exclude_mask.output.out_dir,
         filter_mask=aggregate_exclude_masks,
     params:
-        unpack(aggregate_tck_params),
+        aggregate_tck_params,
         exclude_mask_dir=bids_anat_out(
             datatype="exclude_mask",
         ),
@@ -666,11 +682,12 @@ rule filter_combine_tck:
         "tractography_update"
     container:
         config["singularity"]["mrtrix"]
-    shell: 
-        "parallel --jobs {threads} tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && " # 'true' to overcome smk bash strict 
-        "tckedit {params.filtered_tck} {output.combined_tck} &> {log} && "
-        "cat {params.filtered_weights} >> {output.combined_weights} && "
-        "rm -r {params.exclude_mask_dir} {params.unfiltered_tck_dir} {params.filtered_tck} {params.filtered_weights}"
+    shell:
+        "echo {params[0][filtered_tck]}"
+        "parallel --jobs {threads} tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params[0][filtered_weights]} :::+ {input.tck} :::+ {params[0][filtered_tck]} || true && " # 'true' to overcome smk bash strict 
+        "tckedit {params[0][filtered_tck]} {output.combined_tck} &> {log} && "
+        "cat {params[0][filtered_weights]} >> {output.combined_weights} && "
+        "rm -r {params.exclude_mask_dir} {params.unfiltered_tck_dir} {params[0][filtered_tck]} {params[0][filtered_weights]}"
 
 
 rule filtered_tck2connectome:
