@@ -504,7 +504,7 @@ rule tck2connectome:
     threads: workflow.cores
     resources:
         mem_mb=128000,
-        time=60,
+        time=60*24,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tck2connectome.log",
     group: "tractography_update"
@@ -611,7 +611,7 @@ def aggregate_exclude_masks(wildcards):
     )
 
 
-def aggregate_tck_params(wildcards):
+def get_desc(wildcards):
     """Build param list"""
     # Get desc wildcards
     exclude_mask = expand(
@@ -625,29 +625,34 @@ def aggregate_tck_params(wildcards):
     )[0]
     desc = glob_wildcards(exclude_mask).desc
 
+    return desc
+
+
+def get_filtered_tck(wildcards):
+    desc = get_desc(wildcards)
     # Create params lists 
-    filtered_tck = expand(
+    return expand(
         bids_tractography_out(
             desc="{desc}",
             suffix="tractography.tck",
         ),
+        **wildcards,
         desc=desc,
         allow_missing=True,
     )
-    filtered_weights = expand(
+
+
+def get_filtered_weights(wildcards):
+    desc = get_desc(wildcards)
+    return expand(
         bids_tractography_out(
             desc="{desc}",
             suffix="weights.csv",
         ),
+        **wildcards,
         desc=desc,
         allow_missing=True,
     )
-
-    return {
-        "filtered_tck": filtered_tck,
-        "filtered_weights": filtered_weights,
-    }
-
 
 rule filter_combine_tck:
     input:
@@ -656,7 +661,16 @@ rule filter_combine_tck:
         rules.create_exclude_mask.output.out_dir,
         filter_mask=aggregate_exclude_masks,
     params:
-        aggregate_tck_params,
+        filtered_tck=get_filtered_tck,
+        filtered_weights=get_filtered_weights,
+        filtered_tck_exists=bids_tractography_out(
+            desc="from*",
+            suffix="tractography.tck"
+        ),
+        filtered_weights_exists=bids_tractography_out(
+            desc="from*",
+            suffix="weights.csv"
+        ),
         exclude_mask_dir=bids_anat_out(
             datatype="exclude_mask",
         ),
@@ -683,11 +697,10 @@ rule filter_combine_tck:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "echo {params[0][filtered_tck]}"
-        "parallel --jobs {threads} tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params[0][filtered_weights]} :::+ {input.tck} :::+ {params[0][filtered_tck]} || true && " # 'true' to overcome smk bash strict 
-        "tckedit {params[0][filtered_tck]} {output.combined_tck} &> {log} && "
-        "cat {params[0][filtered_weights]} >> {output.combined_weights} && "
-        "rm -r {params.exclude_mask_dir} {params.unfiltered_tck_dir} {params[0][filtered_tck]} {params[0][filtered_weights]}"
+        "parallel --citation --jobs {threads} -k tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && " # 'true' to overcome smk bash strict 
+        "tckedit {params.filtered_tck_exists} {output.combined_tck} &> {log} && "
+        "cat {params.filtered_weights_exists} >> {output.combined_weights} && "
+        "rm -r {params.exclude_mask_dir} {params.unfiltered_tck_dir} {params.filtered_tck_exists} {params.filtered_weights_exists}"
 
 
 rule filtered_tck2connectome:

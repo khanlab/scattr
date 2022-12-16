@@ -62,9 +62,8 @@ def create_exclude_mask(
         ],
     )
 
-    # Create masks - parallelizes within a single job
-    shell("singularity run {container} parallel --jobs {threads} mrcalc {subcortical_seg} 0 -neq {{1}} -sub {{2}} -sub {lZI} -sub {rZI} -sub {{3}} ::: {roi1} :::+ {roi2} :::+ {out_mask}")
-
+    # Create masks - parallelizes within a single jobs
+    shell("singularity run {container} parallel --citation --jobs {threads} -k mrcalc {subcortical_seg} 0 -neq {{1}} -sub {{2}} -sub {lZI} -sub {rZI} -sub {{3}} ::: {roi1} :::+ {roi2} :::+ {out_mask}")
 
 if __name__ == "__main__":
     create_exclude_mask(

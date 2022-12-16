@@ -50,3 +50,13 @@ rule all:
         ),
         fs_tsv=rules.cp_fs_tsv.output.fs_tsv,
         zona_tsv=rules.cp_zona_tsv.output.zona_tsv,
+    params:
+        mrtrix_dir=expand(
+            bids(
+                root=str(Path(config["output_dir"]) / "mrtrix"),
+                subject="{subject}",
+            ),
+            subject=config["input_lists"]["T1w"]["subject"],
+        )
+    shell: # Clean up intermediate files that left behind
+        "rm -r {params.mrtrix_dir}/exclude_mask {params.mrtrix_dir}/roi_masks {params.mrtrix_dir}/unfiltered"

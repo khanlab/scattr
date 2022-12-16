@@ -42,7 +42,7 @@ def create_roi_mask(
     out = ' '.join(mask for mask in roi_mask_list)
 
     # Get individual masks - parallelize within job
-    shell("singularity run {container} parallel --jobs {threads} mrcalc {subcortical_seg} {{1}} -eq {{2}} ::: {label_list} :::+ {out}")
+    shell("singularity run {container} parallel --citation --jobs {threads} -k mrcalc {subcortical_seg} {{1}} -eq {{2}} ::: {label_list} :::+ {out}")
 
 
 if __name__ == "__main__":
