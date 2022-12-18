@@ -27,9 +27,9 @@ rule cp_fs_tsv:
             "{freesurfer_dir}/desc-FreesurferThal_dseg.tsv",
             freesurfer_dir=freesurfer_dir,
         ),
-    threads: 4
+    threads: 1
     resources:
-        mem_mb=8000,
+        mem_mb=4000,
         time=10,
     group: "dseg_tsv"
     shell:
@@ -52,9 +52,9 @@ rule thalamic_segmentation:
             Path(freesurfer_dir)
             / "sub-{subject}/mri/ThalamicNuclei.v12.T1.mgz"
         ),
-    threads: 8
+    threads: 2
     resources:
-        mem_mb=32000,
+        mem_mb=8000,
         time=60,
     log:
         f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/thalamic_segmentation.log",
@@ -106,9 +106,9 @@ rule mgz2nii:
             desc="ribbon",
             suffix="mask.nii.gz",
         ),
-    threads: 8
+    threads: 2
     resources:
-        mem_mb=16000,
+        mem_mb=8000,
         time=10,
     log:
         f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/mgz2nii.log",
@@ -148,10 +148,10 @@ rule fs_xfm_to_native:
             desc="ribbon",
             suffix="dseg.nii.gz",
         ),
-    threads: 8
+    threads: 2
     resources:
-        mem_mb=16000,
-        time=30,
+        mem_mb=8000,
+        time=60,
     log:
         f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/fs_xfm_to_native.log",
     group: "freesurfer"

@@ -97,9 +97,9 @@ rule nii2mif:
             suffix="brainmask.mif",
             **config["subj_wildcards"]
         ),
-    threads: 8
+    threads: 4
     resources:
-        mem_mb=32000,
+        mem_mb=16000,
         time=10,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/nii2mif.log",
@@ -136,9 +136,9 @@ rule dwi2response:
             desc="csf",
             **config["subj_wildcards"],
         ),
-    threads: 8
+    threads: 4
     resources:
-        mem_mb=32000,
+        mem_mb=16000,
         time=30,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2response.log",
@@ -165,10 +165,10 @@ rule responsemean:
             root=str(Path(mrtrix_dir) / "avg"),
             desc="{tissue}",
         ),
-    threads: 16
+    threads: 4
     resources:
-        mem_mb=64000,
-        time=60,
+        mem_mb=8000,
+        time=10,
     log:
         f"{config['output_dir']}/logs/mrtrix/{{tissue}}_responsemean.log",
     group: "dwiproc_group"
@@ -231,9 +231,9 @@ rule dwi2fod:
             suffix="fod.mif",
             **config["subj_wildcards"],
         ),
-    threads: 8
+    threads: 2
     resources:
-        mem_mb=32000,
+        mem_mb=8000,
         time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2fod.log",
@@ -274,9 +274,9 @@ rule mtnormalise:
             suffix="fodNormalized.mif",
             **config["subj_wildcards"],
         ),
-    threads: 8
+    threads: 2
     resources:
-        mem_mb=32000,
+        mem_mb=8000,
         time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/mtnormalise.log",
@@ -300,9 +300,9 @@ rule dwinormalise:
             suffix="dwi.mif",
             **config["subj_wildcards"],
         ),
-    threads: 8
+    threads: 4
     resources:
-        mem_mb=32000,
+        mem_mb=16000,
         time=30,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwinormalise.log",
@@ -323,9 +323,9 @@ rule dwi2tensor:
         ad=bids_dti_out(suffix="ad.mif"),
         rd=bids_dti_out(suffix="rd.mif"),
         md=bids_dti_out(suffix="md.mif"),
-    threads: 8
+    threads: 4
     resources:
-        mem_mb=32000,
+        mem_mb=16000,
         time=30,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2tensor.log",
@@ -357,14 +357,15 @@ rule tckgen:
             desc="iFOD2",
             suffix="tractography.tck",
         ),
-    threads: workflow.cores,
+    threads: 32
     resources:
         mem_mb=128000,
-        time=60*24,
+        time=60*18,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tckgen.log",
     container:
         config["singularity"]["mrtrix"]
+    group: "tractography"
     shell:
         "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.cortical_ribbon} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {output.tck} &> {log}"
 
@@ -380,7 +381,7 @@ rule tcksift2:
             suffix="tckWeights.txt",
         ),
         mu=bids_tractography_out(desc="iFOD2", suffix="muCoefficient.txt"),
-    threads: workflow.cores,
+    threads: 32
     resources:
         mem_mb=128000,
         time=60*3,
@@ -388,6 +389,7 @@ rule tcksift2:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tcksift2.log",
     container:
         config["singularity"]["mrtrix"]
+    group: "tractography"
     shell:
         "tcksift2 -nthreads {threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights} &> {log}"
 
@@ -406,10 +408,10 @@ checkpoint create_roi_mask:
                 datatype="roi_masks"
             )
         ),
-    threads: 8
+    threads: 2
     resources:
-        mem_mb=32000,
-        time=30,
+        mem_mb=8000,
+        time=60,
     group: "tract_masks"
     script:
         "../scripts/mrtpipelines/create_roi_mask.py"
@@ -468,10 +470,10 @@ checkpoint create_exclude_mask:
         out_dir=directory(
             bids_anat_out(datatype="exclude_mask")
         )
-    threads: 8
+    threads: 2
     resources:
-        mem_mb=32000,
-        time=60,
+        mem_mb=8000,
+        time=60*2,
     group: "tract_masks"
     script:
         "../scripts/mrtpipelines/create_exclude_mask.py"
@@ -501,10 +503,10 @@ rule tck2connectome:
             desc="subcortical",
             suffix="nodeWeights.csv",
         ),
-    threads: workflow.cores
+    threads: 32
     resources:
         mem_mb=128000,
-        time=60*24,
+        time=60*3,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tck2connectome.log",
     group: "tractography_update"
@@ -537,7 +539,7 @@ checkpoint connectome2tck:
                 datatype="unfiltered",
             )
         )
-    threads: workflow.cores
+    threads: 32
     resources:
         mem_mb=128000,
         time=60,
@@ -686,7 +688,7 @@ rule filter_combine_tck:
             desc="filteredsubcortical",
             suffix="tckWeights.txt",
         ),
-    threads: workflow.cores
+    threads: 32
     resources:
         mem_mb=128000,
         time=60,
@@ -697,7 +699,7 @@ rule filter_combine_tck:
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "parallel --citation --jobs {threads} -k tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && " # 'true' to overcome smk bash strict 
+        "parallel --jobs {threads} -k tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && " # 'true' to overcome smk bash strict 
         "tckedit {params.filtered_tck_exists} {output.combined_tck} &> {log} && "
         "cat {params.filtered_weights_exists} >> {output.combined_weights} && "
         "rm -r {params.exclude_mask_dir} {params.unfiltered_tck_dir} {params.filtered_tck_exists} {params.filtered_weights_exists}"
@@ -719,7 +721,7 @@ rule filtered_tck2connectome:
             desc="filteredsubcortical",
             suffix="nodeWeights.csv",
         ),
-    threads: workflow.cores
+    threads: 32
     resources:
         mem_mb=128000,
         time=60*3,

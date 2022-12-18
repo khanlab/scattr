@@ -35,9 +35,9 @@ rule cp_zona_tsv:
         ),
     output:
         zona_tsv=f"{zona_dir}/desc-ZonaBBSubcor_dseg.tsv",
-    threads: 4
+    threads: 1
     resources:
-        mem_mb=8000,
+        mem_mb=4000,
         time=10,
     group: "dseg_tsv"
     shell:
@@ -67,10 +67,10 @@ rule reg2native:
             desc=f"from{config['Space']}toNative",
             suffix="0GenericAffine.mat",
         ),
-    threads: 8
+    threads: 2
     resources:
-        mem_mb=32000,
-        time=60,
+        mem_mb=8000,
+        time=30,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/reg2native.log",
     group: "subcortical"
@@ -100,9 +100,9 @@ rule warp2native:
             desc="ZonaBB",
             suffix="dseg.nii.gz",
         )
-    threads: 8
+    threads: 2
     resources:
-        mem_mb=32000,
+        mem_mb=8000,
         time=10,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/warp2native.log",
@@ -170,9 +170,9 @@ rule rm_bb_thal:
                 suffix="dseg.nii.gz",
             )
         ),
-    threads: 8
+    threads: 1
     resources:
-        mem_mb=32000,
+        mem_mb=4000,
         time=10,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/rm_bb_thal.log",
@@ -228,9 +228,9 @@ rule labelmerge:
             ),
             subject=config["input_lists"]["T1w"]["subject"],
         ),
-    threads: 8
+    threads: 1
     resources:
-        mem_mb=32000,
+        mem_mb=4000,
         time=10,
     group: "subcortical"
     shell:
@@ -248,9 +248,9 @@ rule get_num_nodes:
                 suffix="numNodes.txt",
             )
         )
-    threads: 4
+    threads: 1
     resources:
-        mem_mb=16000,
+        mem_mb=4000,
         time=10,
     group: "subcortical"
     container:
@@ -271,9 +271,9 @@ rule binarize:
             desc="combined",
             suffix="mask.nii.gz",
         ),
-    threads: 8
+    threads: 1
     resources:
-        mem_mb=16000,
+        mem_mb=4000,
         time=10,
     log:
         f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/binarize.log",
@@ -295,9 +295,9 @@ rule add_brainstem:
             desc="labelmergeStem",
             suffix="mask.nii.gz",
         ),
-    threads: 8
+    threads: 1
     resources:
-        mem_mb=32000,
+        mem_mb=4000,
         time=10,
     log:
         f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/add_brainstem.log",
@@ -318,9 +318,9 @@ rule create_convex_hull:
             desc="ConvexHull",
             suffix="mask.nii.gz",
         ),
-    threads: 8
+    threads: 2
     resources:
-        mem_mb=32000,
+        mem_mb=8000,
         time=30,
     log:
         f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/create_convex_hull.log",
