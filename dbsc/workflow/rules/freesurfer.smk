@@ -52,9 +52,9 @@ rule thalamic_segmentation:
             Path(freesurfer_dir)
             / "sub-{subject}/mri/ThalamicNuclei.v12.T1.mgz"
         ),
-    threads: 2
+    threads: 4
     resources:
-        mem_mb=8000,
+        mem_mb=16000,
         time=60,
     log:
         f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/thalamic_segmentation.log",
@@ -106,9 +106,9 @@ rule mgz2nii:
             desc="ribbon",
             suffix="mask.nii.gz",
         ),
-    threads: 2
+    threads: 4
     resources:
-        mem_mb=8000,
+        mem_mb=16000,
         time=10,
     log:
         f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/mgz2nii.log",
@@ -148,9 +148,9 @@ rule fs_xfm_to_native:
             desc="ribbon",
             suffix="dseg.nii.gz",
         ),
-    threads: 2
+    threads: 4
     resources:
-        mem_mb=8000,
+        mem_mb=16000,
         time=60,
     log:
         f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/fs_xfm_to_native.log",

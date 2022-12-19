@@ -139,7 +139,7 @@ rule dwi2response:
     threads: 4
     resources:
         mem_mb=16000,
-        time=30,
+        time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2response.log",
     group: "dwiproc"
@@ -167,7 +167,7 @@ rule responsemean:
         ),
     threads: 4
     resources:
-        mem_mb=8000,
+        mem_mb=16000,
         time=10,
     log:
         f"{config['output_dir']}/logs/mrtrix/{{tissue}}_responsemean.log",
@@ -231,9 +231,9 @@ rule dwi2fod:
             suffix="fod.mif",
             **config["subj_wildcards"],
         ),
-    threads: 2
+    threads: 4
     resources:
-        mem_mb=8000,
+        mem_mb=16000,
         time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2fod.log",
@@ -274,9 +274,9 @@ rule mtnormalise:
             suffix="fodNormalized.mif",
             **config["subj_wildcards"],
         ),
-    threads: 2
+    threads: 4
     resources:
-        mem_mb=8000,
+        mem_mb=16000,
         time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/mtnormalise.log",
@@ -303,7 +303,7 @@ rule dwinormalise:
     threads: 4
     resources:
         mem_mb=16000,
-        time=30,
+        time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwinormalise.log",
     container:
@@ -326,7 +326,7 @@ rule dwi2tensor:
     threads: 4
     resources:
         mem_mb=16000,
-        time=30,
+        time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2tensor.log",
     group: "dwiproc"
@@ -365,7 +365,6 @@ rule tckgen:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tckgen.log",
     container:
         config["singularity"]["mrtrix"]
-    group: "tractography"
     shell:
         "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.cortical_ribbon} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {output.tck} &> {log}"
 
@@ -389,7 +388,6 @@ rule tcksift2:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tcksift2.log",
     container:
         config["singularity"]["mrtrix"]
-    group: "tractography"
     shell:
         "tcksift2 -nthreads {threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights} &> {log}"
 
@@ -408,9 +406,9 @@ checkpoint create_roi_mask:
                 datatype="roi_masks"
             )
         ),
-    threads: 2
+    threads: 4
     resources:
-        mem_mb=8000,
+        mem_mb=16000,
         time=60,
     group: "tract_masks"
     script:
@@ -470,9 +468,9 @@ checkpoint create_exclude_mask:
         out_dir=directory(
             bids_anat_out(datatype="exclude_mask")
         )
-    threads: 2
+    threads: 4
     resources:
-        mem_mb=8000,
+        mem_mb=16000,
         time=60*2,
     group: "tract_masks"
     script:

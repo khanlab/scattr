@@ -22,27 +22,31 @@ def create_roi_mask(
     with open(num_labels, "r") as f:
         num_labels = int(f.read().strip())
 
-    # Build mask list
-    roi_mask_list, label_list = [], []
-    for node_idx in range(1, num_labels+1):
-        label_list.append(node_idx)
-        roi_mask_list.extend(
-            expand(
-                bids(
-                    root=base_dir,
-                    datatype="roi_masks",
-                    desc=node_idx, 
-                    suffix="mask.mif",
-                    **subj_wildcards,
-                ), 
-                **wildcards,
-            )
+    # Create masks sequentially (error with trying to do it in parallel)
+    for idx in range(1, num_labels+1):
+        roi = bids(
+            root=base_dir,
+            datatype="roi_masks",
+            desc=f"{idx}",
+            suffix="mask.mif",
+            **wildcards,
         )
 
-    out = ' '.join(mask for mask in roi_mask_list)
+        shell("singularity run {container} mrcalc -nthreads {threads} {subcortical_seg} {idx} -eq {roi}")
 
-    # Get individual masks - parallelize within job
-    shell("singularity run {container} parallel --citation --jobs {threads} -k mrcalc {subcortical_seg} {{1}} -eq {{2}} ::: {label_list} :::+ {out}")
+    # Build mask list and create in parallel
+    # label_list = [idx for idx in range(1, num_labels+1)]
+    # roi_mask_list = expand(
+    #     bids(
+    #         root=base_dir,
+    #         datatype="roi_masks",
+    #         desc="{desc}",
+    #         suffix="mask.mif",
+    #         **wildcards
+    #     ),
+    #     desc=[idx for idx in range(1, num_labels+1)]
+
+    # # shell("singularity run {container} parallel --jobs {threads} -k mrcalc {subcortical_seg} {{1}} -eq {{2}} ::: {label_list} :::+ {roi_mask_list}")
 
 
 if __name__ == "__main__":
