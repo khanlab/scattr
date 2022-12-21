@@ -6,6 +6,7 @@ import numpy as np
 responsemean_dir = config.get("responsemean_dir")
 dwi_dir = config.get("dwi_dir")
 mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
+labelmerge_dir = str(Path(config["output_dir"]) / "labelmerge")
 
 # Make directory if it doesn't exist
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
@@ -50,6 +51,12 @@ bids_anat_out = partial(
     bids,
     root=mrtrix_dir,
     datatype="anat",
+    **config["subj_wildcards"],
+)
+
+bids_labelmerge = partial(
+    bids,
+    root=str(Path(labelmerge_dir) / "combined"),
     **config["subj_wildcards"],
 )
 
@@ -348,7 +355,11 @@ rule tckgen:
         mask=rules.nii2mif.output.mask,
         cortical_ribbon=rules.fs_xfm_to_native.output.ribbon,
         convex_hull=rules.create_convex_hull.output.convex_hull,
-        subcortical_seg=rules.labelmerge.output.seg,
+        subcortical_seg=bids_labelmerge(
+            space="T1w",
+            desc="combined",
+            suffix="dseg.nii.gz",
+        ),
     params:
         step=config["step"],
         sl=config["sl_count"],
@@ -380,10 +391,10 @@ rule tcksift2:
             suffix="tckWeights.txt",
         ),
         mu=bids_tractography_out(desc="iFOD2", suffix="muCoefficient.txt"),
-    threads: 32
+    threads: 8
     resources:
-        mem_mb=128000,
-        time=60*3,
+        mem_mb=32000,
+        time=60,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tcksift2.log",
     container:
@@ -394,7 +405,7 @@ rule tcksift2:
 
 checkpoint create_roi_mask:
     input:
-        subcortical_seg=rules.labelmerge.output.seg,
+        subcortical_seg=rules.tckgen.input.subcortical_seg,
         num_labels=rules.get_num_nodes.output.num_labels,
     params:
         base_dir=mrtrix_dir,
@@ -455,7 +466,7 @@ checkpoint create_exclude_mask:
     input:
         unpack(aggregate_rois),
         rules.create_roi_mask.output.out_dir,
-        subcortical_seg=rules.labelmerge.output.seg,
+        subcortical_seg=rules.tckgen.input.subcortical_seg,
         num_labels=rules.get_num_nodes.output.num_labels,
     params:
         base_dir=mrtrix_dir,
@@ -489,7 +500,7 @@ rule tck2connectome:
     input:
         weights=rules.tcksift2.output.weights,
         tck=rules.tckgen.output.tck,
-        subcortical_seg=rules.labelmerge.output.seg,
+        subcortical_seg=rules.tckgen.input.subcortical_seg,
     params:
         radius=config["radial_search"],
     output:
@@ -707,7 +718,7 @@ rule filtered_tck2connectome:
     input:
         weights=rules.filter_combine_tck.output.combined_weights,
         tck=rules.filter_combine_tck.output.combined_tck,
-        subcortical_seg=rules.labelmerge.output.seg,
+        subcortical_seg=rules.tckgen.input.subcortical_seg,
     params:
         radius=config["radial_search"],
     output:

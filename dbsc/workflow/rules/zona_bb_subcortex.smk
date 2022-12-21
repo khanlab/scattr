@@ -189,12 +189,18 @@ rule rm_bb_thal:
 
 rule labelmerge:
     input:
-        zona_seg=bids_anat(
-            space="T1w",
-            desc="ZonaBBSubcor",
-            suffix="dseg.nii.gz",
+        zona_seg=expand(
+            rules.rm_bb_thal.output.seg,
+            subject=config["input_lists"]["T1w"]["subject"],
+            allow_missing=True,
         ),
-        fs_seg=rules.fs_xfm_to_native.output.thal, 
+        fs_seg=expand(
+            rules.fs_xfm_to_native.output.thal,
+            subject=config["input_lists"]["T1w"]["subject"],
+            allow_missing=True,
+        ),
+        fs_tsv=rules.cp_fs_tsv.output.fs_tsv,
+        zona_tsv=rules.cp_zona_tsv.output.zona_tsv,
     params:
         zona_dir=zona_dir,
         fs_dir=rules.thalamic_segmentation.input.freesurfer_dir,
@@ -203,30 +209,42 @@ rule labelmerge:
         labelmerge_dir=directory(labelmerge_dir),
         labelmerge_container=config["singularity"]["labelmerge"],
     output:
-        seg=bids_labelmerge(
-	    space="T1w",
-            desc="combined",
-            suffix="dseg.nii.gz",
+        seg=expand(
+            bids_labelmerge(
+                space="T1w",
+                desc="combined",
+                suffix="dseg.nii.gz",
+            ),
+            subject=config["input_lists"]["T1w"]["subject"],
+            allow_missing=True,
         ),
-        tsv=bids_labelmerge(
-            space="T1w",
-            desc="combined",
-            suffix="dseg.tsv",
+        tsv=expand(
+            bids_labelmerge(
+                space="T1w",
+                desc="combined",
+                suffix="dseg.tsv",
+            ),
+            subject=config["input_lists"]["T1w"]["subject"],
+            allow_missing=True,
         ),
     threads: 4
     resources:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/labelmerge.log",
+        f"{config['output_dir']}/logs/zona_bb_subcortex/labelmerge.log",
     group: "subcortical"
     shell:
-        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} -c all --force-output"
+        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --cores {threads} --force-output"
 
 
 rule get_num_nodes:
     input:
-        seg=rules.labelmerge.output.seg,
+        seg=bids_labelmerge(
+            space="T1w",
+            desc="combined",
+            suffix="dseg.nii.gz",
+        )
     output:
         num_labels=temp(
             bids_labelmerge(
@@ -276,8 +294,7 @@ rule add_brainstem:
         mask=rules.binarize.output.mask,
         aparcaseg=rules.fs_xfm_to_native.output.aparcaseg,
     output:
-        mask=bids_anat(
-            root=labelmerge_dir,
+        mask=bids_labelmerge(
             space="T1w",
             desc="labelmergeStem",
             suffix="mask.nii.gz",
@@ -299,8 +316,7 @@ rule create_convex_hull:
     input:
         bin_seg=rules.add_brainstem.output.mask,
     output:
-        convex_hull=bids_anat(
-            root=labelmerge_dir,
+        convex_hull=bids_labelmerge(
             space="T1w",
             desc="ConvexHull",
             suffix="mask.nii.gz",

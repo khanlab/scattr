@@ -48,8 +48,6 @@ rule all:
             rules.dwi2tensor.output.dti,
             subject=config["input_lists"]["T1w"]["subject"],
         ),
-        fs_tsv=rules.cp_fs_tsv.output.fs_tsv,
-        zona_tsv=rules.cp_zona_tsv.output.zona_tsv,
     params:
         mrtrix_dir=expand(
             bids(

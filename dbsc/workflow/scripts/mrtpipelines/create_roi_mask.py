@@ -42,11 +42,13 @@ def create_roi_mask(
     #         datatype="roi_masks",
     #         desc="{desc}",
     #         suffix="mask.mif",
-    #         **wildcards
+    #         **wildcards,
     #     ),
     #     desc=[idx for idx in range(1, num_labels+1)]
+    # )
+    # out = ' '.join(mask for mask in roi_mask_list)
 
-    # # shell("singularity run {container} parallel --jobs {threads} -k mrcalc {subcortical_seg} {{1}} -eq {{2}} ::: {label_list} :::+ {roi_mask_list}")
+    # shell("singularity run {container} parallel --jobs {threads} -k mrcalc {subcortical_seg} {{1}} -eq {{2}} ::: {label_list} :::+ {out}")
 
 
 if __name__ == "__main__":
