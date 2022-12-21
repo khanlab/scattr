@@ -73,7 +73,7 @@ rule reg2native:
         time=60,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/reg2native.log",
-    group: "subcortical"
+    group: "subcortical_1"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -106,7 +106,7 @@ rule warp2native:
         time=30,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/warp2native.log",
-    group: "subcortical"
+    group: "subcortical_1"
     container:
         config["singularity"]["ants"]
     shell:
@@ -176,7 +176,7 @@ rule rm_bb_thal:
         time=10,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/rm_bb_thal.log",
-    group: "subcortical"
+    group: "subcortical_1"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -233,7 +233,7 @@ rule labelmerge:
         time=60,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/labelmerge.log",
-    group: "subcortical"
+    group: "subcortical_group"
     shell:
         "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --cores {threads} --force-output"
 
@@ -257,7 +257,7 @@ rule get_num_nodes:
     resources:
         mem_mb=16000,
         time=10,
-    group: "subcortical"
+    group: "subcortical_2"
     container:
         config["singularity"]["dbsc"]
     script:
@@ -282,7 +282,7 @@ rule binarize:
         time=10,
     log:
         f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/binarize.log",
-    group: "subcortical"
+    group: "subcortical_2"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -305,7 +305,7 @@ rule add_brainstem:
         time=10,
     log:
         f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/add_brainstem.log",
-    group: "subcortical"
+    group: "subcortical_2"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -327,7 +327,7 @@ rule create_convex_hull:
         time=60,
     log:
         f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/create_convex_hull.log",
-    group: "subcortical"
+    group: "subcortical_2"
     container:
         config["singularity"]["dbsc"]
     script:
