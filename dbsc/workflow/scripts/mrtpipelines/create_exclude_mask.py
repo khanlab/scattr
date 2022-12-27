@@ -65,7 +65,7 @@ def create_exclude_mask(
     # Create masks - run sequentially due to parallelization errors
     for idx, mask in enumerate(out_mask):
         in_roi1, in_roi2 = roi1[idx], roi2[idx]
-        shell("singularity run {container} mrcalc -nthreads {threads} {subcortical_seg} 0 -neq {in_roi1} -sub {in_roi2} -sub {lZI} -sub {rZI} -sub {mask}")
+        shell("singularity run {container} mrcalc -nthreads {threads} {subcortical_seg} 0 -neq {in_roi1} -sub {in_roi2} -sub {lZI} -sub {rZI} -sub {mask} -force")
     
     # Create masks - parallelizes within a single jobs
     # shell("singularity run {container} parallel --jobs {threads} -k mrcalc {subcortical_seg} 0 -neq {{1}} -sub {{2}} -sub {lZI} -sub {rZI} -sub {{3}} ::: {roi1} :::+ {roi2} :::+ {out_mask}")

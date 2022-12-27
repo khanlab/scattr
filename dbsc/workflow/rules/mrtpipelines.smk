@@ -14,6 +14,7 @@ Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
 # Parameters
 shells = config.get("shells")
 lmax = config.get("lmax")
+    
 
 # BIDS partials
 bids_dwi = partial(
@@ -371,7 +372,7 @@ rule tckgen:
     threads: 32
     resources:
         mem_mb=128000,
-        time=60*18,
+        time=60*24,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tckgen.log",
     container:
@@ -394,7 +395,7 @@ rule tcksift2:
     threads: 8
     resources:
         mem_mb=32000,
-        time=60,
+        time=60*2,
     log:
         f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tcksift2.log",
     container:
@@ -482,7 +483,7 @@ checkpoint create_exclude_mask:
     threads: 4
     resources:
         mem_mb=16000,
-        time=60*2,
+        time=60*3,
     group: "tract_masks"
     script:
         "../scripts/mrtpipelines/create_exclude_mask.py"
@@ -551,7 +552,7 @@ checkpoint connectome2tck:
     threads: 32
     resources:
         mem_mb=128000,
-        time=60,
+        time=60*24,
     group: "tractography_update"
     container:
         config["singularity"]["mrtrix"]
