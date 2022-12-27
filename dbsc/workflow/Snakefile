@@ -28,6 +28,7 @@ wildcard_constraints:
 
 # ---- end snakebids boilerplate ------------------------------------------------
 
+import os
 from pathlib import Path
 from functools import partial
 

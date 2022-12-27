@@ -84,6 +84,14 @@ parse_args:
 #-----------------------------------------------------#
 
 #--- additional BIDS-app options --- (add in below) --#
+  --slurm_tmpdir:
+    help: Flag to indicate use of SLURM temporary directory. A temporary 
+          directory is used to improve write speeds of output files on a 
+          networked system. If not used, the workflow will default to system 
+          /tmp directory
+    action: store_true
+    default: False
+
   --freesurfer_dir:
     help: The path to the freesurfer directory. If not provided, workflow
           assumes the directory exists at <output_dir>/freesurfer.
