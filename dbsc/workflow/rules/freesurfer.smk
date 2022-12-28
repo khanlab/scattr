@@ -31,7 +31,8 @@ rule cp_fs_tsv:
     resources:
         mem_mb=4000,
         time=10,
-    group: "dseg_tsv"
+    group:
+        "dseg_tsv"
     shell:
         "cp -v {input.fs_tsv} {output.fs_tsv}"
 
@@ -58,7 +59,8 @@ rule thalamic_segmentation:
         time=60,
     log:
         f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/thalamic_segmentation.log",
-    group: "freesurfer"
+    group:
+        "freesurfer"
     container:
         config["singularity"]["freesurfer"]
     shell:
@@ -92,17 +94,17 @@ rule mgz2nii:
             suffix="dseg.nii.gz",
         ),
         aparcaseg=bids_fs_out(
-            space="Freesurfer", 
+            space="Freesurfer",
             desc="aparcaseg",
             suffix="dseg.nii.gz",
         ),
         ribbon_mgz=bids_fs_out(
             space="Freesurfer",
             desc="ribbon",
-            suffix="mask.mgz", 
+            suffix="mask.mgz",
         ),
         ribbon=bids_fs_out(
-            space="Freesurfer", 
+            space="Freesurfer",
             desc="ribbon",
             suffix="mask.nii.gz",
         ),
@@ -112,7 +114,8 @@ rule mgz2nii:
         time=10,
     log:
         f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/mgz2nii.log",
-    group: "freesurfer"
+    group:
+        "freesurfer"
     container:
         config["singularity"]["freesurfer"]
     shell:
@@ -134,8 +137,8 @@ rule fs_xfm_to_native:
         ref=config["input_path"]["T1w"],
     output:
         thal=bids_fs_out(
-            space="T1w", 
-            desc="FreesurferThal", 
+            space="T1w",
+            desc="FreesurferThal",
             suffix="dseg.nii.gz",
         ),
         aparcaseg=bids_fs_out(
@@ -144,7 +147,7 @@ rule fs_xfm_to_native:
             suffix="dseg.nii.gz",
         ),
         ribbon=bids_fs_out(
-            space="T1w", 
+            space="T1w",
             desc="ribbon",
             suffix="dseg.nii.gz",
         ),
@@ -154,7 +157,8 @@ rule fs_xfm_to_native:
         time=60,
     log:
         f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/fs_xfm_to_native.log",
-    group: "freesurfer"
+    group:
+        "freesurfer"
     container:
         config["singularity"]["neuroglia-core"]
     shell:

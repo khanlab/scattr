@@ -12,7 +12,7 @@ config.update(
     snakebids.generate_inputs(
         bids_dir=config["bids_dir"],
         pybids_inputs=config["pybids_inputs"],
-        pybids_config=['bids', 'derivatives'],
+        pybids_config=["bids", "derivatives"],
         derivatives=config["derivatives"],
         participant_label=config["participant_label"],
         exclude_participant_label=config["exclude_participant_label"],
@@ -56,6 +56,6 @@ rule all:
                 subject="{subject}",
             ),
             subject=config["input_lists"]["T1w"]["subject"],
-        )
-    shell: # Clean up intermediate files that left behind
+        ),
+    shell:  # Clean up intermediate files that left behind
         "rm -r {params.mrtrix_dir}/exclude_mask {params.mrtrix_dir}/roi_masks {params.mrtrix_dir}/unfiltered"
