@@ -12,7 +12,7 @@ config.update(
     snakebids.generate_inputs(
         bids_dir=config["bids_dir"],
         pybids_inputs=config["pybids_inputs"],
-        pybids_config=['bids', 'derivatives'],
+        pybids_config=["bids", "derivatives"],
         derivatives=config["derivatives"],
         participant_label=config["participant_label"],
         exclude_participant_label=config["exclude_participant_label"],
@@ -28,6 +28,7 @@ wildcard_constraints:
 
 # ---- end snakebids boilerplate ------------------------------------------------
 
+import os
 from pathlib import Path
 from functools import partial
 
@@ -53,8 +54,9 @@ rule all:
             bids(
                 root=str(Path(config["output_dir"]) / "mrtrix"),
                 subject="{subject}",
+                include_subject_dir=False,
             ),
             subject=config["input_lists"]["T1w"]["subject"],
-        )
-    shell: # Clean up intermediate files that left behind
+        ),
+    shell:  # Clean up intermediate files that left behind
         "rm -r {params.mrtrix_dir}/exclude_mask {params.mrtrix_dir}/roi_masks {params.mrtrix_dir}/unfiltered"

@@ -39,7 +39,8 @@ rule cp_zona_tsv:
     resources:
         mem_mb=4000,
         time=10,
-    group: "dseg_tsv"
+    group:
+        "dseg_tsv"
     shell:
         "cp -v {input.zona_tsv} {output.zona_tsv}"
 
@@ -52,18 +53,18 @@ rule reg2native:
             / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
             / Path(config["zona_bb_subcortex"][config["Space"]]["T1w"])
         ),
-        target=config["input_path"]["T1w"], 
+        target=config["input_path"]["T1w"],
     params:
-        out_dir=directory(bids_anat()),
+        out_dir=directory(str(Path(bids_anat()).parent)),
         out_prefix=bids_anat(
             desc=f"from{config['Space']}toNative_",
         ),
     output:
-        warp = bids_anat(
+        warp=bids_anat(
             desc=f"from{config['Space']}toNative",
             suffix="1Warp.nii.gz",
         ),
-        affine = bids_anat(
+        affine=bids_anat(
             desc=f"from{config['Space']}toNative",
             suffix="0GenericAffine.mat",
         ),
@@ -73,15 +74,17 @@ rule reg2native:
         time=60,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/reg2native.log",
-    group: "subcortical_1"
+    group:
+        "subcortical_1"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
         "mkdir -p {params.out_dir} && "
         "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "antsRegistrationSyNQuick.sh -n {threads} -d 3 " 
+        "antsRegistrationSyNQuick.sh -n {threads} -d 3 "
         "-f {input.target} -m {input.template} "
         "-o {params.out_prefix} &> {log}"
+
 
 rule warp2native:
     """Warp subcortical parcellations to subject native space"""
@@ -99,14 +102,15 @@ rule warp2native:
             space="T1w",
             desc="ZonaBB",
             suffix="dseg.nii.gz",
-        )
+        ),
     threads: 4
     resources:
         mem_mb=16000,
         time=30,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/warp2native.log",
-    group: "subcortical_1"
+    group:
+        "subcortical_1"
     container:
         config["singularity"]["ants"]
     shell:
@@ -114,7 +118,7 @@ rule warp2native:
         "antsApplyTransforms -v -d 3 -n MultiLabel "
         "-i {input.dseg} -r {input.target} "
         "-t {input.warp} -t {input.affine} "
-        "-o {output.nii} &> {log}" 
+        "-o {output.nii} &> {log}"
 
 
 # TODO: Add back later on
@@ -176,7 +180,8 @@ rule rm_bb_thal:
         time=10,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/rm_bb_thal.log",
-    group: "subcortical_1"
+    group:
+        "subcortical_1"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -233,7 +238,8 @@ rule labelmerge:
         time=60,
     log:
         f"{config['output_dir']}/logs/zona_bb_subcortex/labelmerge.log",
-    group: "subcortical_group"
+    group:
+        "subcortical_group"
     shell:
         "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --cores {threads} --force-output"
 
@@ -244,7 +250,7 @@ rule get_num_nodes:
             space="T1w",
             desc="combined",
             suffix="dseg.nii.gz",
-        )
+        ),
     output:
         num_labels=temp(
             bids_labelmerge(
@@ -252,16 +258,18 @@ rule get_num_nodes:
                 desc="combined",
                 suffix="numNodes.txt",
             )
-        )
+        ),
     threads: 4
     resources:
         mem_mb=16000,
         time=10,
-    group: "subcortical_2"
+    group:
+        "subcortical_2"
     container:
         config["singularity"]["dbsc"]
     script:
         "../scripts/zona_bb_subcortex/get_num_labels.py"
+
 
 rule binarize:
     input:
@@ -282,7 +290,8 @@ rule binarize:
         time=10,
     log:
         f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/binarize.log",
-    group: "subcortical_2"
+    group:
+        "subcortical_2"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -305,7 +314,8 @@ rule add_brainstem:
         time=10,
     log:
         f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/add_brainstem.log",
-    group: "subcortical_2"
+    group:
+        "subcortical_2"
     container:
         config["singularity"]["neuroglia-core"]
     shell:
@@ -327,7 +337,8 @@ rule create_convex_hull:
         time=60,
     log:
         f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/create_convex_hull.log",
-    group: "subcortical_2"
+    group:
+        "subcortical_2"
     container:
         config["singularity"]["dbsc"]
     script:
