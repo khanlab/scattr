@@ -54,6 +54,7 @@ rule all:
             bids(
                 root=str(Path(config["output_dir"]) / "mrtrix"),
                 subject="{subject}",
+                include_subject_dir=False,
             ),
             subject=config["input_lists"]["T1w"]["subject"],
         ),
