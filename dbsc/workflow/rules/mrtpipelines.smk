@@ -1,3 +1,4 @@
+import nibabel as nib
 import numpy as np
 
 
@@ -5,6 +6,7 @@ import numpy as np
 responsemean_dir = config.get("responsemean_dir")
 dwi_dir = config.get("dwi_dir")
 mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
+labelmerge_dir = str(Path(config["output_dir"]) / "labelmerge")
 
 # Make directory if it doesn't exist
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
@@ -12,6 +14,7 @@ Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
 # Parameters
 shells = config.get("shells")
 lmax = config.get("lmax")
+
 
 # BIDS partials
 bids_dwi = partial(
@@ -52,11 +55,19 @@ bids_anat_out = partial(
     **config["subj_wildcards"],
 )
 
+bids_labelmerge = partial(
+    bids,
+    root=str(Path(labelmerge_dir) / "combined"),
+    **config["subj_wildcards"],
+)
+
 # Mrtrix3 citation (additional citations are included per rule as necessary):
 # Tournier, J.-D.; Smith, R. E.; Raffelt, D.; Tabbara, R.; Dhollander, T.; Pietsch, M.; Christiaens, D.; Jeurissen, B.; Yeh, C.-H. & Connelly, A. MRtrix3: A fast, flexible and open software framework for medical image processing and visualisation. NeuroImage, 2019, 202, 116137
 
 
 # ------------ MRTRIX PREPROC BEGIN ----------#
+if dwi_dir:
+    print(f"Searching {dwi_dir} for dwi and mask images...")
 
 
 rule nii2mif:
@@ -94,14 +105,19 @@ rule nii2mif:
             suffix="brainmask.mif",
             **config["subj_wildcards"]
         ),
-    threads: workflow.cores
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=10,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/nii2mif.log",
     group:
-        "subject_1"
+        "dwiproc"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "mrconvert -nthreads {threads} -fslgrad {input.bvec} {input.bval} {input.dwi} {output.dwi} && "
-        "mrconvert -nthreads {threads} {input.mask} {output.mask}"
+        "mrconvert -nthreads {threads} -fslgrad {input.bvec} {input.bval} {input.dwi} {output.dwi} &> {log} && "
+        "mrconvert -nthreads {threads} {input.mask} {output.mask} >> {log} 2>&1"
 
 
 rule dwi2response:
@@ -129,18 +145,22 @@ rule dwi2response:
             desc="csf",
             **config["subj_wildcards"],
         ),
-    threads: workflow.cores
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=60,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2response.log",
     group:
-        "subject_1"
+        "dwiproc"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "dwi2response dhollander {input.dwi} {output.wm_rf} {output.gm_rf} {output.csf_rf} -nthreads {threads} -mask {input.mask} {params.shells} {params.lmax} "
+        "dwi2response dhollander {input.dwi} {output.wm_rf} {output.gm_rf} {output.csf_rf} -nthreads {threads} -mask {input.mask} {params.shells} {params.lmax} &> {log}"
 
 
 rule responsemean:
     """Compute average response function"""
-    # DOUBLE CHECK
     input:
         subject_rf=expand(
             bids_response_out(
@@ -155,13 +175,18 @@ rule responsemean:
             root=str(Path(mrtrix_dir) / "avg"),
             desc="{tissue}",
         ),
-    threads: workflow.cores
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=10,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/{{tissue}}_responsemean.log",
     group:
-        "group"
+        "dwiproc_group"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "responsemean {input.subject_rf} {output.avg_rf} -nthreads {threads}"
+        "responsemean {input.subject_rf} {output.avg_rf} -nthreads {threads} &> {log}"
 
 
 rule dwi2fod:
@@ -217,13 +242,18 @@ rule dwi2fod:
             suffix="fod.mif",
             **config["subj_wildcards"],
         ),
-    threads: workflow.cores
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=60,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2fod.log",
     group:
-        "subject_2"
+        "diffmodel"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "dwi2fod -nthreads {threads} {params.shells} -mask {input.mask} msmt_csd {input.dwi} {input.wm_rf} {output.wm_fod} {input.gm_rf} {output.gm_fod} {input.csf_rf} {output.csf_fod}"
+        "dwi2fod -nthreads {threads} {params.shells} -mask {input.mask} msmt_csd {input.dwi} {input.wm_rf} {output.wm_fod} {input.gm_rf} {output.gm_fod} {input.csf_rf} {output.csf_fod} &> {log}"
 
 
 rule mtnormalise:
@@ -256,13 +286,18 @@ rule mtnormalise:
             suffix="fodNormalized.mif",
             **config["subj_wildcards"],
         ),
-    threads: workflow.cores
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=60,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/mtnormalise.log",
     group:
-        "subject_2"
+        "diffmodel"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "mtnormalise -nthreads {threads} -mask {input.mask} {input.wm_fod} {output.wm_fod} {input.gm_fod} {output.gm_fod} {input.csf_fod} {output.csf_fod}"
+        "mtnormalise -nthreads {threads} -mask {input.mask} {input.wm_fod} {output.wm_fod} {input.gm_fod} {output.gm_fod} {input.csf_fod} {output.csf_fod} &> {log}"
 
 
 # DTI (Tensor) Processing
@@ -278,13 +313,18 @@ rule dwinormalise:
             suffix="dwi.mif",
             **config["subj_wildcards"],
         ),
-    threads: workflow.cores
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=60,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwinormalise.log",
     container:
         config["singularity"]["mrtrix"]
     group:
-        "subject_1"
+        "dwiproc"
     shell:
-        "dwinormalise individual -nthreads {threads} {input.dwi} {input.mask} {output.dwi}"
+        "dwinormalise individual -nthreads {threads} {input.dwi} {input.mask} {output.dwi} &> {log}"
 
 
 rule dwi2tensor:
@@ -297,14 +337,19 @@ rule dwi2tensor:
         ad=bids_dti_out(suffix="ad.mif"),
         rd=bids_dti_out(suffix="rd.mif"),
         md=bids_dti_out(suffix="md.mif"),
-    threads: workflow.cores
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=60,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2tensor.log",
     group:
-        "subject_1"
+        "dwiproc"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "dwi2tensor -nthreads {threads} -mask {input.mask} {input.dwi} {output.dti} && "
-        "tensor2metric -nthreads {threads} -mask {input.mask} {output.dti} -fa {output.fa} -ad {output.ad} -rd {output.rd} -adc {output.md}"
+        "dwi2tensor -nthreads {threads} -mask {input.mask} {input.dwi} {output.dti} &> {log} && "
+        "tensor2metric -nthreads {threads} -mask {input.mask} {output.dti} -fa {output.fa} -ad {output.ad} -rd {output.rd} -adc {output.md} >> {log} 2>&1"
 
 
 # --------------- MRTRIX PREPROC END --------------#
@@ -318,7 +363,11 @@ rule tckgen:
         mask=rules.nii2mif.output.mask,
         cortical_ribbon=rules.fs_xfm_to_native.output.ribbon,
         convex_hull=rules.create_convex_hull.output.convex_hull,
-        subcortical_seg=rules.add_brainstem.output.mask,
+        subcortical_seg=bids_labelmerge(
+            space="T1w",
+            desc="combined",
+            suffix="dseg.nii.gz",
+        ),
     params:
         step=config["step"],
         sl=config["sl_count"],
@@ -327,13 +376,32 @@ rule tckgen:
             desc="iFOD2",
             suffix="tractography.tck",
         ),
-    threads: workflow.cores
-    group:
-        "subject_2"
+    threads: 32
+    resources:
+        tmp_dir=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            **wildcards,
+        ),
+        tmp_tck=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            desc="iFOD2",
+            suffix="tractography.tck",
+            **wildcards,
+        ),
+        mem_mb=128000,
+        time=60 * 24,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tckgen.log",
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.cortical_ribbon} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {output.tck}"
+        "mkdir -p {resources.tmp_dir} && "
+        "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.cortical_ribbon} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {resources.tmp_tck} &> {log} && "
+        "rsync -v {resources.tmp_tck} {output.tck} >> {log} 2>&1"
 
 
 rule tcksift2:
@@ -347,13 +415,97 @@ rule tcksift2:
             suffix="tckWeights.txt",
         ),
         mu=bids_tractography_out(desc="iFOD2", suffix="muCoefficient.txt"),
-    threads: workflow.cores
-    group:
-        "subject_2"
+    threads: 8
+    resources:
+        mem_mb=32000,
+        time=60 * 2,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tcksift2.log",
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tcksift2 -nthreads {threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights}"
+        "tcksift2 -nthreads {threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights} &> {log}"
+
+
+checkpoint create_roi_mask:
+    input:
+        subcortical_seg=rules.tckgen.input.subcortical_seg,
+        num_labels=rules.get_num_nodes.output.num_labels,
+    params:
+        base_dir=mrtrix_dir,
+        container=config["singularity"]["mrtrix"],
+        subj_wildcards=config["subj_wildcards"],
+    output:
+        out_dir=directory(bids_anat_out(datatype="roi_masks")),
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=60,
+    group:
+        "tract_masks"
+    script:
+        "../scripts/mrtpipelines/create_roi_mask.py"
+
+
+def aggregate_rois(wildcards):
+    """Grab all created roi masks"""
+    roi_masks = bids_anat_out(
+        datatype="roi_masks",
+        desc="{node}",
+        suffix="mask.mif",
+        **wildcards,
+    )
+    # Get node label wildcard
+    node = glob_wildcards(roi_masks).node
+
+    # Build node pairs
+    node_pairs = np.triu_indices(len(node), k=1)
+
+    return {
+        "roi1": expand(
+            bids_anat_out(
+                datatype="roi_masks",
+                desc="{node1}",
+                suffix="mask.mif",
+            ),
+            node1=list(node_pairs[0] + 1),
+            allow_missing=True,
+        ),
+        "roi2": expand(
+            bids_anat_out(
+                datatype="roi_masks",
+                desc="{node2}",
+                suffix="mask.mif",
+            ),
+            node2=list(node_pairs[1] + 1),
+            allow_missing=True,
+        ),
+    }
+
+
+checkpoint create_exclude_mask:
+    input:
+        unpack(aggregate_rois),
+        rules.create_roi_mask.output.out_dir,
+        subcortical_seg=rules.tckgen.input.subcortical_seg,
+        num_labels=rules.get_num_nodes.output.num_labels,
+    params:
+        base_dir=mrtrix_dir,
+        mask_dir=bids_anat_out(
+            datatype="roi_masks",
+        ),
+        container=config["singularity"]["mrtrix"],
+        subj_wildcards=config["subj_wildcards"],
+    output:
+        out_dir=directory(bids_anat_out(datatype="exclude_mask")),
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=60 * 3,
+    group:
+        "tract_masks"
+    script:
+        "../scripts/mrtpipelines/create_exclude_mask.py"
 
 
 # TODO (v0.2): ADD OPTION TO OUTPUT TDI MAP
@@ -368,7 +520,7 @@ rule tck2connectome:
     input:
         weights=rules.tcksift2.output.weights,
         tck=rules.tckgen.output.tck,
-        subcortical_seg=rules.add_brainstem.output.mask,
+        subcortical_seg=rules.tckgen.input.subcortical_seg,
     params:
         radius=config["radial_search"],
     output:
@@ -380,138 +532,233 @@ rule tck2connectome:
             desc="subcortical",
             suffix="nodeWeights.csv",
         ),
-    threads: workflow.cores
+    threads: 32
+    resources:
+        tmp_dir=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            **wildcards,
+        ),
+        tmp_sl_assignment=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            desc="subcortical",
+            suffix="nodeAssignment.txt",
+            **wildcards,
+        ),
+        tmp_node_weights=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            desc="subcortical",
+            suffix="nodeWeights.csv",
+            **wildcards,
+        ),
+        mem_mb=128000,
+        time=60 * 3,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tck2connectome.log",
     group:
-        "subject_2"
+        "tractography_update"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} "
+        "mkdir -p {resources.tmp_dir} && "
+        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {resources.tmp_sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {resources.tmp_node_weights} &> {log} && "
+        "rsync {resources.tmp_sl_assignment} {output.sl_assignment} >> {log} 2>&1 && "
+        "rsync {resources.tmp_node_weights} {output.node_weights} >> {log} 2>&1"
 
 
-rule connectome2tck:
+checkpoint connectome2tck:
     input:
-        node_weights=rules.tck2connectome.output.node_weights,
+        node_weights=rules.tcksift2.output.weights,
         sl_assignment=rules.tck2connectome.output.sl_assignment,
         tck=rules.tckgen.output.tck,
+        num_labels=rules.get_num_nodes.output.num_labels,
+    output:
+        output_dir=directory(
+            str(
+                Path(
+                    bids_tractography_out(
+                        datatype="unfiltered",
+                    )
+                ).parent
+            )
+        ),
+    threads: 32
+    resources:
+        tmp_dir=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            datatype="unfiltered",
+            **wildcards,
+        ),
+        edge_weight_prefix=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            datatype="unfiltered",
+            desc="subcortical",
+            suffix="tckWeights",
+            **wildcards,
+        ),
+        edge_tck_prefix=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            datatype="unfiltered",
+            desc="subcortical",
+            suffix="from",
+            **wildcards,
+        ),
+        mem_mb=128000,
+        time=60 * 3,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/connectome2tck.log",
+    group:
+        "tractography_update"
+    container:
+        config["singularity"]["mrtrix"]
+    shell:
+        "mkdir -p {resources.tmp_dir} {output.output_dir} && "
+        "num_labels=$(cat {input.num_labels}) && "
+        "connectome2tck -nthreads {threads} -nodes `seq -s, 1 $((num_labels))` -exclusive -files per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {resources.edge_weight_prefix} {input.tck} {input.sl_assignment} {resources.edge_tck_prefix} &> {log} && "
+        "rsync {resources.edge_weight_prefix}*.csv {output.output_dir}/ >> {log} 2>&1 && "
+        "rsync {resources.edge_tck_prefix}*.tck {output.output_dir}/ >> {log} 2>&1"
+
+
+def aggregate_tck_files(wildcards):
+    """Grab all files associated with unfiltered tck"""
+    # Build list of files
+    unfiltered_weights = expand(
+        bids_tractography_out(
+            datatype="unfiltered",
+            desc="subcortical",
+            suffix="tckWeights{suffix}.csv",
+        ),
+        **wildcards,
+        allow_missing=True,
+    )[0]
+
+    suffix = glob_wildcards(unfiltered_weights).suffix
+
+    unfiltered_tck = expand(
+        bids_tractography_out(
+            datatype="unfiltered",
+            desc="subcortical",
+            suffix="from{suffix}.tck",
+        ),
+        suffix=suffix,
+        allow_missing=True,
+    )
+
+    return {
+        "weights": expand(
+            bids_tractography_out(
+                datatype="unfiltered",
+                desc="subcortical",
+                suffix="tckWeights{suffix}.csv",
+            ),
+            suffix=suffix,
+            allow_missing=True,
+        ),
+        "tck": unfiltered_tck,
+    }
+
+
+def aggregate_exclude_masks(wildcards):
+    """Grab all exclude masks"""
+    # Build list of files
+    exclude_mask = expand(
+        bids_anat_out(
+            datatype="exclude_mask",
+            desc="{desc}",
+            suffix="mask.mif",
+        ),
+        **wildcards,
+        allow_missing=True,
+    )
+
+    # Get desc wildcard
+    desc = glob_wildcards(exclude_mask[0]).desc
+
+    return expand(
+        exclude_mask,
+        desc=desc,
+    )
+
+
+def get_desc(wildcards):
+    """Build param list"""
+    # Get desc wildcards
+    exclude_mask = expand(
+        bids_anat_out(
+            datatype="exclude_mask",
+            desc="{desc}",
+            suffix="mask.mif",
+        ),
+        **wildcards,
+        allow_missing=True,
+    )[0]
+    desc = glob_wildcards(exclude_mask).desc
+
+    return desc
+
+
+def get_filtered_tck(wildcards):
+    desc = get_desc(wildcards)
+    # Create params lists
+    return expand(
+        bids_tractography_out(
+            desc="{desc}",
+            suffix="tractography.tck",
+        ),
+        **wildcards,
+        desc=desc,
+        allow_missing=True,
+    )
+
+
+def get_filtered_weights(wildcards):
+    desc = get_desc(wildcards)
+    return expand(
+        bids_tractography_out(
+            desc="{desc}",
+            suffix="weights.csv",
+        ),
+        **wildcards,
+        desc=desc,
+        allow_missing=True,
+    )
+
+
+rule filter_combine_tck:
+    input:
+        unpack(aggregate_tck_files),
+        rules.connectome2tck.output.output_dir,
+        rules.create_exclude_mask.output.out_dir,
+        filter_mask=aggregate_exclude_masks,
     params:
-        nodes=",".join(str(num) for num in range(1, 73)),
-    output:
-        edge_weight=temp(
-            bids_tractography_out(
-                desc="subcortical",
-                suffix="tckWeights",
-            )
+        filtered_tck=get_filtered_tck,
+        filtered_weights=get_filtered_weights,
+        filtered_tck_exists=bids_tractography_out(
+            desc="from*", suffix="tractography.tck"
         ),
-        edge_tck=temp(
-            bids_tractography_out(
-                desc="subcortical",
-                suffix="from",
-            )
+        filtered_weights_exists=bids_tractography_out(
+            desc="from*", suffix="weights.csv"
         ),
-    threads: workflow.cores
-    group:
-        "subject_2"
-    container:
-        config["singularity"]["mrtrix"]
-    shell:
-        "connectome2tck -nthreads {threads} -nodes {params.nodes} -exclusive -filters_per_edge -tck_weights_in {input.node_weights} -prefix_tck_weights_out {output.edge_weight} {input.tck} {input.sl_assignment} {output.edge_tck} "
-
-
-rule create_roi_mask:
-    input:
-        subcortical_seg=rules.add_brainstem.output.mask,
-    output:
-        roi_mask=temp(
-            bids_anat_out(
-                desc="{node1}",
-                suffix="mask.mif",
-            )
+        exclude_mask_dir=bids_anat_out(
+            datatype="exclude_mask",
         ),
-    threads: workflow.cores
-    group:
-        "subject_2"
-    container:
-        config["singularity"]["mrtrix"]
-    shell:
-        "mrcalc -nthreads {threads} {input.subcortical_seg} {wildcards.node1} -eq {output.roi_mask}"
-
-
-rule create_exclude_mask:
-    input:
-        roi1=bids_anat_out(
-            desc="{node1}",
-            suffix="mask.mif",
-        ),
-        roi2=bids_anat_out(
-            desc="{node2}",
-            suffix="mask.mif",
-        ),
-        lZI=bids_anat_out(desc="21", suffix="mask.mif"),
-        rZI=bids_anat_out(desc="22", suffix="mask.mif"),
-        subcortical_seg=rules.add_brainstem.output.mask,
-    output:
-        filter_mask=temp(
-            bids_anat_out(
-                desc="exclude{node1}AND{node2}",
-                suffix="mask.mif",
-            )
-        ),
-    threads: workflow.cores
-    group:
-        "subject_2"
-    container:
-        config["singularity"]["mrtrix"]
-    shell:
-        "mrcalc -nthreads {threads} {input.subcortical_seg} 0 -neq {input.roi1} -sub {input.roi2} -sub {input.lZI} -sub {input.rZI} -sub {output.filter_mask}"
-
-
-rule filter_tck:
-    input:
-        filter_mask=rules.create_exclude_mask.output.filter_mask,
-        tck=rules.connectome2tck.output.edge_tck,
-        weights=rules.tck2connectome.output.node_weights,
-        subcortical_seg=rules.add_brainstem.output.mask,
-    output:
-        filtered_tck=temp(
-            bids_tractography_out(
-                desc="from{node1}to{node2}",
-                suffix="tractography.tck",
-            ),
-        ),
-        filtered_weights=temp(
-            bids_tractography_out(
-                desc="from{node1}to{node2}",
-                suffix="weights.csv",
-            ),
-        ),
-    threads: workflow.cores
-    group:
-        "subject_2"
-    container:
-        config["singularity"]["mrtrix"]
-    shell:
-        "tckedit -nthreads {threads} -exclude {input.filter_mask} -tck_weights_in {input.weights} -tck_weights_out {output.filtered_weights} {input.tck} {output.filtered_tck}"
-
-
-idxes = np.triu_indices(72, k=1)
-
-
-rule combine_filtered:
-    input:
-        tck=expand(
-            rules.filter_tck.output.filtered_tck,
-            zip,
-            node1=list(idxes[0] + 1),
-            node2=list(idxes[1] + 1),
-            allow_missing=True,
-        ),
-        weights=expand(
-            rules.filter_tck.output.filtered_weights,
-            zip,
-            node1=list(idxes[0] + 1),
-            node2=list(idxes[1] + 1),
-            allow_missing=True,
+        unfiltered_tck_dir=str(
+            Path(
+                bids_tractography_out(
+                    datatype="unfiltered",
+                )
+            ).parent
         ),
     output:
         combined_tck=bids_tractography_out(
@@ -522,21 +769,53 @@ rule combine_filtered:
             desc="filteredsubcortical",
             suffix="tckWeights.txt",
         ),
-    threads: workflow.cores
+    threads: 1
+    resources:
+        tmp_dir=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            **wildcards,
+        ),
+        tmp_combined_tck=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            desc="filteredsubcortical",
+            suffix="tractography.tck",
+            **wildcards,
+        ),
+        tmp_combined_weights=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            desc="filteredsubcortical",
+            suffix="tckWeights.txt",
+            **wildcards,
+        ),
+        mem_mb=128000,
+        time=60,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/combine_filtered.log",
     group:
-        "subject_2"
+        "tractography_update"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tckedit {input.tck} {output.combined_tck} && "
-        "cat {input.weights} >> {output.combined_weights} "
+        "mkdir -p {resources.tmp_dir} && "
+        "parallel --jobs {threads} -k tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && "
+        "tckedit {params.filtered_tck_exists} {resources.tmp_combined_tck} &> {log} && "
+        "cat {params.filtered_weights_exists} >> {resources.tmp_combined_weights} && "
+        "rsync -v {resources.tmp_combined_tck} {output.combined_tck} >> {log} 2>&1 && "
+        "rsync -v {resources.tmp_combined_weights} {output.combined_weights} >> {log} 2>&1 && "
+        "rm {params.filtered_tck_exists} {params.filtered_weights_exists}"
 
 
 rule filtered_tck2connectome:
     input:
-        weights=rules.combine_filtered.output.combined_weights,
-        tck=rules.combine_filtered.output.combined_tck,
-        subcortical_seg=rules.add_brainstem.output.mask,
+        weights=rules.filter_combine_tck.output.combined_weights,
+        tck=rules.filter_combine_tck.output.combined_tck,
+        subcortical_seg=rules.tckgen.input.subcortical_seg,
     params:
         radius=config["radial_search"],
     output:
@@ -548,13 +827,43 @@ rule filtered_tck2connectome:
             desc="filteredsubcortical",
             suffix="nodeWeights.csv",
         ),
-    threads: workflow.cores
+    threads: 32
+    resources:
+        tmp_dir=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            **wildcards,
+        ),
+        tmp_sl_assignment=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            desc="filteredsubcortical",
+            suffix="nodeAssignment.txt",
+            **wildcards,
+        ),
+        tmp_node_weights=lambda wildcards: bids_tractography_out(
+            root=os.environ.get("SLURM_TMPDIR")
+            if config.get("slurm_tmpdir")
+            else "/tmp",
+            desc="filteredsubcortical",
+            suffix="nodeWeights.csv",
+            **wildcards,
+        ),
+        mem_mb=128000,
+        time=60 * 3,
+    log:
+        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/filtered_tck2connectome.log",
     group:
-        "subject_2"
+        "tractography_update"
     container:
         config["singularity"]["mrtrix"]
     shell:
-        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {output.sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {output.node_weights} -force"
+        "mkdir -p {resources.tmp_dir} && "
+        "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {resources.tmp_sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {resources.tmp_node_weights} &> {log} && "
+        "rsync {resources.tmp_sl_assignment} {output.sl_assignment} >> {log} 2>&1 && "
+        "rsync {resources.tmp_node_weights} {output.node_weights} >> {log} 2>&1"
 
 
 # ------------ MRTRIX TRACTOGRAPHY END ----------#
