@@ -30,7 +30,6 @@ repos:
     rev: 5.0.4
     hooks:
       - id: flake8
-        args: [--ignore=E501]
 
   - repo: https://github.com/snakemake/snakefmt
     rev: 0.6.1
