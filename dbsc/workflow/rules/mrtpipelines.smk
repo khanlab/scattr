@@ -130,8 +130,8 @@ rule dwi2response:
         dwi=rules.nii2mif.output.dwi,
         mask=rules.nii2mif.output.mask,
     params:
-        shells=f"-shells {shells}" if shells else "",
-        lmax=f"-lmax {lmax}" if lmax else "",
+        shells=f"-shells {','.join(shells)}" if shells else "",
+        lmax=f"-lmax {','.join(lmax)}" if lmax else "",
     output:
         wm_rf=bids_response_out(
             desc="wm",
@@ -222,7 +222,7 @@ rule dwi2fod:
             )
         ),
     params:
-        shells=f"-shells {shells}" if shells else "",
+        shells=f"-shells {','.join(shells)}" if shells else "",
     output:
         wm_fod=bids_response_out(
             model="csd",
