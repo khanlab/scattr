@@ -51,19 +51,19 @@ jobs:
         run: poetry install --no-interaction --no-root --with dev
 
       - name: yamlfix
-        run: poetry run poe yamlfix
+        run: poetry run poe yamlfix-check
 
       - name: isort
-        run: poetry run poe isort
+        run: poetry run poe isort-check
 
       - name: black
-        run: poetry run poe black
+        run: poetry run poe black-check
 
       - name: flake8
         run: poetry run poe flake8
 
       - name: snakefmt
-        run: poetry run poe snakefmt
+        run: poetry run poe snakefmt-check
 
   test:
     runs-on: ubuntu-latest

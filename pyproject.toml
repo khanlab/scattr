@@ -37,11 +37,22 @@ build-backend = "poetry.core.masonry.api"
 [tool.poe.tasks]
 setup = "pre-commit install"
 yamlfix = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix {} \\;" }
-isort = "isort dbsc/*.py"
+yamlfix-check = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix --check {} \\;" }
+isort = "isort dbsc"
+isort-check = "isort -c dbsc"
 black = "black dbsc"
+black-check = "black --check dbsc"
 flake8 = "flake8 dbsc"
 snakefmt = "snakefmt dbsc"
+snakefmt-check = "snakefmt --check dbsc"
 quality = ["yamlfix", "isort", "black", "flake8", "snakefmt"]
+quality-check = [
+    "yamlfix-check",
+    "isort-check",
+    "black-check",
+    "flake8",
+    "snakefmt-check",
+]
 test_base = { shell = "python ./dbsc/run.py ./test/data/bids ./test/data/derivatives/ participant -np --force-output" }
 test_freesurfer = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --freesurfer_dir ./test/data/derivatives/freesurfer -np --force-output" }
 test_responsemean = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --responsemean_dir ./test/data/derivatives/mrtrix/avg -np --force-output" }
@@ -54,9 +65,6 @@ multi_line_output = 3
 
 [tool.black]
 line-length = 79
-
-[tool.flake8]
-ignore = 'E501'
 
 [tool.snakefmt]
 line_length = 79
