@@ -123,7 +123,7 @@ parse_args:
           in the list of b-values as provided to the -shell option! Several
           algorithms which include the b=0 volumes in their computations may
           otherwise return an undesired reuslt.'
-    nargs: "+"
+    nargs: "*"
 
   --lmax:
     help: '(Mrtrix3) the maximum spherical harmonic order for the output
@@ -133,7 +133,7 @@ parse_args:
           should be provided. If omitted, commands will use the lmax of the
           corresponding response function (i.e. based on its number of
           coefficients), up to a maximum of 8.'
-    nargs: "+"
+    nargs: "*"
 
   --step:
     help: '(Mrtrix3) set the step size of the algorithm in mm. Should set to
