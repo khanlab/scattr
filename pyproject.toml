@@ -13,7 +13,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
-snakebids = "^0.6.0"
+snakebids = "^0.7.0"
 nibabel = "^3.2.2"
 numpy = "^1.22.3"
 scipy = "^1.8.0"
