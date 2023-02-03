@@ -10,3 +10,6 @@ test/data/derivatives/.snakebids
 **/zona_bb_subcortex/MNI152
 **/zona_bb_subcortex/MNI2009b
 **/zona_bb_subcortex/transforms
+
+# Package files
+__pycache__/
