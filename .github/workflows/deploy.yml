@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       comments:
-        descriptoin: "Comments"
+        description: "Comments"
         required: false
 
 jobs:
@@ -83,4 +83,31 @@ jobs:
         run: |
           poetry self add "poetry-dynamic-versioning[plugin]"
 
-      # ADD STEP TO BUILD AND DEPLOY DOCKER
+      - name: Login to Dockerhub
+        uses: docker/login-action@2.1.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to container registry
+        uses: docker/login-action@2.1.0
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata
+        uses: docker/metadata-action@v4.1.1
+        id: metadata
+        with:
+          images: |
+            ${{ github.repository }}
+            ghcr.io/${{ github.repository }}
+
+      - name: Build and push docker image
+        uses: docker/build-push-action@v3.2.0
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
