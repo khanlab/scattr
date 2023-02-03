@@ -18,9 +18,9 @@ RUN mkdir -p /opt \
     && git checkout ${MRTRIX_VER} \
     && ./configure \ 
     && ./build \
-    && ./set_path \
     && apt-get purge -y -q g++ \
     && apt-get --purge -y -qq autoremove 
+ENV PATH=/opt/mrtrix3/bin:$PATH
 
 # Stage: freesurfer
 FROM mrtrix AS freesurfer
@@ -40,26 +40,26 @@ RUN mkdir -p /opt \
     && rm fs_runtime2014b.tar.gz \
     && apt-get purge -y -q wget curl
 # setup fs env
-ENV OS Linux
-ENV PATH /usr/local/freesurfer/bin:/usr/local/freesurfer/fsfast/bin:/usr/local/freesurfer/tktools:/usr/local/freesurfer/mni/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
-ENV FREESURFER_HOME /usr/local/freesurfer
-ENV FREESURFER /usr/local/freesurfer
-ENV SUBJECTS_DIR /usr/local/freesurfer/subjects
-ENV LOCAL_DIR /usr/local/freesurfer/local
-ENV FSFAST_HOME /usr/local/freesurfer/fsfast
-ENV FMRI_ANALYSIS_DIR /usr/local/freesurfer/fsfast
-ENV FUNCTIONALS_DIR /usr/local/freesurfer/sessions
-# set default fs options
-ENV FS_OVERRIDE 0
-ENV FIX_VERTEX_AREA ""
-ENV FSF_OUTPUT_FORMAT nii.gz
-# mni env requirements
-ENV MINC_BIN_DIR /usr/local/freesurfer/mni/bin
-ENV MINC_LIB_DIR /usr/local/freesurfer/mni/lib
-ENV MNI_DIR /usr/local/freesurfer/mni
-ENV MNI_DATAPATH /usr/local/freesurfer/mni/data
-ENV MNI_PERL5LIB /usr/local/freesurfer/mni/share/perl5
-ENV PERL5LIB /usr/local/freesurfer/mni/share/perl5
+ENV OS=Linux \ 
+    PATH=/usr/local/freesurfer/bin:/usr/local/freesurfer/fsfast/bin:/usr/local/freesurfer/tktools:/usr/local/freesurfer/mni/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH \
+    FREESURFER_HOME=/usr/local/freesurfer \
+    FREESURFER=/usr/local/freesurfer \
+    SUBJECTS_DIR=/usr/local/freesurfer/subjects \
+    LOCAL_DIR=/usr/local/freesurfer/local \
+    FSFAST_HOME=/usr/local/freesurfer/fsfast \
+    FMRI_ANALYSIS_DIR=/usr/local/freesurfer/fsfast \ 
+    FUNCTIONALS_DIR=/usr/local/freesurfer/sessions \
+    # set default fs options
+    FS_OVERRIDE=0 \
+    FIX_VERTEX_AREA="" \
+    FSF_OUTPUT_FORMAT=nii.gz \
+    # mni env requirements
+    MINC_BIN_DIR=/usr/local/freesurfer/mni/bin \
+    MINC_LIB_DIR=/usr/local/freesurfer/mni/lib \
+    MNI_DIR=/usr/local/freesurfer/mni \
+    MNI_DATAPATH=/usr/local/freesurfer/mni/data \
+    MNI_PERL5LIB=/usr/local/freesurfer/mni/share/perl5 \
+    PERL5LIB=/usr/local/freesurfer/mni/share/perl5
 
 # Stage: ANTs
 FROM freesurfer as ants
@@ -74,7 +74,8 @@ RUN mkdir -p /opt \
     && rm ants.zip \
     && apt-get purge -y -q wget unzip 
 # setup ants env
-ENV PATH /opt/ants-${ANTS_VER}/bin:$PATH
+ENV ANTSPATH=/opt/ants-${ANTS_VER}/bin/ \
+    PATH=/opt/ants-${ANTS_VER}/:/opt/ants-${ANTS_VER}/bin:$PATH
 
 # Stage: build
 # NOTE: g++ and libdatrie are required for poetry install
