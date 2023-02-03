@@ -106,9 +106,15 @@ parse_args:
     type: Path
 
   --responsemean_dir:
-    help: 'Provide directory containing average response functions. If not
-          provided, one will be computed from the subjects in the input
-          directory.'
+    help: The path to the directory containing average response functions. If 
+          not provided, one will be computed from the subjects in the input
+          directory.
+    nargs: "?"
+    type: Path
+
+  --fs_license:
+    help: Path to Freesurfer license file. If not provided, workflow will check
+          FS_LICENSE environment variable for one.
     nargs: "?"
     type: Path
 
