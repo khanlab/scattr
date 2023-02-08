@@ -31,6 +31,8 @@ RUN mkdir -p /opt \
        tcsh \
        wget \
        curl \
+       libncurses5 \
+       libxt6 \
     && wget  https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/${FS_VER}/freesurfer-linux-centos7_x86_64-${FS_VER}.tar.gz -O fs.tar.gz \
     && tar --no-same-owner -xzvf fs.tar.gz \
     && mv freesurfer /usr/local \
@@ -38,6 +40,7 @@ RUN mkdir -p /opt \
     && curl 'https://surfer.nmr.mgh.harvard.edu/fswiki/MatlabRuntime?action=AttachFile&do=get&target=runtime2014bLinux.tar.gz' -o 'fs_runtime2014b.tar.gz' \
     && tar --no-same-owner -xzvf fs_runtime2014b.tar.gz -C /usr/local/freesurfer \
     && rm fs_runtime2014b.tar.gz \
+    && chmod -R 775 /usr/local/freesurfer/MCRv84 \
     && apt-get purge -y -q wget curl
 # setup fs env
 ENV OS=Linux \ 
