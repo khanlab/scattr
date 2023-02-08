@@ -18,5 +18,5 @@ RUN mkdir -p /opt \
 
 # Stage: runtime
 FROM build AS runtime
-COPY ./dbsc /opt/dbsc
-# ENTRYPOINT ["/opt/dbsc/run.py"]
+COPY ./scattr /opt/scattr
+# ENTRYPOINT ["/opt/scattr/run.py"]

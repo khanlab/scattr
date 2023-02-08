@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Variables
+subj=sub-${1:4}
+njobs=$2
+wm_roi=$3
+out_dir=$HOME/scratch/Zona/data/hcp1200_3T/hcp_test
+localscratch=$SLURM_TMPDIR
+
+SINGULARITY_IMG=$HOME/opt/singularity/mrtpipelines_0.1.6.sif
+export SINGULARITYENV_OMP_NUM_THREADS=$njobs
+export SINGULARITYENV_MKL_NUM_THREADS=$njobs
+
+# Untar
+echo "Untarring necessary files"
+mkdir -p $localscratch/$subj/tractography
+tar -xf $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/${subj}_masked.tar -C $localscratch/$subj/tractography/ 
+
+# Processing
+## Combine tracts in single hemisphere
+singularity exec $SINGULARITY_IMG tckedit $localscratch/$subj/tractography/*/*/${wm_roi}/*.tck $localscratch/$subj/tractography/${subj}_space-dwi_desc-${wm_roi}_tractography.tck 
+
+## Combine tckweights
+cat $localscratch/$subj/tractography/*/*/${wm_roi}/*tckweights*.csv >> $localscratch/$subj/tractography/${subj}_space-dwi_desc-${wm_roi}_tckweights.txt
+
+# Create connectivity matrix
+singularity exec $SINGULARITY_IMG tck2connectome -nthreads $njobs -zero_diagonal -stat_edge sum -tck_weights_in $localscratch/$subj/tractography/${subj}_space-dwi_desc-${wm_roi}_tckweights.txt -symmetric $localscratch/$subj/tractography/${subj}_space-dwi_desc-${wm_roi}_tractography.tck $out_dir/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_desc-ZonaBBSubCorSeg.nii.gz $localscratch/$subj/tractography/${subj}_space-dwi_desc-${wm_roi}_nodeweights.csv
+
+# Datasink
+rsync -rv $localscratch/$subj/tractography/${subj}_space-dwi_desc-${wm_roi}_nodeweights.csv $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/

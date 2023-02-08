@@ -1,0 +1,19 @@
+#!/bin/bash
+
+subj=$1
+njobs=$2
+
+SINGULARITY_IMG=$HOME/opt/singularity/mrtpipelines_0.1.6.sif
+
+hcp_test=/scratch/$USER/Zona/data/hcp1200_3T_2/hcp_test/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/
+subconn=/scratch/$USER/Zona/data/hcp1200_3T_2/hcp_test/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_desc-ZonaBBSubCorSeg.nii.gz 
+
+tar -xf $hcp_test/tractography/${subj}_edge.tar -C $SLURM_TMPDIR
+
+singularity exec $SINGULARITY_IMG tckedit -nthreads $njobs $SLURM_TMPDIR/edge/*.tck $SLURM_TMPDIR/${subj}_space-T1w_desc-subcortical_tractography.tck -force
+
+cat $SLURM_TMPDIR/edge/*tckweights*.csv >> $SLURM_TMPDIR/${subj}_space-dwi_desc-subcortical_tractography_tckweights.txt 
+
+singularity exec $SINGULARITY_IMG tck2connectome -nthreads $njobs -zero_diagonal -stat_edge sum -assignment_radial_search 1.5 -tck_weights_in $SLURM_TMPDIR/${subj}_space-dwi_desc-subcortical_tractography_tckweights.txt -symmetric $SLURM_TMPDIR/${subj}_space-T1w_desc-subcortical_tractography.tck $subconn $hcp_test/tractography/${subj}_space-dwi_desc-subcortical_nodeweights.csv -force
+
+rm -r $SLURM_TMPDIR/*

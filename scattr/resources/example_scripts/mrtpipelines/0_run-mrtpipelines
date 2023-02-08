@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Variables
+subj=sub-${1:4}
+out_dir=/scratch/tkai/Zona/data/hcp1200_3T/hcp_test
+work_dir=$out_dir/derivatives/prepdwi_v0.0.13/work
+njobs=32
+localscratch=$SLURM_TMPDIR
+
+SINGULARITY_MRTRIXDEV=$HOME/opt/singularity/mrtrix3-dev.sif
+SINGULARITY_PREPDWI=$HOME/singularity/bids-apps/khanlab_prepdwi_v0.0.13.sif
+export SINGULARITYENV_OMP_NUM_THREADS=$njobs
+export SINGULARITYENV_MKL_NUM_THREADS=$njobs
+
+
+# Mrtrix pipelines - original resolution
+## Temporarily move file for pybids
+mv $out_dir/$subj/dwi/${subj}_dwi_space-T1w_preproc.grad_dev.nii.gz $out_dir/$subj/dwi/temp.nii.gz
+
+## Streamline count of 1 as we are not using template space data
+singularity exec ~/opt/singularity/mrtpipelines_0.1.6.sif genDhollanderTractography -w $localscratch/derivatives/mrtpipelines_0.1.6/work -o $localscratch/derivatives/mrtpipelines_0.1.6/mrtpipelines -s 0 1000 2000 3000 -l 0 8 8 8 -N 1 -n $njobs -m $out_dir/$subj/dwi/${subj}_dwi_space-T1w_brainmask.nii.gz $localscratch /project/rrg-akhanf/ext-bids/hcp_template/derivatives/genHCPTemplate_0.0.1b/genHCPTemplate/sub-HCPUR100 sub-HCPUR100 $subj
+
+## Clean up files
+mv $out_dir/$subj/dwi/temp.nii.gz $out_dir/$subj/dwi/${subj}_dwi_space-T1w_preproc.grad_dev.nii.gz
+rm $localscratch/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/*space-Template*
+rsync -r $localscratch $out_dir
