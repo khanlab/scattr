@@ -2,9 +2,8 @@
 name: Deploy docker container
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
 
 jobs:
   deploy_docker:
