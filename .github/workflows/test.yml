@@ -3,13 +3,9 @@ name: Lint and test workflow
 
 on:
   push:
-    branches:
-      - '*'
-      - '!push-action/*'
+    branches: ['*', '!push-action/*']
   pull_request:
-    branches:
-      - '*'
-      - '!push-action/*'
+    branches: ['*', '!push-action/*']
 
 jobs:
   quality:

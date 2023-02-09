@@ -1,5 +1,5 @@
 ---
-name: Deploy workflow
+name: Release package
 
 on:
   workflow_dispatch:
@@ -52,6 +52,27 @@ jobs:
           find: '"Version": "(?:([0-9]+\.[0-9]+\.[0-9]+.+)|([0-9]+\.[0-9]+\.[0-9]+))"'
           replace: '"Version": "${{ env.NEW_RELEASE }}"'
 
+      - name: Update version in pyproject.toml
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          include: pyproject.toml
+          find: version = "(?:([0-9]+\.[0-9]+\.[0-9]+.+)|([0-9]+\.[0-9]+\.[0-9]+))"
+          replace: version = "${{ env.NEW_RELEASE }}"
+
+      - name: Commit updates
+        env:
+          LATEST_VERSION: ${{ env.NEW_RELEASE }}
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git diff-index --quiet HEAD || git commit -m "Bump version to $LATEST_VERSION" -a
+
+      - name: Push changes
+        uses: CasperWA/push-protected@v2
+        with:
+          token: ${{ secrets.BP_PAT_TOKEN }}
+          unprotect_reviews: true
+          
       - name: Publish change log
         uses: release-drafter/release-drafter@v5
         with:
@@ -61,60 +82,3 @@ jobs:
           tag: "v${{ env.NEW_RELEASE }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [release_changelog]
-
-    steps:
-      - uses: actions/checkout@master
-        with:
-          ref: ${{ steps.extract_branch.outputs.branch }}
-      
-      - name: Fetch tags
-        run: |
-          git fetch --tags
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true 
-
-      - name: Install Poetry Dynamic Version
-        run: |
-          poetry self add "poetry-dynamic-versioning[plugin]"
-
-      - name: Login to Dockerhub
-        uses: docker/login-action@2.1.0
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Login to container registry
-        uses: docker/login-action@2.1.0
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Extract metadata
-        uses: docker/metadata-action@v4.1.1
-        id: metadata
-        with:
-          images: |
-            ${{ github.repository }}
-            ghcr.io/${{ github.repository }}
-
-      - name: Build and push docker image
-        uses: docker/build-push-action@v3.2.0
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
