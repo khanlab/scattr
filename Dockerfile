@@ -97,8 +97,8 @@ ENV FSLDIR=/opt/fsl \
 # Stage: build
 # NOTE: g++ and libdatrie are required for poetry install
 FROM fsl AS build
-COPY ./poetry.lock ./pyproject.toml /
-RUN mkdir -p /opt \
+COPY . /opt/dbsc/
+RUN cd /opt/dbsc \
     && apt-get update -qq \
     && apt-get install -y -q --no-install-recommends \
         g++=4:10.2.1-1 \
@@ -108,11 +108,14 @@ RUN mkdir -p /opt \
     && pip install --prefer-binary --no-cache-dir \
         poetry==1.2.2 \
     && poetry config virtualenvs.create false \
-    && poetry install --only main \
+    && poetry install --without dev \
+    && poetry build -f wheel \
     && apt-get purge -y -q g++ \
     && apt-get --purge -y -qq autoremove
 
 # Stage: runtime
 FROM build AS runtime
-COPY ./scattr /opt/scattr
-# ENTRYPOINT ["/opt/scattr/run.py"]
+RUN WHEEL=`ls /opt/scattr/dist/* | grep whl` \
+    && pip install $WHEEL \
+    && rm -r /opt/scattr
+ENTRYPOINT ["scattr"]

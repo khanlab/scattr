@@ -10,6 +10,9 @@ authors = [
     "Jonathan C. Lau",
     ]
 readme = "README.md"
+packages = [
+    { include = "dbsc" }
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
