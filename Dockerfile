@@ -80,9 +80,23 @@ RUN mkdir -p /opt \
 ENV ANTSPATH=/opt/ants-${ANTS_VER}/bin/ \
     PATH=/opt/ants-${ANTS_VER}/:/opt/ants-${ANTS_VER}/bin:$PATH
 
+# Stage: FSL
+FROM ants as fsl
+RUN mkdir -p /opt \
+    && apt-get update -qq \
+    && apt-get install -y -q --no-install-recommends \
+       wget \ 
+    && wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/releases/fslinstaller.py \
+    && python fslinstaller.py -d /opt/fsl \
+    && rm fslinstaller.py
+ENV FSLDIR=/opt/fsl \
+    PATH=/opt/fsl/bin:$PATH \
+    LD_LIBRARY_PATH=/opt/fsl/lib:$LD_LIBRARY_PATH \
+    FSLOUTPUTTYPE=NIFTI_GZ
+
 # Stage: build
 # NOTE: g++ and libdatrie are required for poetry install
-FROM ants AS build
+FROM fsl AS build
 COPY ./poetry.lock ./pyproject.toml /
 RUN mkdir -p /opt \
     && apt-get update -qq \
