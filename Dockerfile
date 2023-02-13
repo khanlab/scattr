@@ -1,5 +1,5 @@
 # Stage: requirements
-# Notes: g++ (snakebids), tcsh (freesurfer), parellel (dbsc)
+# Notes: g++ (snakebids), tcsh (freesurfer), parellel (scattr)
 FROM python:3.9-slim-bullseye AS requirements 
 RUN mkdir -p /opt \
     && apt-get update -qq \ 
@@ -60,8 +60,8 @@ RUN wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/releases/fslinstaller.
 
 # Stage: build
 FROM requirements AS build
-COPY . /opt/dbsc/
-RUN cd /opt/dbsc \
+COPY . /opt/scattr/
+RUN cd /opt/scattr \
     && pip install --prefer-binary --no-cache-dir \
         poetry==1.2.2 \
     && poetry build -f wheel
@@ -72,10 +72,10 @@ FROM fsl AS runtime
 COPY --from=mrtrix /opt/mrtrix3 /opt/mrtrix3
 COPY --from=freesurfer /usr/local/freesurfer /usr/local/freesurfer
 COPY --from=ants /opt/ants/bin/antsApplyTransforms /opt/ants/bin/antsRegistration /opt/ants/bin/antsRegistrationSyNQuick.sh /opt/ants/bin/
-COPY --from=build /opt/dbsc/dist/*.whl /opt/dbsc/
-RUN WHEEL=`ls /opt/dbsc | grep whl` \
-    && pip install /opt/dbsc/$WHEEL \
-    && rm -r /opt/dbsc \
+COPY --from=build /opt/scattr/dist/*.whl /opt/scattr/
+RUN WHEEL=`ls /opt/scattr | grep whl` \
+    && pip install /opt/scattr/$WHEEL \
+    && rm -r /opt/scattr \
     && apt-get purge -y -q curl g++ unzip wget \ 
     && apt-get --purge -y -qq autoremove
 # Setup environments
@@ -105,29 +105,4 @@ ENV OS=Linux \
     FSLDIR=/opt/fsl \
     LD_LIBRARY_PATH=/opt/fsl/lib:$LD_LIBRARY_PATH \
     FSLOUTPUTTYPE=NIFTI_GZ
-
-# Stage: build
-# NOTE: g++ and libdatrie are required for poetry install
-FROM fsl AS build
-COPY . /opt/dbsc/
-RUN cd /opt/dbsc \
-    && apt-get update -qq \
-    && apt-get install -y -q --no-install-recommends \
-        g++=4:10.2.1-1 \
-        libdatrie1=0.2.13-1 \
-        parallel=20161222-1.1 \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && pip install --prefer-binary --no-cache-dir \
-        poetry==1.2.2 \
-    && poetry config virtualenvs.create false \
-    && poetry install --without dev \
-    && poetry build -f wheel \
-    && apt-get purge -y -q g++ \
-    && apt-get --purge -y -qq autoremove
-
-# Stage: runtime
-FROM build AS runtime
-RUN WHEEL=`ls /opt/scattr/dist/* | grep whl` \
-    && pip install $WHEEL \
-    && rm -r /opt/scattr
 ENTRYPOINT ["scattr"]
