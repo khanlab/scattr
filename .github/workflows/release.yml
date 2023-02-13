@@ -41,7 +41,7 @@ jobs:
         run: |
           if [ ! -z "$RD_RELEASE" ]; then
             echo "NEW_RELEASE=$RD_RELEASE" >> $GITHUB_ENV
-          else:
+          else
             echo "NEW_RELEASE=0.1.0" >> $GITHUB_ENV
           fi
 
