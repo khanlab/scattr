@@ -20,7 +20,7 @@ snakebids = "^0.7.0"
 nibabel = "^3.2.2"
 numpy = "^1.22.3"
 scipy = "^1.8.0"
-labelmerge = {git = "https://github.com/khanlab/labelmerge.git", rev = "v0.3.0"}
+labelmerge = {git = "https://github.com/khanlab/labelmerge.git", rev = "v0.4.3"}
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "4.0"
