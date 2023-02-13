@@ -1,0 +1,62 @@
+# ---- begin snakebids boilerplate ----------------------------------------------
+
+import snakebids
+from snakebids import bids
+
+
+configfile: "config/snakebids.yml"
+
+
+# writes inputs_config.yml and updates config dict
+config.update(
+    snakebids.generate_inputs(
+        bids_dir=config["bids_dir"],
+        pybids_inputs=config["pybids_inputs"],
+        pybids_config=["bids", "derivatives"],
+        derivatives=config["derivatives"],
+        participant_label=config["participant_label"],
+        exclude_participant_label=config["exclude_participant_label"],
+        use_bids_inputs=False,
+    )
+)
+
+
+# this adds constraints to the bids naming
+wildcard_constraints:
+    **snakebids.get_wildcard_constraints(config["pybids_inputs"]),
+
+
+# ---- end snakebids boilerplate ------------------------------------------------
+
+import os
+from pathlib import Path
+from functools import partial
+
+
+# Rules
+include: "rules/freesurfer.smk"
+include: "rules/zona_bb_subcortex.smk"
+include: "rules/mrtpipelines.smk"
+
+
+rule all:
+    input:
+        tck_files=expand(
+            rules.filtered_tck2connectome.output.sl_assignment,
+            subject=config["input_lists"]["T1w"]["subject"],
+        ),
+        dti_files=expand(
+            rules.dwi2tensor.output.dti,
+            subject=config["input_lists"]["T1w"]["subject"],
+        ),
+    params:
+        mrtrix_dir=expand(
+            bids(
+                root=str(Path(config["output_dir"]) / "mrtrix"),
+                subject="{subject}",
+                include_subject_dir=False,
+            ),
+            subject=config["input_lists"]["T1w"]["subject"],
+        ),
+    shell:  # Clean up intermediate files that left behind
+        "rm -r {params.mrtrix_dir}/exclude_mask {params.mrtrix_dir}/roi_masks {params.mrtrix_dir}/unfiltered"

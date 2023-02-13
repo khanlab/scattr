@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Variables
+subj=sub-${1:4}
+njobs=$2
+roi=$3 # ft, fct, fl, hfields available to choose from
+out_dir=$HOME/scratch/Zona/data/hcp1200_3T/hcp_test
+localscratch=$SLURM_TMPDIR
+
+SINGULARITY_IMG=/home/tkai/opt/singularity/mrtpipelines_0.1.6.sif
+export SINGULARITYENV_OMP_NUM_THREADS=$njobs
+export SINGULARITYENV_MKL_NUM_THREADS=$njobs
+
+# Untar
+echo "Untarring necessary files..."
+mkdir -p $localscratch/$subj/tractography
+tar -xf $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/${subj}_edge.tar -C $localscratch/$subj/tractography/
+
+# Create subject directories on localscratch for each hemisphere and wayward roi
+mkdir -p $localscratch/$subj/work 
+
+echo "Examining connectivity passing through ${roi}"
+for hemi in L R; do
+  mkdir -p $localscratch/$subj/masked/$hemi/$roi
+  for node1 in `seq 1 72`; do
+    for node2 in `seq $((node1 + 1)) 72`; do
+      # tck2edit (get tracts passing through mask)
+      echo "Getting connectivity for ${node1}-${node2}..."
+      singularity exec $SINGULARITY_IMG tckedit -nthreads $njobs -tck_weights_in $localscratch/$subj/tractography/edge/${subj}_space-dwi_desc-subcortex_tckweights${node1}-${node2}.csv -tck_weights_out $localscratch/$subj/masked/$hemi/$roi/${subj}_space-dwi_hemi-${hemi}_desc-${roi}_tckweights${node1}-${node2}.csv -include $out_dir/derivatives/zona_bb_subcortex/$subj/anat/${subj}_space-T1w_hemi-${hemi}_desc-${roi}_mask.nii.gz $localscratch/$subj/tractography/edge/${subj}_space-dwi_desc-from_${node1}-${node2}.tck $localscratch/$subj/masked/${hemi}/${roi}/${subj}_space-dwi_hemi-${hemi}_desc-${roi}_${node1}-${node2}.tck 
+    done
+  done 
+done
+
+
+# Sync
+mkdir -p $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/
+pushd . 
+cd $localscratch/$subj
+
+# Check if a tar file already exists
+if [[ -f $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/${subj}_masked.tar ]]; then
+  cp -v $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/${subj}_masked.tar .
+  tar --append --file=${subj}_masked.tar masked/
+else
+  tar -cf ${subj}_masked.tar masked/
+fi 
+
+popd
+
+rsync -rv $localscratch/$subj/${subj}_masked.tar $out_dir/derivatives/mrtpipelines_0.1.6/mrtpipelines/$subj/tractography/

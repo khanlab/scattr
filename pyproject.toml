@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "Deep Brain Structural Connectivity"
+name = "scattr"
 version = "0.1.0-pre.1"
-description = "Snakebids app for mapping the subcortical connectome"
+description = "Snakebids app for structural connectivity between targetted regions"
 authors = [
     "Jason Kai <tkai@uwo.ca>",
     "Tristan Kuehn",
@@ -38,13 +38,13 @@ build-backend = "poetry.core.masonry.api"
 setup = "pre-commit install"
 yamlfix = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix {} \\;" }
 yamlfix-check = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix --check {} \\;" }
-isort = "isort dbsc"
-isort-check = "isort -c dbsc"
-black = "black dbsc"
-black-check = "black --check dbsc"
-flake8 = "flake8 dbsc"
-snakefmt = "snakefmt dbsc"
-snakefmt-check = "snakefmt --check dbsc"
+isort = "isort scattr"
+isort-check = "isort -c scattr"
+black = "black scattr"
+black-check = "black --check scattr"
+flake8 = "flake8 scattr"
+snakefmt = "snakefmt scattr"
+snakefmt-check = "snakefmt --check scattr"
 quality = ["yamlfix", "isort", "black", "flake8", "snakefmt"]
 quality-check = [
     "yamlfix-check",
@@ -53,10 +53,10 @@ quality-check = [
     "flake8",
     "snakefmt-check",
 ]
-test_base = { shell = "python ./dbsc/run.py ./test/data/bids ./test/data/derivatives/ participant -np --force-output" }
-test_freesurfer = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --freesurfer_dir ./test/data/derivatives/freesurfer -np --force-output" }
-test_responsemean = { shell = "python ./dbsc/run.py ./test/data/bids test/data/derivatives/ participant --responsemean_dir ./test/data/derivatives/mrtrix/avg -np --force-output" }
-test_dwi = { shell = "python ./dbsc/run.py ./test/data/bids_nodwi test/data/derivatives/ participant --dwi_dir ./test/data/derivatives/prepdwi -np --force-output" }
+test_base = { shell = "python ./scattr/run.py ./test/data/bids ./test/data/derivatives/ participant -np --force-output" }
+test_freesurfer = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --freesurfer_dir ./test/data/derivatives/freesurfer -np --force-output" }
+test_responsemean = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --responsemean_dir ./test/data/derivatives/mrtrix/avg -np --force-output" }
+test_dwi = { shell = "python ./scattr/run.py ./test/data/bids_nodwi test/data/derivatives/ participant --dwi_dir ./test/data/derivatives/prepdwi -np --force-output" }
 test = ["test_base", "test_freesurfer", "test_responsemean", "test_dwi"]
 
 [tool.isort]

@@ -1,0 +1,1 @@
+This folder contains examples of original scripts that were used to generate outputs.
