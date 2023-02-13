@@ -443,7 +443,7 @@ checkpoint create_roi_mask:
     group:
         "tract_masks"
     container:
-        container=config["singularity"]["scattr"]
+        config["singularity"]["scattr"]
     script:
         "../scripts/mrtpipelines/create_roi_mask.py"
 
@@ -495,7 +495,6 @@ checkpoint create_exclude_mask:
         mask_dir=bids_anat_out(
             datatype="roi_masks",
         ),
-        container=config["singularity"]["mrtrix"],
         subj_wildcards=config["subj_wildcards"],
     output:
         out_dir=directory(bids_anat_out(datatype="exclude_mask")),
