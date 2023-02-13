@@ -34,7 +34,7 @@ def create_roi_mask(
         )
 
         shell(
-            "singularity run {container} mrcalc -nthreads {threads} "
+            "mrcalc -nthreads {threads} "
             "{subcortical_seg} {idx} -eq {roi} -force"
         )
 
