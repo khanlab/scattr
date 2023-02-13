@@ -443,7 +443,7 @@ checkpoint create_roi_mask:
     group:
         "tract_masks"
     container:
-        container=config["singularity"]["dbsc"]
+        container=config["singularity"]["scattr"]
     script:
         "../scripts/mrtpipelines/create_roi_mask.py"
 
@@ -505,6 +505,8 @@ checkpoint create_exclude_mask:
         time=60 * 3,
     group:
         "tract_masks"
+    container:
+        config["singularity"]["scattr"]
     script:
         "../scripts/mrtpipelines/create_exclude_mask.py"
 

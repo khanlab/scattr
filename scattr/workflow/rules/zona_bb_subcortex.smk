@@ -121,30 +121,6 @@ rule warp2native:
         "-o {output.nii} &> {log}"
 
 
-# TODO: Add back later on
-# rule xfm_zona_rois:
-#     input:
-#         mask=str(
-#             Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
-#             / f'sub-SNSX32Nlin2020Asym_space-{config["Space"]}_hemi-{{hemi}}_desc-{{struct}}_mask.nii.gz'
-#         ),
-#         ref=rules.xfm2native.input.ref,
-#         xfm=rules.xfm2native.output.xfm,
-#     output:
-#         mask=bids(
-#             root=zona_dir,
-#             datatype="anat",
-#             space="T1w",
-#             hemi="{{hemi,(L|R)}}",
-#             desc="{{struct,(fct|ft|fl|hfields)}}",
-#             suffix="mask.nii.gz",
-#         ),
-#     container:
-#         config["singularity"]["neuroglia-core"]
-#     shell:
-#         "applywarp --rel --interp=nn -i {input.mask} -r {input.ref} -w {input.xfm} -o {output.mask}"
-
-
 rule rm_bb_thal:
     """Removes thalamus from existing parcellation
 
