@@ -81,4 +81,4 @@ jobs:
           name: ${{ env.NEW_RELEASE }}
           tag: "v${{ env.NEW_RELEASE }}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BP_PAT_TOKEN }}
