@@ -188,7 +188,6 @@ rule labelmerge:
         zona_desc="ZonaBBSubcor",
         fs_desc="FreesurferThal",
         labelmerge_dir=directory(labelmerge_dir),
-        labelmerge_container=config["singularity"]["labelmerge"],
     output:
         seg=expand(
             bids_labelmerge(
@@ -216,8 +215,10 @@ rule labelmerge:
         f"{config['output_dir']}/logs/zona_bb_subcortex/labelmerge.log",
     group:
         "subcortical_group"
+    container:
+        config["singularity"]["labelmerge"]
     shell:
-        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --cores {threads} --force-output"
+        "labelmerge {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --cores {threads} --force-output"
 
 
 rule get_num_nodes:

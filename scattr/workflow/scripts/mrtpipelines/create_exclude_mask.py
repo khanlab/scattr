@@ -8,7 +8,6 @@ from snakemake.shell import shell
 
 
 def create_exclude_mask(
-    container,
     base_dir,
     roi1,
     roi2,
@@ -80,7 +79,6 @@ def create_exclude_mask(
 
 if __name__ == "__main__":
     create_exclude_mask(
-        container=snakemake.params.container,  # noqa: F821
         base_dir=snakemake.params.base_dir,  # noqa: F821
         roi1=snakemake.input.roi1,  # noqa: F821
         roi2=snakemake.input.roi2,  # noqa: F821
