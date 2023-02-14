@@ -12,6 +12,7 @@ RUN mkdir -p /opt \
        libncurses5 \
        libxt6 \
        parallel \
+       rsync \
        tcsh \
        curl \
        git \
