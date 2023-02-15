@@ -93,5 +93,5 @@ ENV OS=Linux \
     MNI_PERL5LIB=/usr/local/freesurfer/mni/share/perl5 \
     PERL5LIB=/usr/local/freesurfer/mni/share/perl5 \
     # ants specific
-    ANTSPATH=/opt/ants/bin/ \
+    ANTSPATH=/opt/ants/bin/
 ENTRYPOINT ["scattr"]
