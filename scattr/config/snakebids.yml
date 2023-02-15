@@ -171,7 +171,7 @@ parse_args:
 Space: MNI152NLin6Asym
 
 zona_bb_subcortex:
-  tsv: 'resources/zona_bb_subcortex/desc-ZonaBBSubcor_dseg.tsv'
+  tsv: 'resources/zona_bb_subcortex/desc-ZonaBB_dseg.tsv'
   MNI152NLin6Asym:
     dir: 'resources/zona_bb_subcortex/MNI152NLin6Asym/'
     T1w: 'tpl-MNI152NLin6Asym_res-04_desc-brain_T1w.nii.gz'
