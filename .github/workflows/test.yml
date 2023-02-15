@@ -1,66 +1,52 @@
 ---
 name: Lint and test workflow
-
 on:
   push:
     branches: ['*', '!push-action/*']
   pull_request:
     branches: ['*', '!push-action/*']
-
 jobs:
   quality:
     name: Lint code
     if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
-
     steps:
       - name: Clone repo
         uses: actions/checkout@master
-
       - name: Setup Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-
       - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-3.10
           restore-keys: ${{ runner.os }}-pip-3.10
-
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
           version: 1.2.0
           virtualenvs-create: true
           virtualenvs-in-project: true
-
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v3
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-3.10
-
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root --with dev
-
       - name: yamlfix
         run: poetry run poe yamlfix-check
-
       - name: isort
         run: poetry run poe isort-check
-
       - name: black
         run: poetry run poe black-check
-
       - name: flake8
         run: poetry run poe flake8
-
       - name: snakefmt
         run: poetry run poe snakefmt-check
-
   test:
     runs-on: ubuntu-latest
     needs: [quality]
@@ -70,25 +56,21 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@master
-
       - name: Select Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-
       - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}
           restore-keys: ${{ runner.os }}-pip-${{ matrix.python-version }}
-
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
           version: 1.2.0
           virtualenvs-create: true
           virtualenvs-in-project: true
-
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v2
@@ -96,19 +78,14 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-${{ matrix.python-version
             }}
-
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root --with dev
-
       - name: Test minimum inputs
         run: poetry run poe test_base
-
       - name: Test freesurfer input
         run: poetry run poe test_freesurfer
-
       - name: Test responsemean input
         run: poetry run poe test_responsemean
-
       - name: Test dwi input
         run: poetry run poe test_dwi
