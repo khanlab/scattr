@@ -34,7 +34,7 @@ rule cp_zona_tsv:
             / Path(config["zona_bb_subcortex"]["tsv"])
         ),
     output:
-        zona_tsv=f"{zona_dir}/desc-ZonaBBSubcor_dseg.tsv",
+        zona_tsv=f"{zona_dir}/desc-ZonaBB_dseg.tsv",
     threads: 1
     resources:
         mem_mb=4000,
@@ -121,57 +121,10 @@ rule warp2native:
         "-o {output.nii} &> {log}"
 
 
-rule rm_bb_thal:
-    """Removes thalamus from existing parcellation
-
-    1. Grab labels following thalamus ROI
-    2. Remove existing thalamus from segmentation
-    3. Add labels following thalamus ROI back to segmentation
-    """
-    input:
-        seg=rules.warp2native.output.nii,
-    output:
-        seg=bids_anat(
-            space="T1w",
-            desc="ZonaBBSubcor",
-            suffix="dseg.nii.gz",
-        ),
-        non_thal=temp(
-            bids_anat(
-                space="T1w",
-                desc="NonThal",
-                suffix="dseg.nii.gz",
-            )
-        ),
-        rm_seg=temp(
-            bids_anat(
-                space="T1w",
-                desc="ThalPost",
-                suffix="dseg.nii.gz",
-            )
-        ),
-    threads: 4
-    resources:
-        mem_mb=16000,
-        time=10,
-    log:
-        f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/rm_bb_thal.log",
-    group:
-        "subcortical_1"
-    container:
-        config["singularity"]["neuroglia-core"]
-    shell:
-        "fslmaths {input.seg} -sub 2 {output.non_thal} &> {log} && "
-        "fslmaths {output.non_thal} -thr 15 {output.non_thal} >> {log} 2>&1 && "
-        "fslmaths {input.seg} -thr 15 {output.rm_seg} >> {log} 2>&1 && "
-        "fslmaths {input.seg} -sub {output.rm_seg} {output.seg} >> {log} 2>&1 && "
-        "fslmaths {output.seg} -add {output.non_thal} {output.seg} >> {log} 2>&1"
-
-
 rule labelmerge:
     input:
         zona_seg=expand(
-            rules.rm_bb_thal.output.seg,
+            rules.warp2native.output.nii,
             subject=config["input_lists"]["T1w"]["subject"],
             allow_missing=True,
         ),
@@ -185,7 +138,7 @@ rule labelmerge:
     params:
         zona_dir=zona_dir,
         fs_dir=rules.thalamic_segmentation.input.freesurfer_dir,
-        zona_desc="ZonaBBSubcor",
+        zona_desc="ZonaBB",
         fs_desc="FreesurferThal",
         labelmerge_dir=directory(labelmerge_dir),
     output:
@@ -218,7 +171,7 @@ rule labelmerge:
     container:
         config["singularity"]["labelmerge"]
     shell:
-        "labelmerge {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --cores {threads} --force-output"
+        "labelmerge {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --base_drop 15 16 --cores {threads} --force-output"
 
 
 rule get_num_nodes:
