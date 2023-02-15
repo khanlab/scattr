@@ -192,6 +192,6 @@ singularity:
   ants: "docker://kaczmarj/ants:2.3.4"
   mrtrix: "docker://brainlife/mrtrix3:3.0.3"
   labelmerge: "docker://khanlab/labelmerge:v0.4.3"
-  scattr: "docker://khanlab/scattr:v0.1.1"
+  scattr: "docker://khanlab/scattr:v0.1.2"
 
 fs_license: /path/to/fs/license
