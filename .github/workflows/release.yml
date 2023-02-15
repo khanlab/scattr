@@ -59,6 +59,13 @@ jobs:
           find: version = "(?:([0-9]+\.[0-9]+\.[0-9]+.+)|([0-9]+\.[0-9]+\.[0-9]+))"
           replace: version = "${{ env.NEW_RELEASE }}"
 
+      - name: Update container version
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          include: scattr/config/snakebids.yml
+          find: scattr: "docker://khanlab/scattr:v(?:([0-9]+\.[0-9]+\.[0-9]+.+)|([0-9]+\.[0-9]+\.[0-9]+))"
+          replace: "docker://khanlab/scattr:v${{ env.NEW_RELEASE }}"
+
       - name: Commit updates
         env:
           LATEST_VERSION: ${{ env.NEW_RELEASE }}
