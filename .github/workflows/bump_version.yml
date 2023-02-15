@@ -12,7 +12,6 @@ jobs:
         uses: actions/checkout@master
         with:
           ref: ${{ github.event.pull_request.base.ref }}
-
       - name: Update changelog
         uses: release-drafter/release-drafter@v5
         id: release-drafter
@@ -20,11 +19,9 @@ jobs:
           commitish: ${{ github.event.pull_request.base.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.BP_PAT_TOKEN }}
-
       - name: Get previous release version
         run: |
           echo "PREV_VER=$(cat pyproject.toml | grep -o -E '(version\s=\s)([[:punct:]])([0-9]+\.[0-9]+\.[0-9]+.+)([[:punct:]])' | cut -d ' ' -f 3 | tr -d '"')" >> $GITHUB_ENV
-
       - name: Get previous bump version
         env:
           PREV_VER: ${{ env.PREV_VER }}
@@ -34,13 +31,11 @@ jobs:
           else
             echo "OLD_BUMP=$(echo $PREV_VER | cut -d '.' -f 4)" >> $GITHUB_ENV
           fi
-
       - name: Bump version
         env:
           BUMP_VER: ${{ env.OLD_BUMP }}
         run: |
           echo "NEW_BUMP=$(($BUMP_VER + 1))" >> $GITHUB_ENV
-
       - name: Set new release version
         env:
           RD_RELEASE: ${{ steps.release-drafter.outputs.name }}
@@ -50,14 +45,12 @@ jobs:
           else
             echo "NEW_RELEASE=0.1.0" >> $GITHUB_ENV
           fi
-
       - name: Update version in pyproject.toml
         uses: jacobtomlinson/gha-find-replace@master
         with:
           include: pyproject.toml
           find: version = "(?:([0-9]+\.[0-9]+\.[0-9]+.+)|([0-9]+\.[0-9]+\.[0-9]+))"
           replace: version = "${{ env.NEW_RELEASE }}-pre.${{ env.NEW_BUMP }}"
-
       - name: Commit updates
         env:
           SNAKEBIDS_VERSION: ${{ env.NEW_RELEASE }}-pre.${{ env.NEW_BUMP }}
@@ -65,7 +58,6 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git diff-index --quiet HEAD || git commit -m "Bump version to $SNAKEBIDS_VERSION" -a
-
       - name: Push changes
         uses: CasperWA/push-protected@v2
         with:

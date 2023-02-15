@@ -52,13 +52,6 @@ RUN wget https://github.com/ANTsX/ANTs/releases/download/v${ANTS_VER}/ants-${ANT
     && mv /opt/ants-${ANTS_VER} /opt/ants \
     && rm ants.zip
 
-# Stage: FSL
-# Copy over fslmaths to "minify"
-FROM requirements as fsl
-RUN wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/releases/fslinstaller.py \
-    && python fslinstaller.py -d /opt/fsl \
-    && rm fslinstaller.py
-
 # Stage: build
 FROM requirements AS build
 COPY . /opt/scattr/
@@ -68,8 +61,7 @@ RUN cd /opt/scattr \
     && poetry build -f wheel
 
 # Stage: runtime
-# NOTE: use fsl stage for library dependencies
-FROM fsl AS runtime
+FROM requirements AS runtime
 COPY --from=mrtrix /opt/mrtrix3 /opt/mrtrix3
 COPY --from=freesurfer /usr/local/freesurfer /usr/local/freesurfer
 COPY --from=ants /opt/ants/bin/antsApplyTransforms /opt/ants/bin/antsRegistration /opt/ants/bin/antsRegistrationSyNQuick.sh /opt/ants/bin/
@@ -81,8 +73,8 @@ RUN WHEEL=`ls /opt/scattr | grep whl` \
     && apt-get --purge -y -qq autoremove
 # Setup environments
 ENV OS=Linux \
-    # Path: mrtrix > freesurfer > ants > fsl
-    PATH=/opt/mrtrix3/bin:/usr/local/freesurfer/bin:/usr/local/freesurfer/fsfast/bin:/usr/local/freesurfer/tktools:/usr/local/freesurfer/mni/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/ants/:/opt/ants/bin:/opt/fsl/bin:$PATH \
+    # Path: mrtrix > freesurfer > ants
+    PATH=/opt/mrtrix3/bin:/usr/local/freesurfer/bin:/usr/local/freesurfer/fsfast/bin:/usr/local/freesurfer/tktools:/usr/local/freesurfer/mni/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/ants/:/opt/ants/bin:$PATH \
     # freesurfer specific
     FREESURFER_HOME=/usr/local/freesurfer \
     FREESURFER=/usr/local/freesurfer \
@@ -102,8 +94,4 @@ ENV OS=Linux \
     PERL5LIB=/usr/local/freesurfer/mni/share/perl5 \
     # ants specific
     ANTSPATH=/opt/ants/bin/ \
-    # fsl specific
-    FSLDIR=/opt/fsl \
-    LD_LIBRARY_PATH=/opt/fsl/lib:$LD_LIBRARY_PATH \
-    FSLOUTPUTTYPE=NIFTI_GZ
 ENTRYPOINT ["scattr"]
