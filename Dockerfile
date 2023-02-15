@@ -61,7 +61,6 @@ RUN cd /opt/scattr \
     && poetry build -f wheel
 
 # Stage: runtime
-# NOTE: use fsl stage for library dependencies
 FROM requirements AS runtime
 COPY --from=mrtrix /opt/mrtrix3 /opt/mrtrix3
 COPY --from=freesurfer /usr/local/freesurfer /usr/local/freesurfer
