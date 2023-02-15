@@ -10,6 +10,9 @@ authors = [
     "Jonathan C. Lau",
     ]
 readme = "README.md"
+packages = [
+    { include = "scattr" }
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
@@ -17,6 +20,7 @@ snakebids = "^0.7.0"
 nibabel = "^3.2.2"
 numpy = "^1.22.3"
 scipy = "^1.8.0"
+labelmerge = {git = "https://github.com/khanlab/labelmerge.git", rev = "v0.4.3"}
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "4.0"
@@ -29,6 +33,9 @@ poethepoet = "^0.13.1"
 pre-commit = "^2.17.0"
 snakefmt = "^0.6.1"
 yamlfix = "^1.1.0"
+
+[tool.poetry.scripts]
+scattr = 'scattr.run:main'
 
 [build-system]
 requires = ["poetry-core"]
@@ -53,10 +60,10 @@ quality-check = [
     "flake8",
     "snakefmt-check",
 ]
-test_base = { shell = "python ./scattr/run.py ./test/data/bids ./test/data/derivatives/ participant -np --force-output" }
-test_freesurfer = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --freesurfer_dir ./test/data/derivatives/freesurfer -np --force-output" }
-test_responsemean = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --responsemean_dir ./test/data/derivatives/mrtrix/avg -np --force-output" }
-test_dwi = { shell = "python ./scattr/run.py ./test/data/bids_nodwi test/data/derivatives/ participant --dwi_dir ./test/data/derivatives/prepdwi -np --force-output" }
+test_base = { shell = "python ./scattr/run.py ./test/data/bids ./test/data/derivatives/ participant --fs-license ./test/.fs_license -np --force-output" }
+test_freesurfer = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --freesurfer_dir ./test/data/derivatives/freesurfer --fs-license ./test/.fs_license -np --force-output" }
+test_responsemean = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --responsemean_dir ./test/data/derivatives/mrtrix/avg --fs-license ./test/.fs_license -np --force-output" }
+test_dwi = { shell = "python ./scattr/run.py ./test/data/bids_nodwi test/data/derivatives/ participant --dwi_dir ./test/data/derivatives/prepdwi --fs-license ./test/.fs_license -np --force-output" }
 test = ["test_base", "test_freesurfer", "test_responsemean", "test_dwi"]
 
 [tool.isort]

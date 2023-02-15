@@ -106,9 +106,15 @@ parse_args:
     type: Path
 
   --responsemean_dir:
-    help: 'Provide directory containing average response functions. If not
-          provided, one will be computed from the subjects in the input
-          directory.'
+    help: The path to the directory containing average response functions. If 
+          not provided, one will be computed from the subjects in the input
+          directory.
+    nargs: "?"
+    type: Path
+
+  --fs_license:
+    help: Path to Freesurfer license file. If not provided, workflow will check
+          FS_LICENSE environment variable for one.
     nargs: "?"
     type: Path
 
@@ -185,7 +191,7 @@ singularity:
   neuroglia-core: "docker://khanlab/neuroglia-core:latest"
   ants: "docker://kaczmarj/ants:2.3.4"
   mrtrix: "docker://brainlife/mrtrix3:3.0.3"
-  labelmerge: "docker://kaitj/labelmerge:v0.1.0"
-  scattr: "docker:kaitj/scattr:v0.1.0"
+  labelmerge: "docker://khanlab/labelmerge:v0.4.3"
+  scattr: "docker://khanlab/scattr:v0.1.0"
 
 fs_license: /path/to/fs/license

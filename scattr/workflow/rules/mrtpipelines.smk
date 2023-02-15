@@ -433,7 +433,6 @@ checkpoint create_roi_mask:
         num_labels=rules.get_num_nodes.output.num_labels,
     params:
         base_dir=mrtrix_dir,
-        container=config["singularity"]["mrtrix"],
         subj_wildcards=config["subj_wildcards"],
     output:
         out_dir=directory(bids_anat_out(datatype="roi_masks")),
@@ -443,6 +442,8 @@ checkpoint create_roi_mask:
         time=60,
     group:
         "tract_masks"
+    container:
+        config["singularity"]["scattr"]
     script:
         "../scripts/mrtpipelines/create_roi_mask.py"
 
@@ -494,7 +495,6 @@ checkpoint create_exclude_mask:
         mask_dir=bids_anat_out(
             datatype="roi_masks",
         ),
-        container=config["singularity"]["mrtrix"],
         subj_wildcards=config["subj_wildcards"],
     output:
         out_dir=directory(bids_anat_out(datatype="exclude_mask")),
@@ -504,6 +504,8 @@ checkpoint create_exclude_mask:
         time=60 * 3,
     group:
         "tract_masks"
+    container:
+        config["singularity"]["scattr"]
     script:
         "../scripts/mrtpipelines/create_exclude_mask.py"
 

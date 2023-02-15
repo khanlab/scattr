@@ -7,7 +7,6 @@ from snakemake.shell import shell
 
 
 def create_roi_mask(
-    container,
     base_dir,
     subcortical_seg,
     num_labels,
@@ -34,7 +33,7 @@ def create_roi_mask(
         )
 
         shell(
-            "singularity run {container} mrcalc -nthreads {threads} "
+            "mrcalc -nthreads {threads} "
             "{subcortical_seg} {idx} -eq {roi} -force"
         )
 
@@ -61,7 +60,6 @@ def create_roi_mask(
 
 if __name__ == "__main__":
     create_roi_mask(
-        container=snakemake.params.container,  # noqa: F821
         base_dir=snakemake.params.base_dir,  # noqa: F821
         subcortical_seg=snakemake.input.subcortical_seg,  # noqa: F821
         num_labels=snakemake.input.num_labels,  # noqa: F821

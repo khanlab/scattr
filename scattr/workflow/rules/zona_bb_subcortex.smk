@@ -121,30 +121,6 @@ rule warp2native:
         "-o {output.nii} &> {log}"
 
 
-# TODO: Add back later on
-# rule xfm_zona_rois:
-#     input:
-#         mask=str(
-#             Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
-#             / f'sub-SNSX32Nlin2020Asym_space-{config["Space"]}_hemi-{{hemi}}_desc-{{struct}}_mask.nii.gz'
-#         ),
-#         ref=rules.xfm2native.input.ref,
-#         xfm=rules.xfm2native.output.xfm,
-#     output:
-#         mask=bids(
-#             root=zona_dir,
-#             datatype="anat",
-#             space="T1w",
-#             hemi="{{hemi,(L|R)}}",
-#             desc="{{struct,(fct|ft|fl|hfields)}}",
-#             suffix="mask.nii.gz",
-#         ),
-#     container:
-#         config["singularity"]["neuroglia-core"]
-#     shell:
-#         "applywarp --rel --interp=nn -i {input.mask} -r {input.ref} -w {input.xfm} -o {output.mask}"
-
-
 rule rm_bb_thal:
     """Removes thalamus from existing parcellation
 
@@ -212,7 +188,6 @@ rule labelmerge:
         zona_desc="ZonaBBSubcor",
         fs_desc="FreesurferThal",
         labelmerge_dir=directory(labelmerge_dir),
-        labelmerge_container=config["singularity"]["labelmerge"],
     output:
         seg=expand(
             bids_labelmerge(
@@ -240,8 +215,10 @@ rule labelmerge:
         f"{config['output_dir']}/logs/zona_bb_subcortex/labelmerge.log",
     group:
         "subcortical_group"
+    container:
+        config["singularity"]["labelmerge"]
     shell:
-        "singularity run {params.labelmerge_container} {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --cores {threads} --force-output"
+        "labelmerge {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --cores {threads} --force-output"
 
 
 rule get_num_nodes:

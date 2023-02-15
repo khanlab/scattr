@@ -3,6 +3,15 @@ freesurfer_dir = str(Path(config["output_dir"]) / "freesurfer")
 if config.get("freesurfer_dir"):
     freesurfer_dir = config.get("freesurfer_dir")
 
+# Licenses
+if config.get("fs_license"):
+    fs_license = config["fs_license"]
+else:
+    fs_license = os.getenv("FS_LICENSE")
+# Raise error if still no fs_license found
+if not fs_license:
+    raise ValueError("No Freesurfer license available...exiting")
+
 # BIDS partials
 bids_fs_out = partial(
     bids,
@@ -47,7 +56,7 @@ rule thalamic_segmentation:
     input:
         freesurfer_dir=freesurfer_dir,
     params:
-        fs_license=config["fs_license"],
+        fs_license=fs_license,
     output:
         thal_seg=str(
             Path(freesurfer_dir)
@@ -86,7 +95,7 @@ rule mgz2nii:
         rRibbon=str(Path(freesurfer_dir) / "sub-{subject}/mri/rh.ribbon.mgz"),
     params:
         freesurfer_dir=freesurfer_dir,
-        fs_license=config["fs_license"],
+        fs_license=fs_license,
     output:
         thal=bids_fs_out(
             space="Freesurfer",

@@ -8,7 +8,6 @@ from snakemake.shell import shell
 
 
 def create_exclude_mask(
-    container,
     base_dir,
     roi1,
     roi2,
@@ -65,7 +64,7 @@ def create_exclude_mask(
     for idx, mask in enumerate(out_mask):
         in_roi1, in_roi2 = roi1[idx], roi2[idx]  # noqa: F841 (used in shell)
         shell(
-            "singularity run {container} mrcalc -nthreads {threads} "
+            "mrcalc -nthreads {threads} "
             "{subcortical_seg} 0 -neq {in_roi1} -sub {in_roi2} -sub {lZI} "
             "-sub {rZI} -sub {mask} -force"
         )
@@ -80,7 +79,6 @@ def create_exclude_mask(
 
 if __name__ == "__main__":
     create_exclude_mask(
-        container=snakemake.params.container,  # noqa: F821
         base_dir=snakemake.params.base_dir,  # noqa: F821
         roi1=snakemake.input.roi1,  # noqa: F821
         roi2=snakemake.input.roi2,  # noqa: F821

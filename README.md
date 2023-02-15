@@ -1,7 +1,8 @@
 ## Structural Connectivity Applied To Targeted Regions (SCATTR)
-![Version](https://img.shields.io/github/v/tag/khanlab/dbsc?label=version)
+![Version](https://img.shields.io/github/v/tag/khanlab/scattr?label=version)
 ![Python3](https://img.shields.io/badge/python-3.8_|_3.9_|_3.10-blue.svg)
 ![Docker Pulls](https://img.shields.io/docker/pulls/khanlab/scattr)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7636506.svg)](https://doi.org/10.5281/zenodo.7636506)
 
 SCATTR is a BIDS App that performs tractography to identify
 connections between subcortical structures (i.e. map the subcortical
