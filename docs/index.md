@@ -14,6 +14,17 @@ getting_started/singularity
 ```
 
 ```{toctree}
+:caption: Usage Notes
+:name: usage
+:hidden:
+:maxdepth: 2
+
+usage/cli
+usage/useful_options
+usage/faq
+```
+
+```{toctree}
 :caption: Contributing
 :name: contributing
 :hidden:

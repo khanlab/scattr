@@ -73,7 +73,7 @@ atlases (combining segmentations) and diffusion derived data (estimation of
 fibre orientation distributions). This includes estimating an average response 
 function from input data. The `--fs-license` argument allows for specification
 of the location of the required Freesurfer license file if not already 
-specified in the `FREESURFER_LICENSE` environment variable. Note, that this is
+specified in the `FS_LICENSE` environment variable. Note, that this is
 required to perform any Freesurfer-related processing. The `--force-output` 
 flag is a Snakemake argument that is invoked to allow for writing of output file
 to already existing folders - in this case, for thalamus segmentations via 
