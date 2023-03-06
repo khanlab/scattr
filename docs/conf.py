@@ -21,8 +21,8 @@ sys.path.insert(0, os.path.abspath("../"))
 
 # -- Project information -----------------------------------------------------
 
-project = "scattr"
-copyright = f"{datetime.date.today().year}, scattr "
+project = "SCATTR"
+copyright = f"{datetime.date.today().year}, Jason Kai"
 author = "Jason Kai"
 
 
@@ -53,12 +53,6 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 master_doc = "index"
-
-intersphinx_mapping = {
-    "pybids": ("https://bids-standard.github.io/pybids/", None),
-    "python": ("https://docs.python.org/3", None),
-}
-
 
 # -- Options for HTML output -------------------------------------------------
 
