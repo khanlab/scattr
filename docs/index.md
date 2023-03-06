@@ -25,6 +25,16 @@ usage/faq
 ```
 
 ```{toctree}
+:caption: Outputs of SCATTR
+:name: outputs
+:hidden:
+:maxdepth: 2
+
+outputs/output_files
+outputs/visualization
+```
+
+```{toctree}
 :caption: Contributing
 :name: contributing
 :hidden:
