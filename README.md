@@ -1,4 +1,5 @@
 ## Structural Connectivity Applied To Targeted Regions (SCATTR)
+[![Documentation Status](https://readthedocs.org/projects/scattr/badge/?version=stable)](https://scattr.readthedocs.io/en/stable/?badge=stable)
 ![Version](https://img.shields.io/github/v/tag/khanlab/scattr?label=version)
 ![Python3](https://img.shields.io/badge/python-3.8_|_3.9_|_3.10-blue.svg)
 [![Tests](https://github.com/khanlab/scattr/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/khanlab/scattr/actions/workflows/test.yml?query=branch%3Amain)
