@@ -11,7 +11,7 @@ identify connections between targetted structures of interest (extracted from
 various atlases) in the brain, using some common neuroimaging tools like 
 `prepdwi`, `Freesurfer`, and `Mrtrix3`.
 
-![Example use of SCATTR](https://github.com/kaitj/hcp_subcortical_repro/raw/master/etc/ansa.png)
+![Example outputs](https://raw.githubusercontent.com/khanlab/scattr/main/docs/images/ex_output.png)
 
 This is useful for:
 
@@ -32,7 +32,7 @@ a detailed summary):
 _Note: The workflow assumes Freesurfer has already been run on the dataset, as 
 well as diffusion preprocessing (e.g. distortion correction)._
 
-![Workflow example](docs/images/workflow.png)
+![Workflow example](https://raw.githubusercontent.com/khanlab/scattr/main/docs/images/workflow.png)
 
 1. Merge the segmentations of structures in a standard template space from 
 various sources (if necessary) via 
