@@ -25,6 +25,15 @@ usage/faq
 ```
 
 ```{toctree}
+:caption: Workflow Details
+:name: workflow_details
+:hidden:
+:maxdepth: 2
+
+workflow/workflow
+```
+
+```{toctree}
 :caption: Outputs of SCATTR
 :name: outputs
 :hidden:
