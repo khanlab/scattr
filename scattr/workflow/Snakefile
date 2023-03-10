@@ -37,6 +37,7 @@ from functools import partial
 include: "rules/freesurfer.smk"
 include: "rules/zona_bb_subcortex.smk"
 include: "rules/mrtpipelines.smk"
+include: "rules/qc.smk"
 
 
 rule all:
@@ -49,6 +50,10 @@ rule all:
             rules.dwi2tensor.output.dti,
             subject=config["input_lists"]["T1w"]["subject"],
         ),
+        qc_files=expand(
+            rules.qc.output.segment_overlay,
+            subject=config["input_lists"]["T1w"]["subject"],
+        )
     params:
         mrtrix_dir=expand(
             bids(
