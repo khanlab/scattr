@@ -18,6 +18,7 @@ packages = [
 python = ">=3.8, <3.11"
 snakebids = "^0.7.0"
 nibabel = "^3.2.2"
+nilearn = "^0.10.0"
 numpy = "^1.22.3"
 scipy = "^1.8.0"
 labelmerge = {git = "https://github.com/khanlab/labelmerge.git", rev = "v0.4.3"}
