@@ -1,4 +1,8 @@
-include: "zona_bb_subcortex.smk"
+bids_labelmerge = partial(
+    bids,
+    root=str(Path(labelmerge_dir) / "combined"),
+    **config["subj_wildcards"],
+)
 
 rule overlay_image:
     input:
