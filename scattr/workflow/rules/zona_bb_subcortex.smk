@@ -16,7 +16,9 @@ bids_anat = partial(
 
 bids_labelmerge = partial(
     bids,
-    root=str(Path(labelmerge_dir) / "combined"),
+    root=str(Path(labelmerge_dir) / "combined")
+    if not config.get("skip_labelmerge")
+    else config.get("labelmerge_base_dir") or zona_dir,
     **config["subj_wildcards"],
 )
 
@@ -212,14 +214,20 @@ rule get_num_nodes:
     input:
         seg=bids_labelmerge(
             space="T1w",
-            desc="combined",
+            datatype="anat" if config.get("skip_labelmerge") else "",
+            desc="combined"
+            if not config.get("skip_labelmerge")
+            else config.get("labelmerge_base_desc"),
             suffix="dseg.nii.gz",
         ),
     output:
         num_labels=temp(
             bids_labelmerge(
                 space="T1w",
-                desc="combined",
+                datatype="anat" if config.get("skip_labelmerge") else "",
+                desc="combined"
+                if not config.get("skip_labelmerge")
+                else config.get("labelmerge_base_desc"),
                 suffix="numNodes.txt",
             )
         ),
@@ -237,15 +245,13 @@ rule get_num_nodes:
 
 rule binarize:
     input:
-        seg=bids_labelmerge(
-            space="T1w",
-            desc="combined",
-            suffix="dseg.nii.gz",
-        ),
+        seg=rules.get_num_nodes.input.seg,
     output:
         mask=bids_labelmerge(
             space="T1w",
-            desc="combined",
+            desc="combined"
+            if not config.get("skip_labelmerge")
+            else config.get("labelmerge_base_desc"),
             suffix="mask.nii.gz",
         ),
     threads: 4
