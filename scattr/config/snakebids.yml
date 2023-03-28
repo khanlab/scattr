@@ -164,6 +164,12 @@ parse_args:
           be overwritten by base labels at corresponding voxels.'
     nargs: "*"
 
+  --skip_labelmerge:
+    help: 'Skip the merging step, using only the base labelmap to identify 
+          structures of interest to target.'
+    action: store_true
+    default: False
+
   --skip_brainstem:
     help: 'By default, the worklow adds the brainstem to the combined output of
           labelmerge. Use of this flag will disable the addition of the 
