@@ -32,6 +32,15 @@ import os
 from pathlib import Path
 from functools import partial
 
+# Warnings
+if config.get("labelmerge_base_dir") or config.get("labelmerge_overlay_dir"):
+    print(
+        """
+    WARNING: Use of custom atlas detected - ensure label map used is available 
+    for each subject in dataset in subject's T1w space with associated metadata.
+    """
+    )
+
 
 # Rules
 include: "rules/freesurfer.smk"

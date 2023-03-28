@@ -361,7 +361,6 @@ rule tckgen:
     input:
         fod=rules.mtnormalise.output.wm_fod,
         mask=rules.nii2mif.output.mask,
-        cortical_ribbon=rules.fs_xfm_to_native.output.ribbon,
         convex_hull=rules.create_convex_hull.output.convex_hull,
         subcortical_seg=bids_labelmerge(
             space="T1w",
@@ -400,7 +399,7 @@ rule tckgen:
         config["singularity"]["mrtrix"]
     shell:
         "mkdir -p {resources.tmp_dir} && "
-        "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.cortical_ribbon} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {resources.tmp_tck} &> {log} && "
+        "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {resources.tmp_tck} &> {log} && "
         "rsync -v {resources.tmp_tck} {output.tck} >> {log} 2>&1"
 
 

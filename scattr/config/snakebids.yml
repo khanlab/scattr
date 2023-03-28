@@ -85,38 +85,98 @@ parse_args:
 
 #--- additional BIDS-app options --- (add in below) --#
   --slurm_tmpdir:
-    help: Flag to indicate use of SLURM temporary directory. A temporary 
+    help: 'Flag to indicate use of SLURM temporary directory. A temporary 
           directory is used to improve write speeds of output files on a 
           networked system. If not used, the workflow will default to system 
-          /tmp directory
+          /tmp directory.'
     action: store_true
     default: False
 
   --freesurfer_dir:
-    help: The path to the freesurfer directory. If not provided, workflow
-          assumes the directory exists at <output_dir>/freesurfer.
+    help: 'The path to the freesurfer directory. If not provided, workflow
+          assumes the directory exists at <output_dir>/freesurfer.'
     nargs: "?"
     type: Path
 
   --dwi_dir:
-    help: The path to the directory containing pre-processed dwi data
+    help: 'The path to the directory containing pre-processed dwi data
           transformed to subject T1w space. If not provided, workflow assumes
-          this data exists in <bids_dir>/<subject>/dwi.
+          this data exists in <bids_dir>/<subject>/dwi.'
     nargs: "?"
     type: Path
 
   --responsemean_dir:
-    help: The path to the directory containing average response functions. If 
+    help: 'The path to the directory containing average response functions. If 
           not provided, one will be computed from the subjects in the input
-          directory.
+          directory.'
     nargs: "?"
     type: Path
 
   --fs_license:
-    help: Path to Freesurfer license file. If not provided, workflow will check
-          FS_LICENSE environment variable for one.
+    help: 'Path to Freesurfer license file. If not provided, workflow will check
+          FS_LICENSE environment variable for one.'
     nargs: "?"
     type: Path
+
+  --labelmerge_base_dir:
+    help: 'BIDS directory containing base input labelmaps.'
+    nargs: "?"
+    type: Path
+
+  --labelmerge_overlay_dir:
+    help: 'BIDS directory containing overlay input labelmaps.'
+    nargs: "?"
+    type: Path
+
+  --labelmerge_base_desc:
+    help: 'Description entity for base labelmaps used in labelmerge. By default,
+          uses ZonaBB entity as intended in the subcortical connectome workflow
+          (default: ZonaBB).'
+    nargs: "?"
+    default: "ZonaBB"
+
+  --labelmerge_overlay_desc:
+    help: 'Description entity for overlay labelmaps used in labelmerge. By 
+          default, uses FreesurferThal value as intended in the subcortical 
+          connectome workflow (default: FreesurferThal).'
+    nargs: "?"
+    default: "FreesurferThal"
+
+  --labelmerge_base_drops:
+    help: 'Space-separated list of indices to drop from the base image used in
+          labelmerge. By default, will drop the thalamus labels for intended use
+          in the subcortical connectome workflow (default: 15 16).'
+    nargs: "*"
+    default: 15 16
+
+  --labelmerge_overlay_drops:
+    help: 'Space-separated list of indices to drop from the overlay image used 
+          in labelmerge.'
+    nargs: "*"
+
+  --labelmerge_base_exceptions:
+    help: 'Space-separated list of integer labels from the base labelmap to 
+          keep over overlay labels at corresponding voxels.'
+    nargs: "*"
+
+  --labelmerge_overlay_exceptions:
+    help: 'Space-separated list of integer labels from the overlay labelmap to 
+          be overwritten by base labels at corresponding voxels.'
+    nargs: "*"
+
+  --skip_brainstem:
+    help: 'By default, the worklow adds the brainstem to the combined output of
+          labelmerge. Use of this flag will disable the addition of the 
+          brainstem label.'
+    action: store_true
+    default: False
+
+  --skip_thal_seg:
+    help: 'By default, the workflow performs segmentation of the thalamus on 
+          (previously processed) Freesurfer outputs. Use of this flag will skip
+          the thalamus segmentation step.'
+    action: store_true
+    default: False
 
   --shells:
     help: '(Mrtrix3) specify one or more b-values to use during processing, as

@@ -16,8 +16,9 @@ section.
 for example, T1w images are labelled with the suffix `t1w.nii.gz` instead of 
 `T1w.nii.gz` as per [BIDS specifications](https://bids.neuroimaging.io/specification.html).
 SCATTR makes use of [pybids](https://github.com/bids-standard/pybids) to parse
-the dataset, so we suggest using the [BIDS Validator](https://bids-standard.github.io/bids-validator/) to ensure your dataset
-has no errors.
+the dataset, so we suggest using the 
+[BIDS Validator](https://bids-standard.github.io/bids-validator/) to ensure 
+your dataset has no errors.
 
 If you passed Freesurfer or diffusion derivative locations (`--freesurfer-dir` 
 or `--dwi-dir`), you may get get this message as the files are a different

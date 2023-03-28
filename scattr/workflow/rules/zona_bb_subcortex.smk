@@ -46,7 +46,7 @@ rule cp_zona_tsv:
 
 
 rule reg2native:
-    """Create transfroms from chosen template space to subject native space via ANTsRegistrationSyNQuick"""
+    """Create transforms from chosen template space to subject native space via ANTsRegistrationSyNQuick"""
     input:
         template=str(
             Path(workflow.basedir).parent
@@ -124,23 +124,53 @@ rule warp2native:
 rule labelmerge:
     input:
         zona_seg=expand(
-            rules.warp2native.output.nii,
+            rules.warp2native.output.nii
+            if not config.get("labelmerge_base_dir")
+            else [],
             subject=config["input_lists"]["T1w"]["subject"],
             allow_missing=True,
         ),
         fs_seg=expand(
-            rules.fs_xfm_to_native.output.thal,
+            rules.fs_xfm_to_native.output.thal
+            if not config.get("labelmerge_overlay_dir")
+            else [],
             subject=config["input_lists"]["T1w"]["subject"],
             allow_missing=True,
         ),
-        fs_tsv=rules.cp_fs_tsv.output.fs_tsv,
-        zona_tsv=rules.cp_zona_tsv.output.zona_tsv,
+        fs_tsv=rules.cp_fs_tsv.output.fs_tsv
+        if not config.get("labelmerge_overlay_dir")
+        else [],
+        zona_tsv=rules.cp_zona_tsv.output.zona_tsv
+        if not config.get("labelmerge_base_dir")
+        else [],
     params:
-        zona_dir=zona_dir,
-        fs_dir=rules.thalamic_segmentation.input.freesurfer_dir,
-        zona_desc="ZonaBB",
-        fs_desc="FreesurferThal",
-        labelmerge_dir=directory(labelmerge_dir),
+        labelmerge_out_dir=directory(labelmerge_dir),
+        labelmerge_base_dir=(
+            config.get("labelmerge_base_dir")
+            if config.get("labelmerge_base_dir")
+            else zona_dir
+        ),
+        base_drops=f"--base_drops {config['labelmerge_base_drops']}",
+        base_desc=f"--base_desc {config['labelmerge_base_desc']}",
+        base_exceptions=(
+            f"--base_exceptions {config.get('labelmerge_base_exceptions')}"
+            if config.get("labelmerge_base_exceptions")
+            else ""
+        ),
+        overlay_dir=(
+            f"--overlay_bids_dir {config.get('labelmerge_overlay_dir') if config.get('labelmerge_overlay_dir') else rules.thalamic_segmentation.input.freesurfer_dir}"
+        ),
+        overlay_desc=f"--overlay_desc {config['labelmerge_overlay_desc']}",
+        overlay_drops=(
+            f"--overlay_drops {config.get('labelmerge_overlay_drops')}"
+            if config.get("labelmerge_overlay_drops")
+            else ""
+        ),
+        overlay_exceptions=(
+            f"--overlay_exceptions {config.get('labelmerge_overlay_exceptions')}"
+            if config.get("labelmerge_overlay_exceptions")
+            else ""
+        ),
     output:
         seg=expand(
             bids_labelmerge(
@@ -171,7 +201,7 @@ rule labelmerge:
     container:
         config["singularity"]["labelmerge"]
     shell:
-        "labelmerge {params.zona_dir} {params.labelmerge_dir} participant --base_desc {params.zona_desc} --overlay_bids_dir {params.fs_dir} --overlay_desc {params.fs_desc} --base_drop 15 16 --cores {threads} --force-output"
+        "labelmerge {params.labelmerge_base_dir} {params.labelmerge_out_dir} participant {params.base_desc} {params.base_drops} {params.base_exceptions} {params.overlay_dir} {params.overlay_desc} {params.overlay_drops} {params.overlay_exceptions} --cores {threads} --force-output"
 
 
 rule get_num_nodes:
@@ -231,7 +261,9 @@ rule binarize:
 rule add_brainstem:
     input:
         mask=rules.binarize.output.mask,
-        aparcaseg=rules.fs_xfm_to_native.output.aparcaseg,
+        aparcaseg=rules.fs_xfm_to_native.output.aparcaseg
+        if not config.get("skip_brainstem")
+        else [],
     output:
         mask=bids_labelmerge(
             space="T1w",
@@ -254,7 +286,9 @@ rule add_brainstem:
 
 rule create_convex_hull:
     input:
-        bin_seg=rules.add_brainstem.output.mask,
+        bin_seg=rules.binarize.output.mask
+        if config["skip_brainstem"]
+        else rules.add_brainstem.output.mask,
     output:
         convex_hull=bids_labelmerge(
             space="T1w",
