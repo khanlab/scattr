@@ -87,12 +87,12 @@ rule mgz2nii:
     NOTE: During conversion, files are renamed to BIDS-esque formatting
     """
     input:
-        thal=rules.thalamic_segmentation.output.thal_seg,
+        thal=rules.thalamic_segmentation.output.thal_seg
+        if not config.get("skip_thal_seg")
+        else [],
         aparcaseg=str(
             Path(freesurfer_dir) / "sub-{subject}/mri/aparc+aseg.mgz"
         ),
-        lRibbon=str(Path(freesurfer_dir) / "sub-{subject}/mri/lh.ribbon.mgz"),
-        rRibbon=str(Path(freesurfer_dir) / "sub-{subject}/mri/rh.ribbon.mgz"),
     params:
         freesurfer_dir=freesurfer_dir,
         fs_license=fs_license,
@@ -106,16 +106,6 @@ rule mgz2nii:
             space="Freesurfer",
             desc="aparcaseg",
             suffix="dseg.nii.gz",
-        ),
-        ribbon_mgz=bids_fs_out(
-            space="Freesurfer",
-            desc="ribbon",
-            suffix="mask.mgz",
-        ),
-        ribbon=bids_fs_out(
-            space="Freesurfer",
-            desc="ribbon",
-            suffix="mask.nii.gz",
         ),
     threads: 4
     resources:
@@ -132,9 +122,7 @@ rule mgz2nii:
         "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
         "export SUBJECTS_DIR={params.freesurfer_dir} && "
         "mri_convert {input.thal} {output.thal} &> {log} && "
-        "mri_convert {input.aparcaseg} {output.aparcaseg} >> {log} 2>&1 && "
-        "mergeseg --src {input.lRibbon} --merge {input.rRibbon} --o {output.ribbon_mgz} >> {log} 2>&1 && "
-        "mri_convert {output.ribbon_mgz} {output.ribbon} >> {log} 2>&1"
+        "mri_convert {input.aparcaseg} {output.aparcaseg} >> {log} 2>&1 "
 
 
 rule fs_xfm_to_native:
@@ -142,7 +130,6 @@ rule fs_xfm_to_native:
     input:
         thal=rules.mgz2nii.output.thal,
         aparcaseg=rules.mgz2nii.output.aparcaseg,
-        ribbon=rules.mgz2nii.output.ribbon,
         ref=config["input_path"]["T1w"],
     output:
         thal=bids_fs_out(
@@ -153,11 +140,6 @@ rule fs_xfm_to_native:
         aparcaseg=bids_fs_out(
             space="T1w",
             desc="aparcaseg",
-            suffix="dseg.nii.gz",
-        ),
-        ribbon=bids_fs_out(
-            space="T1w",
-            desc="ribbon",
             suffix="dseg.nii.gz",
         ),
     threads: 4
@@ -172,5 +154,4 @@ rule fs_xfm_to_native:
         config["singularity"]["neuroglia-core"]
     shell:
         "antsApplyTransforms -d 3 -n MultiLabel -i {input.thal} -r {input.ref} -o {output.thal} &> {log} && "
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} >> {log} 2>&1 && "
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.ribbon} -r {input.ref} -o {output.ribbon} >> {log} 2>&1"
+        "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} >> {log} 2>&1"
