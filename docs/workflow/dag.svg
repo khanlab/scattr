@@ -18,7 +18,10 @@
    version="1.1"
    id="svg8942"
    sodipodi:docname="dag.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
+   inkscape:export-xdpi="119.99"
+   inkscape:export-ydpi="119.99">
   <metadata
      id="metadata8948">
     <rdf:RDF>
@@ -27,11 +30,867 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs8946" />
+     id="defs8946">
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7272"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7270"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7266"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7264"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7260"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7258"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7254"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7252"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7248"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7246"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7242"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7240"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7236"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7234"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7230"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7228"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7224"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7222"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7218"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7216"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7212"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7210"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker6564"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path6562"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker6537"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path6535"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker6531"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path6529"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5843"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5841"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5481"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5479"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5475"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5473"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5418"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5416"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5412"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5410"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5406"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5404"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5400"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5398"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5333"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5331"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5316"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5314"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5297"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5295"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5186"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5184"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5182"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5180"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Send"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path4912"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#b3b3b3;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5153"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5151"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#b3b3b3;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5149"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5147"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#b3b3b3;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Send"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path4894"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Lend"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path4900"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#808080;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(1.1) rotate(180) translate(1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-3"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-5"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5186-2"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5184-9"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-9"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-3"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5186-2-0"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5184-9-6"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5186-2-0-6"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5184-9-6-1"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5418-9"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5416-2"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5418-8"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5416-9"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5418-9-7"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5416-2-3"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5481-2"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5479-9"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-4"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-50"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5186-6"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5184-1"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5186-6-6"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5184-1-3"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-9-1"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-3-5"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6-7"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9-4"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6-2"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9-5"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6-74"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9-43"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6-74-7"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9-43-8"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6-74-8"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9-43-84"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6-74-1"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9-43-4"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker6537-2"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path6535-0"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6-2-8"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9-5-9"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6-2-8-6"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9-5-9-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6-2-8-9"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9-5-9-5"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2-0-7-6-2-8-4"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4894-7-6-6-9-5-9-8"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+  </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -39,57 +898,299 @@
      objecttolerance="10"
      gridtolerance="10"
      guidetolerance="10"
-     inkscape:pageopacity="0"
+     inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:window-width="1848"
-     inkscape:window-height="1047"
+     inkscape:window-height="1016"
      id="namedview8944"
      showgrid="false"
-     inkscape:zoom="0.93403033"
-     inkscape:cx="630.63309"
-     inkscape:cy="316.47489"
+     inkscape:zoom="0.33022959"
+     inkscape:cx="-423.75527"
+     inkscape:cy="737.87516"
      inkscape:window-x="72"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
-     inkscape:current-layer="graph0" />
+     inkscape:current-layer="layer3"
+     showguides="false" />
   <g
-     id="graph0"
-     class="graph"
-     transform="scale(1 1) rotate(0) translate(4 976)"
-     inkscape:export-xdpi="119.99"
-     inkscape:export-ydpi="119.99">
-    <title
-       id="title8419">snakemake_dag</title>
-    <polygon
-       stroke="transparent"
-       points="-4,4 -4,-976 843.5,-976 843.5,4 -4,4"
-       id="polygon8421"
-       fill="white" />
-    <!-- 0 -->
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="BG"
+     sodipodi:insensitive="true"
+     style="display:none">
+    <rect
+       style="opacity:0.6;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect7405"
+       width="848.2735"
+       height="978.86444"
+       x="-0.81778479"
+       y="-0.56779224"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Everything_else">
+    <path
+       style="opacity:0.6;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send)"
+       d="M 455.442,44.93937 V 86.18971"
+       id="path4877"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5186)"
+       d="m 455.17727,126.34329 c 0,0 -32.3298,15.03289 -50.10175,23.54208"
+       id="path5178"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5186-2)"
+       d="m 453.80575,126.5157 c 0,0 42.87074,14.45967 66.43712,22.6444"
+       id="path5178-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2)"
+       d="m 520.29985,187.73134 v 42.54384"
+       id="path4877-0"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-9)"
+       d="m 402.35315,187.93627 v 42.54384"
+       id="path4877-0-6"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:0.6;fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5186-2-0)"
+       d="m 519.20986,271.64076 35.28531,72.78057"
+       id="path5178-1-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:0.6;fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5297)"
+       d="m 398.76,271.43001 127.33055,76.53581"
+       id="path5293"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:0.6;fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5316)"
+       d="m 609.61259,270.17295 -37.7881,73.7293"
+       id="path5312"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:0.6;fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5333)"
+       d="M 695.74597,270.8343 587.95744,345.94413"
+       id="path5329"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5406)"
+       d="m 524.38501,380.41716 -41.93657,26.59153"
+       id="path5402"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5412)"
+       d="m 593.655,376.44265 28.95713,30.66049"
+       id="path5408"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5418)"
+       d="m 460.22511,442.30592 v 32.36385"
+       id="path5414"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5418-9)"
+       d="m 460.22511,515.34323 v 32.36385"
+       id="path5414-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5418-8)"
+       d="m 665.18533,443.054 v 32.36385"
+       id="path5414-6"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5418-9-7)"
+       d="m 665.18533,516.09131 v 32.36385"
+       id="path5414-2-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:0.6;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-4)"
+       d="M 168.45569,44.93937 V 86.18971"
+       id="path4877-3"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5186-6)"
+       d="m 146.12578,121.68553 c 0,0 -30.05865,19.57518 -39.59769,26.6649"
+       id="path5178-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5186-6-6)"
+       d="m 194.10377,121.96941 c 0,0 25.23246,19.2913 34.7715,26.38102"
+       id="path5178-0-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6531)"
+       d="M 157.31084,127.75203 127.50203,232.79259"
+       id="path6527"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6537)"
+       d="m 177.20677,127.24396 c 0,0 -4.41635,190.30432 29.30847,200.74296"
+       id="path6533"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6537-2)"
+       d="m 166.46783,128.10784 c 0,0 -5.62081,256.95098 28.10401,267.38962"
+       id="path6533-6"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6564)"
+       d="m 200.49295,413.9049 c 0,0 -49.78425,212.93104 8.83269,237.02019"
+       id="path6560"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-0-7-6-2-8)"
+       d="m 238.48232,669.99246 0.28389,9.90936"
+       id="path4877-0-5-5-3-4-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-0-7-6-2-8-6)"
+       d="m 238.48232,719.47062 0.28389,12.31827"
+       id="path4877-0-5-5-3-4-2-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-0-7-6-2-8-9)"
+       d="m 238.48232,772.10849 0.28389,10.71233"
+       id="path4877-0-5-5-3-4-2-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-0-7-6-2-8-4)"
+       d="m 238.48232,821.90743 0.28389,12.31827"
+       id="path4877-0-5-5-3-4-2-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
     <g
        id="node1"
-       class="node">
+       class="node"
+       transform="translate(59.250015,976.00001)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99">
       <title
          id="title8423">0</title>
       <path
-         d="M379.5,-36C379.5,-36 349.5,-36 349.5,-36 343.5,-36 337.5,-30 337.5,-24 337.5,-24 337.5,-12 337.5,-12 337.5,-6 343.5,0 349.5,0 349.5,0 379.5,0 379.5,0 385.5,0 391.5,-6 391.5,-12 391.5,-12 391.5,-24 391.5,-24 391.5,-30 385.5,-36 379.5,-36"
+         d="m 379.5,-36 c 0,0 -30,0 -30,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 30,0 30,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8425"
-         stroke-width="2"
-         stroke="#c6d856"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#c6d856;stroke-width:2" />
       <text
          x="364.5"
          y="-15.5"
          font-size="10.00"
          id="text8427"
-         text-anchor="middle"
-         font-family="sans">all</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">all</text>
     </g>
-    <!-- 1 -->
     <g
        id="node2"
        class="node"
-       transform="translate(-372)">
+       transform="translate(-390.48321,945.39793)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8430">1</title>
       <path
@@ -104,28 +1205,13 @@
          id="text8434"
          style="font-size:10px;font-family:sans;text-anchor:middle">filtered_tck2connectome</text>
     </g>
-    <!-- 1&#45;&gt;0 -->
-    <g
-       id="edge2"
-       class="edge"
-       transform="translate(-253.5)">
-      <title
-         id="title8437">1-&gt;0</title>
-      <path
-         d="M 564.26,-71.97 C 513.21,-58.43 443.63,-39.98 401.5,-28.81"
-         id="path8439"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="400.43,-32.15 402.23,-25.38 391.66,-26.2 "
-         id="polygon8441"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 2 -->
     <g
        id="node3"
        class="node"
-       transform="translate(-372)">
+       transform="translate(-390.48321,966.39793)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8444">2</title>
       <path
@@ -140,28 +1226,13 @@
          id="text8448"
          style="font-size:10px;font-family:sans;text-anchor:middle">filter_combine_tck</text>
     </g>
-    <!-- 2&#45;&gt;1 -->
-    <g
-       id="edge3"
-       class="edge"
-       transform="translate(-372)">
-      <title
-         id="title8451">2-&gt;1</title>
-      <path
-         d="m 628.5,-143.7 c 0,7.72 0,16.99 0,25.59"
-         id="path8453"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="632,-118.1 628.5,-108.1 625,-118.1 "
-         id="polygon8455"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 3 -->
     <g
        id="node4"
        class="node"
-       transform="translate(-253.5)">
+       transform="translate(-294.48321,987.39793)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8458">3</title>
       <path
@@ -176,12 +1247,13 @@
          id="text8462"
          style="font-size:10px;font-family:sans;text-anchor:middle">connectome2tck</text>
     </g>
-    <!-- 3&#45;&gt;2 -->
-    <!-- 4 -->
     <g
        id="node5"
        class="node"
-       transform="translate(-253.5)">
+       transform="translate(-162.48321,1029.3979)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8472">4</title>
       <path
@@ -196,28 +1268,13 @@
          id="text8476"
          style="font-size:10px;font-family:sans;text-anchor:middle">tcksift2</text>
     </g>
-    <!-- 4&#45;&gt;3 -->
-    <g
-       id="edge10"
-       class="edge"
-       transform="translate(-253.5)">
-      <title
-         id="title8479">4-&gt;3</title>
-      <path
-         d="m 404.99,-359.83 c 5.78,19.34 17.4,50.8 36.51,71.83 11.4,12.55 26.49,22.96 41.09,31.14"
-         id="path8481"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="481.11,-253.68 484.41,-259.85 491.58,-252.06 "
-         id="polygon8483"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 22 -->
     <g
        id="node23"
        class="node"
-       transform="translate(-253.5)">
+       transform="translate(-294.48321,1006.8979)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8486">22</title>
       <path
@@ -232,28 +1289,13 @@
          id="text8490"
          style="font-size:10px;font-family:sans;text-anchor:middle">tck2connectome</text>
     </g>
-    <!-- 4&#45;&gt;22 -->
-    <g
-       id="edge37"
-       class="edge"
-       transform="translate(-253.5)">
-      <title
-         id="title8493">4-&gt;22</title>
-      <path
-         d="m 427.53,-362.67 c 18.4,9.76 43.09,22.85 63.9,33.89"
-         id="path8495"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="489.91,-325.62 493.19,-331.81 500.38,-324.03 "
-         id="polygon8497"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 5 -->
     <g
        id="node6"
        class="node"
-       transform="translate(-253.5)">
+       transform="translate(-186.48321,1029.3979)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8500">5</title>
       <path
@@ -268,1379 +1310,770 @@
          id="text8504"
          style="font-size:10px;font-family:sans;text-anchor:middle">tckgen</text>
     </g>
-    <!-- 5&#45;&gt;3 -->
-    <g
-       id="edge8"
-       class="edge"
-       transform="translate(-253.5)">
-      <title
-         id="title8507">5-&gt;3</title>
-      <path
-         d="m 428.58,-431.99 c 8.86,36.18 30.35,119.47 45.92,143.99 6.91,10.89 16.63,20.96 26.13,29.33"
-         id="path8509"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="498.6,-255.8 503.1,-261.16 508.5,-252.05 "
-         id="polygon8511"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 5&#45;&gt;4 -->
-    <g
-       id="edge12"
-       class="edge"
-       transform="translate(-253.5)">
-      <title
-         id="title8514">5-&gt;4</title>
-      <path
-         d="m 418.57,-431.7 c -2.68,7.8 -5.9,17.19 -8.87,25.87"
-         id="path8516"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="406.3,-406.7 412.92,-404.43 406.36,-396.1 "
-         id="polygon8518"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 5&#45;&gt;22 -->
-    <g
-       id="edge35"
-       class="edge"
-       transform="translate(-253.5)">
-      <title
-         id="title8521">5-&gt;22</title>
-      <path
-         d="m 439.9,-431.65 c 8.88,10.19 20.13,23.44 29.6,35.65 16.26,20.95 33.59,45.62 45.95,63.67"
-         id="path8523"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="512.57,-330.35 518.35,-334.29 521.09,-324.05 "
-         id="polygon8525"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 6 -->
     <g
        id="node7"
-       class="node">
+       class="node"
+       transform="translate(-21.483211,921.39793)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8528">6</title>
       <path
-         d="M287,-540C287,-540 232,-540 232,-540 226,-540 220,-534 220,-528 220,-528 220,-516 220,-516 220,-510 226,-504 232,-504 232,-504 287,-504 287,-504 293,-504 299,-510 299,-516 299,-516 299,-528 299,-528 299,-534 293,-540 287,-540"
+         d="m 287,-540 c 0,0 -55,0 -55,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 55,0 55,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8530"
-         stroke-width="2"
-         stroke="#b6d856"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#b6d856;stroke-width:2" />
       <text
          x="259.5"
          y="-519.5"
          font-size="10.00"
          id="text8532"
-         text-anchor="middle"
-         font-family="sans">mtnormalise</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">mtnormalise</text>
     </g>
-    <!-- 6&#45;&gt;4 -->
-    <g
-       id="edge11"
-       class="edge"
-       transform="translate(-253.5)">
-      <title
-         id="title8535">6-&gt;4</title>
-      <path
-         d="M 472.96424,-526.58147 C 397.91376,-512.88721 350.09115,-430.91443 376.27,-403.41"
-         id="path8537"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2"
-         sodipodi:nodetypes="cc" />
-      <polygon
-         points="373.9,-400.82 378.87,-405.75 383.43,-396.19 "
-         id="polygon8539"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 6&#45;&gt;5 -->
-    <g
-       id="edge13"
-       class="edge"
-       transform="matrix(-1,0,0,1,592.75449,-4.3800001)">
-      <title
-         id="title8542">6-&gt;5</title>
-      <path
-         d="m 334.22278,-499.68771 c 0,0 52.61722,36.51771 53.92722,33.26771"
-         id="path8544"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2"
-         sodipodi:nodetypes="cc" />
-      <polygon
-         points="386.84,-463.17 389.58,-469.62 397.42,-462.49 "
-         id="polygon8546"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 7 -->
     <g
        id="node8"
-       class="node">
+       class="node"
+       transform="translate(4.5167894,921.39793)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8549">7</title>
       <path
-         d="M249.5,-612C249.5,-612 217.5,-612 217.5,-612 211.5,-612 205.5,-606 205.5,-600 205.5,-600 205.5,-588 205.5,-588 205.5,-582 211.5,-576 217.5,-576 217.5,-576 249.5,-576 249.5,-576 255.5,-576 261.5,-582 261.5,-588 261.5,-588 261.5,-600 261.5,-600 261.5,-606 255.5,-612 249.5,-612"
+         d="m 249.5,-612 c 0,0 -32,0 -32,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 32,0 32,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8551"
-         stroke-width="2"
-         stroke="#d87d56"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#d87d56;stroke-width:2" />
       <text
          x="233.5"
          y="-591.5"
          font-size="10.00"
          id="text8553"
-         text-anchor="middle"
-         font-family="sans">dwi2fod</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">dwi2fod</text>
     </g>
-    <!-- 7&#45;&gt;6 -->
-    <g
-       id="edge19"
-       class="edge">
-      <title
-         id="title8556">7-&gt;6</title>
-      <path
-         d="M239.93,-575.7C242.86,-567.81 246.39,-558.3 249.64,-549.55"
-         id="path8558"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="252.95,-550.7 253.15,-540.1 246.38,-548.26 252.95,-550.7"
-         id="polygon8560"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 8 -->
     <g
        id="node9"
-       class="node">
+       class="node"
+       transform="translate(-46.809845,919.00001)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8563">8</title>
       <path
-         d="M231.5,-828C231.5,-828 201.5,-828 201.5,-828 195.5,-828 189.5,-822 189.5,-816 189.5,-816 189.5,-804 189.5,-804 189.5,-798 195.5,-792 201.5,-792 201.5,-792 231.5,-792 231.5,-792 237.5,-792 243.5,-798 243.5,-804 243.5,-804 243.5,-816 243.5,-816 243.5,-822 237.5,-828 231.5,-828"
+         d="m 231.5,-828 c 0,0 -30,0 -30,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 30,0 30,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8565"
-         stroke-width="2"
-         stroke="#68d856"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#68d856;stroke-width:2" />
       <text
          x="216.5"
          y="-807.5"
          font-size="10.00"
          id="text8567"
-         text-anchor="middle"
-         font-family="sans">nii2mif</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">nii2mif</text>
     </g>
-    <!-- 8&#45;&gt;5 -->
-    <g
-       id="edge14"
-       class="edge">
-      <title
-         id="title8570">8-&gt;5</title>
-      <path
-         d="M242.52,-792C275.33,-768.27 327.5,-721.92 327.5,-667 327.5,-667 327.5,-667 327.5,-593 327.5,-544.7 366.24,-500.73 394.76,-474.91"
-         id="path8572"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="397.28,-477.35 402.49,-468.12 392.67,-472.09 397.28,-477.35"
-         id="polygon8574"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 8&#45;&gt;6 -->
-    <g
-       id="edge18"
-       class="edge">
-      <title
-         id="title8577">8-&gt;6</title>
-      <path
-         d="M229.31,-791.73C236.07,-781.77 243.89,-768.73 248.5,-756 275.94,-680.22 278.73,-656.17 270.5,-576 269.62,-567.46 267.97,-558.26 266.21,-549.96"
-         id="path8579"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="269.58,-549.03 263.96,-540.05 262.76,-550.57 269.58,-549.03"
-         id="polygon8581"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 8&#45;&gt;7 -->
-    <g
-       id="edge20"
-       class="edge">
-      <title
-         id="title8584">8-&gt;7</title>
-      <path
-         d="M223.12,-791.62C226.67,-781.42 230.67,-768.17 232.5,-756 239.51,-709.52 237.74,-654.63 235.7,-622.43"
-         id="path8586"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="239.17,-621.78 234.98,-612.05 232.18,-622.26 239.17,-621.78"
-         id="polygon8588"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 10 -->
     <g
        id="node11"
-       class="node">
+       class="node"
+       transform="translate(56.5,907.22869)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8591">10</title>
       <path
-         d="M211.5,-756C211.5,-756 151.5,-756 151.5,-756 145.5,-756 139.5,-750 139.5,-744 139.5,-744 139.5,-732 139.5,-732 139.5,-726 145.5,-720 151.5,-720 151.5,-720 211.5,-720 211.5,-720 217.5,-720 223.5,-726 223.5,-732 223.5,-732 223.5,-744 223.5,-744 223.5,-750 217.5,-756 211.5,-756"
+         d="m 211.5,-756 c 0,0 -60,0 -60,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 60,0 60,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8593"
-         stroke-width="2"
-         stroke="#56d8a2"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56d8a2;stroke-width:2" />
       <text
          x="181.5"
          y="-735.5"
          font-size="10.00"
          id="text8595"
-         text-anchor="middle"
-         font-family="sans">dwi2response</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">dwi2response</text>
     </g>
-    <!-- 8&#45;&gt;10 -->
-    <g
-       id="edge23"
-       class="edge">
-      <title
-         id="title8598">8-&gt;10</title>
-      <path
-         d="M207.85,-791.7C203.86,-783.73 199.05,-774.1 194.63,-765.26"
-         id="path8600"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="197.65,-763.48 190.05,-756.1 191.39,-766.61 197.65,-763.48"
-         id="polygon8602"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 26 -->
     <g
        id="node27"
-       class="node">
+       class="node"
+       transform="translate(17.5,919.00001)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8605">26</title>
       <path
-         d="M104,-684C104,-684 57,-684 57,-684 51,-684 45,-678 45,-672 45,-672 45,-660 45,-660 45,-654 51,-648 57,-648 57,-648 104,-648 104,-648 110,-648 116,-654 116,-660 116,-660 116,-672 116,-672 116,-678 110,-684 104,-684"
+         d="m 104,-684 c 0,0 -47,0 -47,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 47,0 47,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8607"
-         stroke-width="2"
-         stroke="#d6d856"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#d6d856;stroke-width:2" />
       <text
          x="80.5"
          y="-663.5"
          font-size="10.00"
          id="text8609"
-         text-anchor="middle"
-         font-family="sans">dwi2tensor</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">dwi2tensor</text>
     </g>
-    <!-- 8&#45;&gt;26 -->
-    <g
-       id="edge44"
-       class="edge">
-      <title
-         id="title8612">8-&gt;26</title>
-      <path
-         d="M189.21,-796.73C170.95,-787.49 147.26,-773.46 130.5,-756 113.04,-737.82 99.55,-712.37 91.01,-693.35"
-         id="path8614"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="94.17,-691.84 86.99,-684.05 87.74,-694.62 94.17,-691.84"
-         id="polygon8616"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 27 -->
     <g
        id="node28"
-       class="node">
+       class="node"
+       transform="translate(56.5,907.22869)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8619">27</title>
       <path
-         d="M71,-756C71,-756 12,-756 12,-756 6,-756 0,-750 0,-744 0,-744 0,-732 0,-732 0,-726 6,-720 12,-720 12,-720 71,-720 71,-720 77,-720 83,-726 83,-732 83,-732 83,-744 83,-744 83,-750 77,-756 71,-756"
+         d="m 71,-756 c 0,0 -59,0 -59,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 59,0 59,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8621"
-         stroke-width="2"
-         stroke="#78d856"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#78d856;stroke-width:2" />
       <text
          x="41.5"
          y="-735.5"
          font-size="10.00"
          id="text8623"
-         text-anchor="middle"
-         font-family="sans">dwinormalise</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">dwinormalise</text>
     </g>
-    <!-- 8&#45;&gt;27 -->
-    <g
-       id="edge46"
-       class="edge">
-      <title
-         id="title8626">8-&gt;27</title>
-      <path
-         d="M189.16,-798.06C163.46,-787.78 124.34,-772.13 92.82,-759.53"
-         id="path8628"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="93.89,-756.19 83.31,-755.72 91.29,-762.69 93.89,-756.19"
-         id="polygon8630"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 9 -->
     <g
        id="node10"
-       class="node">
+       class="node"
+       transform="translate(59.5,919.00001)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8633">9</title>
       <path
-         d="M211,-684C211,-684 146,-684 146,-684 140,-684 134,-678 134,-672 134,-672 134,-660 134,-660 134,-654 140,-648 146,-648 146,-648 211,-648 211,-648 217,-648 223,-654 223,-660 223,-660 223,-672 223,-672 223,-678 217,-684 211,-684"
+         d="m 211,-684 c 0,0 -65,0 -65,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 65,0 65,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8635"
-         stroke-width="2"
-         stroke="#d8a456"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#d8a456;stroke-width:2" />
       <text
          x="178.5"
          y="-663.5"
          font-size="10.00"
          id="text8637"
-         text-anchor="middle"
-         font-family="sans">responsemean</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">responsemean</text>
     </g>
-    <!-- 9&#45;&gt;7 -->
-    <g
-       id="edge21"
-       class="edge">
-      <title
-         id="title8640">9-&gt;7</title>
-      <path
-         d="M192.1,-647.7C198.62,-639.39 206.57,-629.28 213.75,-620.14"
-         id="path8642"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="216.63,-622.13 220.06,-612.1 211.13,-617.81 216.63,-622.13"
-         id="polygon8644"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 10&#45;&gt;9 -->
-    <g
-       id="edge22"
-       class="edge">
-      <title
-         id="title8647">10-&gt;9</title>
-      <path
-         d="M180.76,-719.7C180.43,-711.98 180.03,-702.71 179.66,-694.11"
-         id="path8649"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="183.16,-693.95 179.23,-684.1 176.16,-694.25 183.16,-693.95"
-         id="polygon8651"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 11 -->
     <g
        id="node12"
        class="node"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(-17.362408,1063)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8654">11</title>
       <path
-         d="M460,-828C460,-828 383,-828 383,-828 377,-828 371,-822 371,-816 371,-816 371,-804 371,-804 371,-798 377,-792 383,-792 383,-792 460,-792 460,-792 466,-792 472,-798 472,-804 472,-804 472,-816 472,-816 472,-822 466,-828 460,-828"
+         d="m 460,-828 c 0,0 -77,0 -77,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 77,0 77,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8656"
-         stroke-width="2"
-         stroke="#56b1d8"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56b1d8;stroke-width:2" />
       <text
          x="421.5"
          y="-807.5"
          font-size="10.00"
          id="text8658"
-         text-anchor="middle"
-         font-family="sans">fs_xfm_to_native</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">fs_xfm_to_native</text>
     </g>
-    <!-- 11&#45;&gt;5 -->
-    <g
-       id="edge16"
-       class="edge">
-      <title
-         id="title8661">11-&gt;5</title>
-      <path
-         d="M409.9,-791.93C393.49,-766.09 365.5,-714.97 365.5,-667 365.5,-667 365.5,-667 365.5,-593 365.5,-552.55 367.7,-540.79 384.5,-504 388.95,-494.25 395.45,-484.59 401.92,-476.24"
-         id="path8663"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="404.72,-478.34 408.3,-468.37 399.28,-473.93 404.72,-478.34"
-         id="polygon8665"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 15 -->
     <g
        id="node16"
        class="node"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(9.5672086,1091.0087)">
       <title
          id="title8668">15</title>
       <path
-         d="M482,-612C482,-612 417,-612 417,-612 411,-612 405,-606 405,-600 405,-600 405,-588 405,-588 405,-582 411,-576 417,-576 417,-576 482,-576 482,-576 488,-576 494,-582 494,-588 494,-588 494,-600 494,-600 494,-606 488,-612 482,-612"
+         d="m 482,-612 c 0,0 -65,0 -65,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 65,0 65,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8670"
-         stroke-width="2"
-         stroke="#d88d56"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#d88d56;stroke-width:2" />
       <text
          x="449.5"
          y="-591.5"
          font-size="10.00"
          id="text8672"
-         text-anchor="middle"
-         font-family="sans">add_brainstem</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">add_brainstem</text>
     </g>
-    <!-- 11&#45;&gt;15 -->
-    <g
-       id="edge27"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8675">11-&gt;15</title>
-      <path
-         d="M423.26,-791.57C426.32,-761.99 433.01,-700.1 440.5,-648 441.71,-639.56 443.21,-630.38 444.63,-622.08"
-         id="path8677"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="448.09,-622.6 446.36,-612.15 441.19,-621.4 448.09,-622.6"
-         id="polygon8679"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 17 -->
     <g
        id="node18"
        class="node"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(-72.761879,1103.5)">
       <title
          id="title8682">17</title>
       <path
-         d="M655.5,-756C655.5,-756 607.5,-756 607.5,-756 601.5,-756 595.5,-750 595.5,-744 595.5,-744 595.5,-732 595.5,-732 595.5,-726 601.5,-720 607.5,-720 607.5,-720 655.5,-720 655.5,-720 661.5,-720 667.5,-726 667.5,-732 667.5,-732 667.5,-744 667.5,-744 667.5,-750 661.5,-756 655.5,-756"
+         d="m 655.5,-756 c 0,0 -48,0 -48,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 48,0 48,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8684"
-         stroke-width="2"
-         stroke="#56d87b"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56d87b;stroke-width:2" />
       <text
          x="631.5"
          y="-735.5"
          font-size="10.00"
          id="text8686"
-         text-anchor="middle"
-         font-family="sans">labelmerge</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">labelmerge</text>
     </g>
-    <!-- 11&#45;&gt;17 -->
-    <g
-       id="edge33"
-       class="edge"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png">
-      <title
-         id="title8689">11-&gt;17</title>
-      <path
-         d="M472.07,-792.14C506.64,-780.62 552.1,-765.47 585.63,-754.29"
-         id="path8691"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="586.8,-757.59 595.18,-751.11 584.59,-750.95 586.8,-757.59"
-         id="polygon8693"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 12 -->
     <g
        id="node13"
        class="node"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(-17.362408,1051.2287)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8696">12</title>
       <path
-         d="M437.5,-900C437.5,-900 405.5,-900 405.5,-900 399.5,-900 393.5,-894 393.5,-888 393.5,-888 393.5,-876 393.5,-876 393.5,-870 399.5,-864 405.5,-864 405.5,-864 437.5,-864 437.5,-864 443.5,-864 449.5,-870 449.5,-876 449.5,-876 449.5,-888 449.5,-888 449.5,-894 443.5,-900 437.5,-900"
+         d="m 437.5,-900 c 0,0 -32,0 -32,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 32,0 32,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8698"
-         stroke-width="2"
-         stroke="#d85656"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#d85656;stroke-width:2" />
       <text
          x="421.5"
          y="-879.5"
          font-size="10.00"
          id="text8700"
-         text-anchor="middle"
-         font-family="sans">mgz2nii</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">mgz2nii</text>
     </g>
-    <!-- 12&#45;&gt;11 -->
-    <g
-       id="edge24"
-       class="edge"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8703">12-&gt;11</title>
-      <path
-         d="M421.5,-863.7C421.5,-855.98 421.5,-846.71 421.5,-838.11"
-         id="path8705"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="425,-838.1 421.5,-828.1 418,-838.1 425,-838.1"
-         id="polygon8707"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 13 -->
     <g
        id="node14"
        class="node"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(32.368792,1063)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8710">13</title>
       <path
-         d="M475.5,-972C475.5,-972 367.5,-972 367.5,-972 361.5,-972 355.5,-966 355.5,-960 355.5,-960 355.5,-948 355.5,-948 355.5,-942 361.5,-936 367.5,-936 367.5,-936 475.5,-936 475.5,-936 481.5,-936 487.5,-942 487.5,-948 487.5,-948 487.5,-960 487.5,-960 487.5,-966 481.5,-972 475.5,-972"
+         d="m 475.5,-972 c 0,0 -108,0 -108,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 108,0 108,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8712"
-         stroke-width="2"
-         stroke="#56d88a"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56d88a;stroke-width:2" />
       <text
          x="421.5"
          y="-951.5"
          font-size="10.00"
          id="text8714"
-         text-anchor="middle"
-         font-family="sans">thalamic_segmentation</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">thalamic_segmentation</text>
     </g>
-    <!-- 13&#45;&gt;12 -->
-    <g
-       id="edge25"
-       class="edge"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8717">13-&gt;12</title>
-      <path
-         d="M421.5,-935.7C421.5,-927.98 421.5,-918.71 421.5,-910.11"
-         id="path8719"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="425,-910.1 421.5,-900.1 418,-910.1 425,-910.1"
-         id="polygon8721"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 14 -->
     <g
        id="node15"
        class="node"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(9.5672086,1091.0087)">
       <title
          id="title8724">14</title>
       <path
-         d="M493,-540C493,-540 406,-540 406,-540 400,-540 394,-534 394,-528 394,-528 394,-516 394,-516 394,-510 400,-504 406,-504 406,-504 493,-504 493,-504 499,-504 505,-510 505,-516 505,-516 505,-528 505,-528 505,-534 499,-540 493,-540"
+         d="m 493,-540 c 0,0 -87,0 -87,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 87,0 87,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8726"
-         stroke-width="2"
-         stroke="#56c9d8"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56c9d8;stroke-width:2" />
       <text
          x="449.5"
          y="-519.5"
          font-size="10.00"
          id="text8728"
-         text-anchor="middle"
-         font-family="sans">create_convex_hull</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">create_convex_hull</text>
     </g>
-    <!-- 14&#45;&gt;5 -->
-    <!-- 15&#45;&gt;14 -->
-    <g
-       id="edge26"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8738">15-&gt;14</title>
-      <path
-         d="M449.5,-575.7C449.5,-567.98 449.5,-558.71 449.5,-550.11"
-         id="path8740"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="453,-550.1 449.5,-540.1 446,-550.1 453,-550.1"
-         id="polygon8742"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 16 -->
     <g
        id="node17"
        class="node"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(-18.432791,1091.0087)">
       <title
          id="title8745">16</title>
       <path
-         d="M493.5,-684C493.5,-684 461.5,-684 461.5,-684 455.5,-684 449.5,-678 449.5,-672 449.5,-672 449.5,-660 449.5,-660 449.5,-654 455.5,-648 461.5,-648 461.5,-648 493.5,-648 493.5,-648 499.5,-648 505.5,-654 505.5,-660 505.5,-660 505.5,-672 505.5,-672 505.5,-678 499.5,-684 493.5,-684"
+         d="m 493.5,-684 c 0,0 -32,0 -32,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 32,0 32,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8747"
-         stroke-width="2"
-         stroke="#568ad8"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#568ad8;stroke-width:2" />
       <text
          x="477.5"
          y="-663.5"
          font-size="10.00"
          id="text8749"
-         text-anchor="middle"
-         font-family="sans">binarize</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">binarize</text>
     </g>
-    <!-- 16&#45;&gt;15 -->
-    <g
-       id="edge28"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8752">16-&gt;15</title>
-      <path
-         d="M470.58,-647.7C467.43,-639.81 463.62,-630.3 460.12,-621.55"
-         id="path8754"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="463.31,-620.09 456.34,-612.1 456.81,-622.69 463.31,-620.09"
-         id="polygon8756"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 17&#45;&gt;1 -->
-    <g
-       id="edge4"
-       class="edge"
-       transform="translate(-303,81)"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8759">17-&gt;1</title>
-      <path
-         d="m 971.29656,-820.80506 c 59.59004,14.41 140.81484,32.80307 140.86734,115.00306 l 0.3326,520.21076 C 1112.5389,-119.30125 766.92,-129.33 706.9,-109.75"
-         id="path8761"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2"
-         sodipodi:nodetypes="cssc" />
-      <polygon
-         points="697.01,-106.65 705.5,-112.98 707.59,-106.3 "
-         id="polygon8763"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 17&#45;&gt;5 -->
-    <g
-       id="edge17"
-       class="edge"
-       transform="translate(-253.5,22.5)"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8766">17-&gt;5</title>
-      <path
-         d="m 848.89,-743.09 c -59.77667,87.78052 -60.14489,223.89431 -92.37725,269.75049 -13.11,17.73 -277.09275,-0.0205 -295.39275,8.60951"
-         id="path8768"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2"
-         sodipodi:nodetypes="ccc" />
-      <polygon
-         points="462.42,-461.47 451.86,-460.6 459.57,-467.87 "
-         id="polygon8770"
-         style="fill:#808080;stroke:#808080;stroke-width:2"
-         transform="rotate(26.632964,464.33918,-459.62965)" />
-    </g>
-    <!-- 17&#45;&gt;16 -->
-    <g
-       id="edge29"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8773">17-&gt;16</title>
-      <path
-         d="m 595.39,-720.59 c -24.17,10.99 -55.92,25.42 -80.38,36.54"
-         id="path8775"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="513.35,-687.14 516.24,-680.77 505.69,-679.81 "
-         id="polygon8777"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 17&#45;&gt;22 -->
-    <g
-       id="edge36"
-       class="edge"
-       transform="translate(-219)"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8780">17-&gt;22</title>
-      <path
-         d="m 833.75833,-718.79703 c -8.27,9.79 -32.29349,57.15779 -38.30349,70.12779 -17.04,36.79 -8.03014,207.55644 -41.68024,219.8844 l -109.20417,40.00773 C 605.65951,-374.52182 555.86,-361.67 544.39,-333.58"
-         id="path8782"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2"
-         sodipodi:nodetypes="ccssc" />
-      <polygon
-         points="547.5,-331.93 540.39,-324.07 541.05,-334.65 "
-         id="polygon8784"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 23 -->
     <g
        id="node24"
        class="node"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(17.424101,1091.0087)">
       <title
          id="title8787">23</title>
       <path
-         d="M682.5,-684C682.5,-684 612.5,-684 612.5,-684 606.5,-684 600.5,-678 600.5,-672 600.5,-672 600.5,-660 600.5,-660 600.5,-654 606.5,-648 612.5,-648 612.5,-648 682.5,-648 682.5,-648 688.5,-648 694.5,-654 694.5,-660 694.5,-660 694.5,-672 694.5,-672 694.5,-678 688.5,-684 682.5,-684"
+         d="m 682.5,-684 c 0,0 -70,0 -70,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 70,0 70,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8789"
-         stroke-width="2"
-         stroke="#9fd856"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#9fd856;stroke-width:2" />
       <text
          x="647.5"
          y="-663.5"
          font-size="10.00"
          id="text8791"
-         text-anchor="middle"
-         font-family="sans">get_num_nodes</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">get_num_nodes</text>
     </g>
-    <!-- 17&#45;&gt;23 -->
-    <g
-       id="edge38"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8794">17-&gt;23</title>
-      <path
-         d="M635.46,-719.7C637.22,-711.98 639.34,-702.71 641.3,-694.11"
-         id="path8796"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="644.77,-694.63 643.59,-684.1 637.95,-693.07 644.77,-694.63"
-         id="polygon8798"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 24 -->
     <g
        id="node25"
        class="node"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(-47.575899,1091.0087)">
       <title
          id="title8801">24</title>
       <path
-         d="M762,-540C762,-540 663,-540 663,-540 657,-540 651,-534 651,-528 651,-528 651,-516 651,-516 651,-510 657,-504 663,-504 663,-504 762,-504 762,-504 768,-504 774,-510 774,-516 774,-516 774,-528 774,-528 774,-534 768,-540 762,-540"
+         d="m 762,-540 c 0,0 -99,0 -99,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 99,0 99,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8803"
-         stroke-width="2"
-         stroke="#8fd856"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#8fd856;stroke-width:2" />
       <text
          x="712.5"
          y="-519.5"
          font-size="10.00"
          id="text8805"
-         text-anchor="middle"
-         font-family="sans">create_exclude_mask</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">create_exclude_mask</text>
     </g>
-    <!-- 17&#45;&gt;24 -->
-    <g
-       id="edge41"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8808">17-&gt;24</title>
-      <path
-         d="M667.75,-721.09C706.15,-701.8 763.77,-665.12 782.5,-612 787.82,-596.91 789.62,-590.33 782.5,-576 776.5,-563.93 766.29,-553.87 755.49,-545.88"
-         id="path8810"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="757.41,-542.95 747.18,-540.17 753.44,-548.71 757.41,-542.95"
-         id="polygon8812"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 25 -->
     <g
        id="node26"
        class="node"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(-59.575899,1091.0087)">
       <title
          id="title8815">25</title>
       <path
-         d="M761.5,-612C761.5,-612 687.5,-612 687.5,-612 681.5,-612 675.5,-606 675.5,-600 675.5,-600 675.5,-588 675.5,-588 675.5,-582 681.5,-576 687.5,-576 687.5,-576 761.5,-576 761.5,-576 767.5,-576 773.5,-582 773.5,-588 773.5,-588 773.5,-600 773.5,-600 773.5,-606 767.5,-612 761.5,-612"
+         d="m 761.5,-612 c 0,0 -74,0 -74,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 74,0 74,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8817"
-         stroke-width="2"
-         stroke="#56d8c9"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56d8c9;stroke-width:2" />
       <text
          x="724.5"
          y="-591.5"
          font-size="10.00"
          id="text8819"
-         text-anchor="middle"
-         font-family="sans">create_roi_mask</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">create_roi_mask</text>
     </g>
-    <!-- 17&#45;&gt;25 -->
-    <g
-       id="edge43"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8822">17-&gt;25</title>
-      <path
-         d="M664.38,-719.8C678.4,-710.89 693.74,-698.76 703.5,-684 715.7,-665.54 720.84,-640.79 722.99,-622.07"
-         id="path8824"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="726.48,-622.4 723.93,-612.11 719.51,-621.74 726.48,-622.4"
-         id="polygon8826"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 18 -->
     <g
        id="node19"
        class="node"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(-24.5,1063)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8829">18</title>
       <path
-         d="M570,-828C570,-828 517,-828 517,-828 511,-828 505,-822 505,-816 505,-816 505,-804 505,-804 505,-798 511,-792 517,-792 517,-792 570,-792 570,-792 576,-792 582,-798 582,-804 582,-804 582,-816 582,-816 582,-822 576,-828 570,-828"
+         d="m 570,-828 c 0,0 -53,0 -53,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 53,0 53,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8831"
-         stroke-width="2"
-         stroke="#56d8d8"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56d8d8;stroke-width:2" />
       <text
          x="543.5"
          y="-807.5"
          font-size="10.00"
          id="text8833"
-         text-anchor="middle"
-         font-family="sans">warp2native</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">warp2native</text>
     </g>
-    <!-- 18&#45;&gt;17 -->
-    <g
-       id="edge32"
-       class="edge"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png">
-      <title
-         id="title8836">18-&gt;17</title>
-      <path
-         d="M565.25,-791.7C576.34,-782.88 589.97,-772.03 601.99,-762.47"
-         id="path8838"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="604.35,-765.07 610,-756.1 599.99,-759.59 604.35,-765.07"
-         id="polygon8840"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 19 -->
     <g
        id="node20"
        class="node"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
+       inkscape:export-ydpi="119.99"
+       transform="translate(-24.5,1051.2287)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
       <title
          id="title8843">19</title>
       <path
-         d="M566,-900C566,-900 521,-900 521,-900 515,-900 509,-894 509,-888 509,-888 509,-876 509,-876 509,-870 515,-864 521,-864 521,-864 566,-864 566,-864 572,-864 578,-870 578,-876 578,-876 578,-888 578,-888 578,-894 572,-900 566,-900"
+         d="m 566,-900 c 0,0 -45,0 -45,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 45,0 45,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8845"
-         stroke-width="2"
-         stroke="#56d86b"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56d86b;stroke-width:2" />
       <text
          x="543.5"
          y="-879.5"
          font-size="10.00"
          id="text8847"
-         text-anchor="middle"
-         font-family="sans">reg2native</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">reg2native</text>
     </g>
-    <!-- 19&#45;&gt;18 -->
     <g
-       id="edge34"
-       class="edge"
+       id="node21"
+       class="node"
+       transform="translate(-24.5,1063)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
        inkscape:export-xdpi="119.99"
        inkscape:export-ydpi="119.99">
       <title
-         id="title8850">19-&gt;18</title>
-      <path
-         d="M543.5,-863.7C543.5,-855.98 543.5,-846.71 543.5,-838.11"
-         id="path8852"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="547,-838.1 543.5,-828.1 540,-838.1 547,-838.1"
-         id="polygon8854"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 20 -->
-    <g
-       id="node21"
-       class="node">
-      <title
          id="title8857">20</title>
       <path
-         d="M650.5,-828C650.5,-828 612.5,-828 612.5,-828 606.5,-828 600.5,-822 600.5,-816 600.5,-816 600.5,-804 600.5,-804 600.5,-798 606.5,-792 612.5,-792 612.5,-792 650.5,-792 650.5,-792 656.5,-792 662.5,-798 662.5,-804 662.5,-804 662.5,-816 662.5,-816 662.5,-822 656.5,-828 650.5,-828"
+         d="m 650.5,-828 c 0,0 -38,0 -38,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 38,0 38,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8859"
-         stroke-width="2"
-         stroke="#56a2d8"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56a2d8;stroke-width:2" />
       <text
          x="631.5"
          y="-807.5"
          font-size="10.00"
          id="text8861"
-         text-anchor="middle"
-         font-family="sans">cp_fs_tsv</text>
+         style="font-size:10px;font-family:sans;text-anchor:middle">cp_fs_tsv</text>
     </g>
-    <!-- 20&#45;&gt;17 -->
     <g
-       id="edge30"
-       class="edge"
-       style="opacity:1"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
+       id="node22"
+       class="node"
+       transform="translate(-24.5,1063)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
        inkscape:export-xdpi="119.99"
        inkscape:export-ydpi="119.99">
       <title
-         id="title8864">20-&gt;17</title>
-      <path
-         d="M631.5,-791.7C631.5,-783.98 631.5,-774.71 631.5,-766.11"
-         id="path8866"
-         stroke-width="2"
-         stroke="grey"
-         fill="none"
-         style="" />
-      <polygon
-         points="635,-766.1 631.5,-756.1 628,-766.1 635,-766.1"
-         id="polygon8868"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey"
-         style="" />
-    </g>
-    <!-- 21 -->
-    <g
-       id="node22"
-       class="node">
-      <title
          id="title8871">21</title>
       <path
-         d="M746,-828C746,-828 693,-828 693,-828 687,-828 681,-822 681,-816 681,-816 681,-804 681,-804 681,-798 687,-792 693,-792 693,-792 746,-792 746,-792 752,-792 758,-798 758,-804 758,-804 758,-816 758,-816 758,-822 752,-828 746,-828"
+         d="m 746,-828 c 0,0 -53,0 -53,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 53,0 53,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
          id="path8873"
-         stroke-width="2"
-         stroke="#59d856"
-         fill="none" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#59d856;stroke-width:2" />
       <text
          x="719.5"
          y="-807.5"
          font-size="10.00"
          id="text8875"
-         text-anchor="middle"
-         font-family="sans">cp_zona_tsv</text>
-    </g>
-    <!-- 21&#45;&gt;17 -->
-    <g
-       id="edge31"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8878">21-&gt;17</title>
-      <path
-         d="M697.75,-791.7C686.66,-782.88 673.03,-772.03 661.01,-762.47"
-         id="path8880"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="663.01,-759.59 653,-756.1 658.65,-765.07 663.01,-759.59"
-         id="polygon8882"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 22&#45;&gt;3 -->
-    <g
-       id="edge9"
-       class="edge"
-       transform="translate(-253.5)">
-      <title
-         id="title8885">22-&gt;3</title>
-      <path
-         d="m 532.5,-287.7 c 0,7.72 0,16.99 0,25.59"
-         id="path8887"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="529,-262.1 536,-262.1 532.5,-252.1 "
-         id="polygon8889"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 23&#45;&gt;3 -->
-    <g
-       id="edge7"
-       class="edge"
-       transform="translate(-234,1.5)"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8892">23-&gt;3</title>
-      <path
-         d="m 862.5457,-650.86594 c -11.1,26.29 -34.07762,226.66616 -75.58893,247.50874 C 726.73332,-365.91167 618.52504,-335.42964 590.5,-288 c -6.31,11 -15.68,21 -25.06,29.28"
-         id="path8894"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2"
-         sodipodi:nodetypes="cccc" />
-      <polygon
-         points="557.62,-252.19 563.05,-261.29 567.54,-255.92 "
-         id="polygon8896"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 23&#45;&gt;24 -->
-    <g
-       id="edge39"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8899">23-&gt;24</title>
-      <path
-         d="M648.62,-647.76C650.39,-629.19 654.94,-599.19 666.5,-576 671.53,-565.92 678.92,-556.21 686.32,-547.91"
-         id="path8901"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="689.05,-550.12 693.34,-540.43 683.94,-545.33 689.05,-550.12"
-         id="polygon8903"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 23&#45;&gt;25 -->
-    <g
-       id="edge42"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8906">23-&gt;25</title>
-      <path
-         d="M666.53,-647.7C676.04,-639.05 687.71,-628.45 698.07,-619.03"
-         id="path8908"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="700.64,-621.42 705.69,-612.1 695.93,-616.24 700.64,-621.42"
-         id="polygon8910"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 24&#45;&gt;2 -->
-    <g
-       id="edge5"
-       class="edge"
-       transform="translate(-232.5)"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8913">24-&gt;2</title>
-      <path
-         d="m 943.95703,-503.37739 c -7.89,26.53 -163.1077,213.84798 -201.06903,239.23866 l -57.81397,38.66924 c -35.90824,24.01745 -104.90312,84.79514 -121.68312,112.32514"
-         id="path8915"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2"
-         sodipodi:nodetypes="cssc" />
-      <polygon
-         points="642.67,-190.37 648.59,-186.65 640.31,-180.04 "
-         id="polygon8917"
-         style="fill:#808080;stroke:#808080;stroke-width:2"
-         transform="translate(-82.329087,75.515645)" />
-    </g>
-    <!-- 25&#45;&gt;24 -->
-    <g
-       id="edge40"
-       class="edge"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8920">25-&gt;24</title>
-      <path
-         d="M721.53,-575.7C720.21,-567.98 718.62,-558.71 717.15,-550.11"
-         id="path8922"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="720.57,-549.37 715.43,-540.1 713.67,-550.55 720.57,-549.37"
-         id="polygon8924"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
-    </g>
-    <!-- 26&#45;&gt;0 -->
-    <g
-       id="edge1"
-       class="edge"
-       transform="translate(-3,3)">
-      <title
-         id="title8927">26-&gt;0</title>
-      <path
-         d="m 81.565411,-653.40787 c 0,0 -0.747013,107.05515 -0.895076,154.25492 l -1.135574,362 C 79.248767,-45.983403 260.68,-35.62 327.02,-24.16"
-         id="path8929"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2"
-         sodipodi:nodetypes="cssc" />
-      <polygon
-         points="326.65,-20.67 327.78,-27.58 337.08,-22.51 "
-         id="polygon8931"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <!-- 27&#45;&gt;26 -->
-    <g
-       id="edge45"
-       class="edge">
-      <title
-         id="title8934">27-&gt;26</title>
-      <path
-         d="M51.14,-719.7C55.63,-711.64 61.06,-701.89 66.02,-692.98"
-         id="path8936"
-         stroke-width="2"
-         stroke="grey"
-         fill="none" />
-      <polygon
-         points="69.16,-694.54 70.97,-684.1 63.05,-691.14 69.16,-694.54"
-         id="polygon8938"
-         stroke-width="2"
-         stroke="grey"
-         fill="grey" />
+         style="font-size:10px;font-family:sans;text-anchor:middle">cp_zona_tsv</text>
     </g>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75"
-       x="440.90387"
-       y="-982.94025"
-       id="text8952"
+       x="134.20285"
+       y="78.873238"
+       id="text8952-7"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99"><tspan
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"><tspan
          sodipodi:role="line"
-         id="tspan8950"
-         x="440.90387"
-         y="-982.94025"
-         style="font-weight:bold;stroke-width:0.75">Freesurfer</tspan></text>
+         id="tspan8950-2"
+         x="134.20285"
+         y="78.873238"
+         style="font-weight:bold;stroke-width:0.75">Mrtpipelines</tspan></text>
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:2.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect9387"
+       width="217.93779"
+       height="213.26338"
+       x="345.68954"
+       y="64.580147"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:2.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect9387-7-2"
+       width="328.16602"
+       height="819.47272"
+       x="5.6071491"
+       y="64.587166"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <g
+       id="node14-3"
+       class="node"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       transform="translate(32.368792,979.97509)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
+      <title
+         id="title8710-6">13</title>
+      <path
+         d="m 475.5,-972 c 0,0 -108,0 -108,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 108,0 108,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
+         id="path8712-7"
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56d88a;stroke-width:2" />
+      <text
+         x="421.50732"
+         y="-951.38037"
+         font-size="10.00"
+         id="text8714-5"
+         style="font-size:10px;font-family:sans;text-anchor:middle">freesurfer_input</text>
+    </g>
+    <g
+       id="node12-2"
+       class="node"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       transform="translate(400.40531,1060.9618)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
+      <title
+         id="title8654-3">11</title>
+      <path
+         d="m 434.13557,-828 c 0,0 -77,0 -77,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6 6,12 12,12 0,0 77,0 77,0 6,0 12,-6 12,-12 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
+         id="path8656-7"
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56b1d8;stroke-width:2" />
+      <text
+         x="395.63556"
+         y="-807.5"
+         font-size="10.00"
+         id="text8658-5"
+         style="font-size:10px;font-family:sans;text-anchor:middle">subcortical_atlas</text>
+      <path
+         style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5400)"
+         d="m 396.97451,-792.96643 -201.01672,89.31086"
+         id="path5396"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:2.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect9387-1"
+       width="347.79269"
+       height="270.44156"
+       x="393.07266"
+       y="324.11871"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <g
+       id="node14-3-9"
+       class="node"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       transform="translate(-251.80984,1036.8969)"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png">
+      <title
+         id="title8710-6-4">13</title>
+      <path
+         d="m 475.5,-1028.9218 c 0,0 -108,0 -108,0 -6,0 -12,6 -12,12 0,0 0,12 0,12 0,6.00001 6,12.00001 12,12.00001 0,0 108,0 108,0 6,0 12,-6 12,-12.00001 0,0 0,-12 0,-12 0,-6 -6,-12 -12,-12"
+         id="path8712-7-7"
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#56d88a;stroke-width:2" />
+      <text
+         x="421.50732"
+         y="-1008.3022"
+         font-size="10.00"
+         id="text8714-5-8"
+         style="font-size:10px;font-family:sans;text-anchor:middle">diffusion_input</text>
+    </g>
+    <path
+       inkscape:connector-curvature="0"
+       id="path4877-0-5"
+       d="m 238.71177,188.17312 v 42.54384"
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-0)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path4877-0-5-5"
+       d="m 238.71177,271.96871 v 32.32368"
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-0-7)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path4877-0-5-5-3"
+       d="m 238.71177,344.84877 v 32.32368"
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-0-7-6)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path4877-0-5-5-3-5"
+       d="m 238.71177,418.4577 0.10037,137.99205"
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-0-7-6-7)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path4877-0-5-5-3-4"
+       d="m 238.48232,597.99883 0.28389,31.18811"
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-0-7-6-2)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4877-0-6-4"
+       d="m 96.765069,188.37805 v 42.54384"
+       style="opacity:1;fill:#808080;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-2-9-1)"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7212)"
+       d="m 399.62996,568.87847 -130.88441,11.2416"
+       id="path7208"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7218)"
+       d="m 520.97829,362.24798 c 0,0 -271.90214,84.02989 -268.52929,194.89155"
+       id="path7214"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7224)"
+       d="m 261.51881,594.57356 c 0,0 19.48532,56.24331 13.21409,84.34985"
+       id="path7220"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7230)"
+       d="m 265.75812,589.93049 c 0,0 44.00348,120.3708 21.8598,148.47625"
+       id="path7226"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7236)"
+       d="m 210.11502,660.05216 c 0,0 -74.66398,51.95249 -24.69874,89.9942"
+       id="path7232"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7248)"
+       d="M 667.82255,585.74086 C 685.20056,672.6309 390.79727,851.52452 310.5001,856.34237"
+       id="path7244"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7254)"
+       d="M 616.93426,425.27232 C 544.73957,424.52777 560.56225,766.70878 290.33089,753.28676"
+       id="path7250"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7260)"
+       d="m 237.08489,873.39384 c 4.44165,85.61564 179.79036,27.75798 180.9577,63.31659"
+       id="path7256"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7266)"
+       d="m 96.273763,270.26652 c 0,0 -0.413687,175.39181 -2.247489,322.48904 -2.44806,196.36959 14.996126,378.69289 298.064416,367.65582"
+       id="path7262"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7272)"
+       d="m 593.655,367.35806 c 0,0 141.27314,11.65636 202.73607,81.06829 43.80068,90.56426 13.81805,390.68482 -25.78534,457.51927 -39.56078,66.76252 -265.09468,51.79642 -318.32964,54.74962"
+       id="path7268"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccsc"
+       inkscape:export-xdpi="119.99"
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Headings">
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75"
-       x="431.50543"
-       y="-758.70563"
+       x="506.3681"
+       y="338.79437"
        id="text8952-8"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"
        inkscape:export-xdpi="119.99"
        inkscape:export-ydpi="119.99"><tspan
          sodipodi:role="line"
          id="tspan8950-8"
-         x="431.50543"
-         y="-758.70563"
+         x="506.3681"
+         y="338.79437"
          style="font-weight:bold;stroke-width:0.75">ZonaBBSubcortex</tspan></text>
-    <g
-       id="edge13-4"
-       class="edge"
-       transform="matrix(-1,0,0,1,598.37695,11.73935)"
-       inkscape:export-filename="/srv/khan/users/tkai/git/scattr/docs/workflow/subcortex_dag.png"
-       inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99">
-      <title
-         id="title8542-9">6-&gt;5</title>
-      <path
-         d="m 199.08952,-517.85689 c 0,0 187.75048,54.68689 189.06048,51.43689"
-         id="path8544-5"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2"
-         sodipodi:nodetypes="cc" />
-      <polygon
-         points="397.42,-462.49 386.84,-463.17 389.58,-469.62 "
-         id="polygon8546-0"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75"
-       x="181.69414"
-       y="-837.12549"
-       id="text8952-7"><tspan
-         sodipodi:role="line"
-         id="tspan8950-2"
-         x="181.69414"
-         y="-837.12549"
-         style="font-weight:bold;stroke-width:0.75">Mrtpipelines</tspan></text>
-    <rect
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:1.85102368;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect9387"
-       width="246.15326"
-       height="213.21358"
-       x="348.04404"
-       y="-998.39496"
+       x="423.65201"
+       y="80.059761"
+       id="text8952"
        inkscape:export-xdpi="119.99"
-       inkscape:export-ydpi="119.99" />
-    <rect
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:1.85102368;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect9387-7"
-       width="394.81384"
-       height="282.59924"
-       x="388.07715"
-       y="-778.52448" />
-    <rect
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:1.85102368;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect9387-7-2"
-       width="339.50476"
-       height="809.23553"
-       x="-5.8843493"
-       y="-860.72058" />
-    <g
-       id="edge3-4-6"
-       class="edge"
-       transform="translate(-360.42727,-71.061372)">
-      <title
-         id="title8451-8-1">2-&gt;1</title>
-      <path
-         d="m 628.5,-143.7 c 0,7.72 0,16.99 0,25.59"
-         id="path8453-7-5"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="628.5,-108.1 625,-118.1 632,-118.1 "
-         id="polygon8455-1-9"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
-    <g
-       id="edge37-1"
-       class="edge"
-       transform="translate(-162.56958,289.32495)">
-      <title
-         id="title8493-7">4-&gt;22</title>
-      <path
-         d="m 427.53,-362.67 c 18.4,9.76 43.09,22.85 63.9,33.89"
-         id="path8495-7"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#808080;stroke-width:2" />
-      <polygon
-         points="500.38,-324.03 489.91,-325.62 493.19,-331.81 "
-         id="polygon8497-1"
-         style="fill:#808080;stroke:#808080;stroke-width:2" />
-    </g>
+       inkscape:export-ydpi="119.99"
+       inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png"><tspan
+         sodipodi:role="line"
+         id="tspan8950"
+         x="423.65201"
+         y="80.059761"
+         style="font-weight:bold;stroke-width:0.75">Freesurfer</tspan></text>
   </g>
+  <path
+     style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5475)"
+     d="m 379.03159,270.26652 c 0,0 42.58401,186.23407 68.13442,207.24218"
+     id="path5471"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc"
+     inkscape:export-xdpi="119.99"
+     inkscape:export-ydpi="119.99"
+     inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+  <path
+     style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5481)"
+     d="m 571.39255,383.82388 c 0,0 7.38123,53.93974 46.55852,94.25261"
+     id="path5477"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc"
+     inkscape:export-xdpi="119.99"
+     inkscape:export-ydpi="119.99"
+     inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+  <path
+     style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5481-2)"
+     d="m 556.13666,383.27532 c 0,0 13.0591,128.31981 52.23639,168.63268"
+     id="path5477-3"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc"
+     inkscape:export-xdpi="119.99"
+     inkscape:export-ydpi="119.99"
+     inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
+  <path
+     style="fill:none;stroke:#808080;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5843)"
+     d="m 709.57708,437.19108 c 0,0 38.60102,97.95526 11.27079,112.61315"
+     id="path5839"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc"
+     inkscape:export-xdpi="119.99"
+     inkscape:export-ydpi="119.99"
+     inkscape:export-filename="/home/ROBARTS/tkai/tsclient/tkai/Downloads/OHBM/SCATTR/figures/workflow_001.png" />
 </svg>
