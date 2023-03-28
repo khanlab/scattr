@@ -69,10 +69,10 @@ system in order to update the file on-the-fly. This process can be extremely
 slow on network storages. To help with this, SCATTR always reads and writes the
 tractography to a temporary location (e.g. `/tmp`) before copying the output to
 the final output, significantly improving the time it takes for tractography to 
-be generated. On a network system, you may be unable to write to `/tmp`. An 
-alternative on systems with `SLURM` workload managers is to invoke 
-`--slurm_tmpdir`, which requests that the workflow write to the local temporary
-storage system (e.g. `/localscratch`) instead of the network temporary storage.
+be generated. On a network system, you may be unable to write to `/tmp`. 
+Currently, on systems using the `SLURM` workflow manager, the workflow will 
+write to the local temporary storage system (e.g. `SLURM_TMPDIR`) instead of the
+the default network temporary storage (e.g. `/tmp`). 
 
 ## BIDS Parsing limitations
 
