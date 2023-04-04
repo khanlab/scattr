@@ -51,7 +51,7 @@ rule all:
             subject=config["input_lists"]["T1w"]["subject"],
         ),
         qc_files=expand(
-            rules.qc.output.segment_overlay,
+            rules.overlay_image.output.segment_overlay,
             subject=config["input_lists"]["T1w"]["subject"],
         )
     params:

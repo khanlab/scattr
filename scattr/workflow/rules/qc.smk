@@ -19,6 +19,13 @@ rule overlay_image:
         space = 'T1w',
         suffix='qc_img.png',
         **config["subj_wildcards"]
+        ),
+            
+        segment_html = bids(root =  str(Path(config["output_dir"]) / "qc_dir"), 
+        datatype = 'anat',
+        space = 'T1w',
+        suffix='qc_img.html',
+        **config["subj_wildcards"]
         )
 
     script:
