@@ -60,6 +60,10 @@ rule reg2native:
             desc=f"from{config['Space']}toNative_",
         ),
     output:
+        native_t1w=bids_anat(
+            desc=f"from{config['Space']}toNative",
+            suffix="Warped.nii.gz",
+        ),
         warp=bids_anat(
             desc=f"from{config['Space']}toNative",
             suffix="1Warp.nii.gz",

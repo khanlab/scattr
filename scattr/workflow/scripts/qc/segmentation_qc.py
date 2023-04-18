@@ -15,7 +15,7 @@ def segmentation_qc(
         opacity=0.5,
         dim=-1,
         symmetric_cmap=False,
-        title="sub-{subject}".format(**wildcards),
+        title="sub-{subject} dseg".format(**wildcards),
     )
     html_view.save_as_html(output_path_html)
 

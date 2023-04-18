@@ -14,7 +14,7 @@ bids_qc = partial(
 )
 
 
-rule overlay_segment:
+rule segment_qc:
     input:
         qc_labels=bids_labelmerge(
             space="T1w",
@@ -25,11 +25,48 @@ rule overlay_segment:
     output:
         qc_png=bids_qc(
             desc="labelmerge",
-            suffix="dseg.png",
+            suffix="dsegQC.png",
         ),
         qc_html=bids_qc(
             desc="labelmerge",
-            suffix="dseg.html",
+            suffix="dsegQC.html",
         ),
     script:
-        "../scripts/qc/segmentation_image.py"
+        "../scripts/qc/segmentation_qc.py"
+
+
+rule registration_qc:
+    input:
+        template_t1w=rules.reg2native.output.t1w_nativespace,
+        native_t1w=config["input_path"]["T1w"],
+    output:
+        qc_png=bids_qc(
+            desc=f"{config['Space']}toNative",
+            suffix="regQC.png",
+        ),
+        qc_html=bids_qc(
+            desc=f"{config['Space']}toNative",
+            suffix="regQC.html",
+        ),
+    script:
+        "../scripts/qc/registration_qc.py"
+
+
+rule gather_qc:
+    input:
+        dseg_png=expand(
+            rules.segment_qc.output.qc_png,
+            subject=config["input_lists"]["T1w"]["subject"],
+        ),
+        dseg_html=expand(
+            rules.segment_qc.output.qc_html,
+            subject=config["input_lists"]["T1w"]["subject"],
+        ),
+        reg_png=expand(
+            rules.registration_qc.output.qc_png,
+            subject=config["input_lists"]["T1w"]["subject"],
+        ),
+        reg_html=expand(
+            rules.registration_qc_output.qc_html,
+            subject=config["input_lists"]["T1w"]["subject"],
+        ),
