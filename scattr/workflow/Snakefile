@@ -53,7 +53,7 @@ rule all:
         qc_files=expand(
             rules.overlay_image.output.segment_overlay,
             subject=config["input_lists"]["T1w"]["subject"],
-        )
+        ),
     params:
         mrtrix_dir=expand(
             bids(
