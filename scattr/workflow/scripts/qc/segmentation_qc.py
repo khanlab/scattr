@@ -2,17 +2,18 @@
 import matplotlib
 from nilearn import plotting
 
-matplotlib.use(backend="Agg")
-
 
 def segmentation_qc(
     t1w_path, seg_path, output_path_static, output_path_html, wildcards
 ):
+    matplotlib.use(backend="Agg")
+
     # Create HTML
     html_view = plotting.view_img(
         stat_map_img=seg_path,
         bg_img=t1w_path,
-        opacity=0.5,
+        opacity=0.3,
+        cmap="viridis",
         dim=-1,
         symmetric_cmap=False,
         title="sub-{subject} dseg".format(**wildcards),
@@ -23,6 +24,7 @@ def segmentation_qc(
     display = plotting.plot_roi(
         roi_img=seg_path,
         bg_img=t1w_path,
+        view_type="contours",
         display_mode="mosaic",
         cut_coords=7,
     )

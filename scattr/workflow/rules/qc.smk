@@ -7,7 +7,7 @@ bids_labelmerge = partial(
 
 bids_qc = partial(
     bids,
-    root=str(Path(config["output_dir"] / "qc")),
+    root=str(Path(config["output_dir"]) / "qc"),
     datatype="anat",
     space="T1w",
     **config["subj_wildcards"],
@@ -31,6 +31,14 @@ rule segment_qc:
             desc="labelmerge",
             suffix="dsegQC.html",
         ),
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=15,
+    group:
+        "qc"
+    container:
+        config["singularity"]["scattr"]
     script:
         "../scripts/qc/segmentation_qc.py"
 
@@ -48,6 +56,14 @@ rule registration_qc:
             desc=f"{config['Space']}toNative",
             suffix="regQC.html",
         ),
+    threads: 4
+    resources:
+        mem_mb=16000,
+        time=15,
+    group:
+        "qc"
+    container:
+        config["singularity"]["scattr"]
     script:
         "../scripts/qc/registration_qc.py"
 
@@ -67,6 +83,6 @@ rule gather_qc:
             subject=config["input_lists"]["T1w"]["subject"],
         ),
         reg_html=expand(
-            rules.registration_qc_output.qc_html,
+            rules.registration_qc.output.qc_html,
             subject=config["input_lists"]["T1w"]["subject"],
         ),

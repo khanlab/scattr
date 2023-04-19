@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import matplotlib
 from nilearn import plotting
 
@@ -15,9 +14,10 @@ def registration_qc(
 
     # HTML output
     html_view = plotting.view_img(
-        stat_img=template_t1w,
+        stat_map_img=template_t1w,
         bg_img=native_t1w,
         opacity=0.5,
+        cmap="viridis",
         dim=-1,
         symmetric_cmap="False",
         title="sub-{subject} registration".format(**smk_wildcards),
@@ -26,7 +26,7 @@ def registration_qc(
 
     # PNG output
     display = plotting.plot_anat(native_t1w, display_mode="mosaic")
-    display.add_contours(template_t1w, colors="r")
+    display.add_edges(template_t1w, color="r")
     display.savefig(out_png)
     display.close()
 
