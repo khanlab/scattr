@@ -12,7 +12,7 @@ supported**. We do not have a Docker arm64 container yet._
 
 ### Notes
 * Inputs to SCATTR should be a BIDS dataset, including processed Freesurfer
-and DWI derivatives. 
+and DWI derivatives (which can be stored separately). 
 
 ## Docker on Windows / Mac (Intel) / Linux
 
@@ -24,7 +24,7 @@ Instructions can be found in the [Docker](https://scattr.readthedocs.io/en/stabl
 * All dependencies are in a single container
 
 ### Cons
-* Typically not possible on shared macines
+* Typically not possible on shared machines
 * Cannot use Snakemake cluster execution profiles
 * Cannot edit code
 
