@@ -5,8 +5,8 @@
 [MRview](https://mrtrix.readthedocs.io/en/latest/reference/commands/mrview.html)
 is a powerful viewer distributed with [MRtrix](https://www.mrtrix.org/) 
 that works well with both volume (e.g. `.nii`, `.nii.gz`) and tractography
-(e.g. `.tck`) data. It should be noted that loading large tractography files
-may take a while to load and navigate the data.
+(e.g. `.tck`) data. It may take a while to load and navigate large 
+tractography files.
 
 ### Tips and tricks:
 * Consider extracting a particular connection passing through two anatomical 
