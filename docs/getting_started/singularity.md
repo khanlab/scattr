@@ -119,7 +119,7 @@ After this completes, you have additional folders in your output folder,
 
 ### Exploring different options
 
-If you alternative want to run SCATTR using a pre-defined average response 
+If you alternatively want to run SCATTR using a pre-defined average response 
 function, you can use the `--responsemean_dir` flag to specify the location to
 where the average response function is located. 
 
@@ -128,5 +128,5 @@ singularity run khanlab_scattr_latest.sif test/data/bids test/data/derivatives/ 
 ```
 
 Other parameters exist, which may help to improve processing times at the 
-expense of sensitivity / specifity (e.g. reducing the number of streamlines 
+expense of sensitivity / specificity (e.g. reducing the number of streamlines 
 generated).
