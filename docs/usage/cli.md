@@ -5,7 +5,7 @@ The following can also be seen by entering `scattr -h` into your terminal.
 
 These are all the required and optional arguments SCATTR accepts in order to 
 run flexibly on many different input data types and with many options. In most 
-cases, only the required arguments are neede.
+cases, only the required arguments are needed.
 
 ```{argparse}
 ---
@@ -26,7 +26,7 @@ The complete list of [Snakemake](https://snakemake.readthedocs.io/en/stable/)
 arguments are below, and most act to determine your environment and app
 behaviours. They will likely only need to be used for running in cloud
 environments or troubleshooting. These can be listed from the command line with
-`scatter --help-snakemake`.
+`scattr --help-snakemake`.
 
 ```{argparse}
 ---
