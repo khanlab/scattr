@@ -21,7 +21,7 @@ This is useful for:
 
 
 ## Example use of workflow 
-This workflow was used to process and analyze the the data for the from
+This workflow was used to process and analyze the data from
 [`hcp_subcortical_repo`](https://github.com/kaitj/hcp_subcortical_repro) 
 (see Kai et al., 2022). 
 
@@ -36,8 +36,8 @@ well as diffusion preprocessing (e.g. distortion correction)._
 
 1. Merge the segmentations of structures in a standard template space from 
 various sources (if necessary) via 
-[labelmerge](https://zenodo.org/record/7636410), which is used downstream to
-identify targetted connections.
+[labelmerge](https://zenodo.org/record/7636410) into a combined atlas, which is 
+used downstream to identify targeted connections.
 1. Estimate and apply transformations from standard template space to 
 subject-specific space.
 1. Further process the pre-processed diffusion data to enable tractography
