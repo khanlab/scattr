@@ -20,5 +20,5 @@ the dataset, so we suggest using the [BIDS Validator](https://bids-standard.gith
 has no errors.
 
 If you passed Freesurfer or diffusion derivative locations (`--freesurfer-dir` 
-or `--dwi-dir`), you may get get this message as it the files are a different
+or `--dwi-dir`), you may get get this message as the files are a different
 location than in the input directory provided.
