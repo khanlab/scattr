@@ -29,7 +29,7 @@ run on only a subset of subjects, you can use the `--participant-label` flag:
 --participant-label 001
 ```
 
-which would only run on `sub-001. You can add additional subjects by passing
+which would only run on `sub-001`. You can add additional subjects by passing
 a space-separated list to this option:
 
 ```
@@ -88,7 +88,7 @@ PATH_TO_BIDS_DIR/
 └── dataset_description.json
 └── sub-001/
     └── anat/
-        ├── sub-001_acq-mprage_T1w.nii.gz
+        └── sub-001_acq-mprage_T1w.nii.gz
 └── sub-002/
     └── anat/
         ├── sub-002_acq-spgr_T1w.nii.gz
