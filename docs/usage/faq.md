@@ -29,13 +29,15 @@ location than in the input directory provided.
 `SCATTR` uses [labelmerge](https://github.com/khanlab/labelmerge) to combine
 labels from different atlases. To that end, we have exposed the `labelmerge` 
 command-line arguments, enabling substitution of different atlases. These
-arguments are pre-prended with `--labelmerge_<labelmerge_arg>`. We encourage you
+arguments are pre-pended with `--labelmerge_<labelmerge_arg>`. We encourage you
 to check out the `labelmerge` documention (linked above), as well as `SCATTR`'s 
 help command to see all available options. 
 
 *NOTE:* If using a different atlas, you will need to ensure that the associated
-metadata is available (according to the BIDS specification) for each subject 
-part of the input dataset and in the same space as the T1w image.
+metadata is available (according to the 
+[BIDS specification](https://bids-specification.readthedocs.io/en/stable/05-derivatives/03-imaging.html#segmentations)) 
+for each subject part of the input dataset and in the same space as the T1w 
+image.
 
 ### 3. I only want to use labels from a single atlas.
 If you only want to use a labels from a single atlas (e.g. skip labelmerge), you
