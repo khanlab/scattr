@@ -12,8 +12,7 @@ Below is an image exhibiting the workflow DAG. Each rounded rectangle in
 the DAG represents a rule (i.e. some code or script that produces an output), 
 with arrows representing the connections (i.e. inputs / outputs) to these rules.
 
-<img src="dag.png" width="800px">
-_(Click on the image to enlarge)_
+<img src="https://raw.githubusercontent.com/khanlab/scattr/main/docs/workflow/dag.png" width="800px">
 
 Although it may look complex, it is also organized into groups of rules, each
 representing the different phases of the workflow. Each grouped set of rules 
