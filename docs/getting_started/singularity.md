@@ -44,7 +44,7 @@ Use the `-h` option to get a detailed help listing:
 singularity run -e khanlab_scattr_latest.sif -h
 ```
 
-_Note that all the Snakemake command-line options are also available in SCATTR,
+Note that all the Snakemake command-line options are also available in SCATTR,
 and can be listed with `--help-snakemake`:
 
 ```
