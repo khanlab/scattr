@@ -15,15 +15,15 @@ mrtrix/
     └── tractography
 ```
 
-Briefly, `dti` containers processed diffusion tensor images along with 
+Briefly, `dti` contains processed diffusion tensor images along with 
 quantitative maps (e.g. `FA`, `MD`, etc.), `dwi` contains images that were
 converted from Nifti (`.nii.gz`) to the MRtrix imaging format (`.mif`), 
-`response`, contains subject-specific response functions, and `tractography`
+`response` contains subject-specific response functions, and `tractography`
 contains tractogram files.
 
 ## dti
 
-This folder contains processed diffusion tensor images (DTI) that was used to 
+This folder contains processed diffusion tensor images (DTI) that were used to 
 compute quantitative maps (stored in the MRtrix imaging format - `.mif`), also 
 found within the folder:
 
@@ -96,7 +96,7 @@ sub-{subject}
     ├── sub-{subject}_desc-subcortical_nodeWeights.csv
 ```
 
-The `desc-filteredsubcortical` entity pair, describes associated tractogram 
+The `desc-filteredsubcortical` entity pair describes associated tractogram 
 files that have been filtered to only pass through WM and connect two GM 
 structures, while the `desc-subcortical` entity pair denotes files associated
 with the unfiltered subcortical connectome. Whole-brain tractogram associated
