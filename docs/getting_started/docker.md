@@ -2,21 +2,21 @@
 
 _Note, these instructions you have Docker installed already on a Windows system.
 Docker can also be run on Linux or MacOS with similar commands, but here, we 
-will assume the default Windows CLI is being used.
+will assume the default Windows CLI is being used._
 
 ## First time setup
 
 Open your Windows Command Prompt by clicking the `Windows` button and typing
 `cmd` and pressing the `Enter` on your keyboard. This is where you will enter 
 your SCATTR commands. Feel free to make a new directory with `mkdir` or move to
-a directory you would like to work out of with `cd. For this example, we will
+a directory you would like to work out of with `cd`. For this example, we will
 work from:
 
 ```
 cd c:\Users\username\Downloads
 ```
 
-Pull the container (this will take some time and storage stage, but like an 
+Pull the container (this will take some time and storage space, but like an 
 installation, it only needs to be done once and can be then be run on many 
 datasets). The example below pulls the latest versioned container (replace 
 `latest` with `vX.X.X` for a specific version).
@@ -25,7 +25,7 @@ datasets). The example below pulls the latest versioned container (replace
 docker pull khanlab/scattr:latest
 ```
 
-Run SCATTR without any arguments to print hte short help:
+Run SCATTR without any arguments to print the short help:
 
 ```
 docker run -it --rm khanlab/scattr:latest
@@ -60,7 +60,7 @@ docker run -it --rm -v c:\Users\username\Downloads\scattr\test:\test khanlab_sca
 Everything prior to the container (`khanlab_scattr_latest.sif`) are arguments
 to Docker and after are to SCATTR itself. The first three arguments to Docker
 are to enable interactive mode (`-it`), run and subsequently remove the Docker
-container upon completion (`--rm`) and mount the the directoty 
+container upon completion (`--rm`) and mount the the directory 
 (`-v c:\Users\username\Downloads\scattr\test`) to a directory within the
 container named `\test`. These are not specific to SCATTR, but are general ways
 to use Docker. You may want to familiarize yourself with 
@@ -109,7 +109,7 @@ After this completes, you have additional folders in your output folder,
 
 ### Exploring different options
 
-If you alternative want to run SCATTR using a pre-defined average response 
+If you alternatively want to run SCATTR using a pre-defined average response 
 function, you can use the `--responsemean_dir` flag to specify the location to
 where the average response function is located. 
 
@@ -118,5 +118,5 @@ docker run -it --rm -v c:\Users\username\Downloads\scattr\test:\test /test/data/
 ```
 
 Other parameters exist, which may help to improve processing times at the 
-expense of sensitivity / specifity (e.g. reducing the number of streamlines 
+expense of sensitivity / specificity (e.g. reducing the number of streamlines 
 generated).
