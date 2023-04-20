@@ -4,10 +4,10 @@ SCATTR python package dependencies are managed with Poetry (`v1.2.0+`), which
 you will need installed on your machine. You can find installation instructions 
 on the [Poetry website](https://python-poetry.org/docs/master/#installation).
 
-SCATTR also have a few dependencies outside of python, including popular 
+SCATTR also has a few dependencies outside of python, including popular 
 neuroimaging packages like `ANTs`, `Freesurfer`, `MRtrix3`, and others. We 
 **strongly** recommend using SCATTR with the `--use-singularity` flag, which 
-will pull and use the requiremed containers, unless you are comfortable using
+will pull and use the required containers, unless you are comfortable using
 installing and using all of these tools yourself.
 
 _Note: These instructions are only recommended if you are making changes to the
@@ -70,7 +70,7 @@ the command._
 ## Dry-run / testing your workflow
 Using Snakemake\'s dry-run option (`--dry-run`/`-n`) is an easy way to verify
 any changes made to the workflow are working direcctly. The `test/data` folder 
-contains a _fake* BIDS dataset (i.e. dataset with zero-sized files) that are 
+contains a _fake_ BIDS dataset (i.e. dataset with zero-sized files) that is 
 useful for verifying different aspects of the workflow. These dry-run tests are 
 part of the automated Github actions that are run for every commit.
 
