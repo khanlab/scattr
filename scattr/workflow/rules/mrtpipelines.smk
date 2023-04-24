@@ -7,6 +7,7 @@ responsemean_dir = config.get("responsemean_dir")
 dwi_dir = config.get("dwi_dir")
 mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
 labelmerge_dir = str(Path(config["output_dir"]) / "labelmerge")
+zona_dir = str(Path(config["output_dir"]) / "zona_bb_subcortex")
 
 # Make directory if it doesn't exist
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
@@ -57,7 +58,9 @@ bids_anat_out = partial(
 
 bids_labelmerge = partial(
     bids,
-    root=str(Path(labelmerge_dir) / "combined"),
+    root=str(Path(labelmerge_dir) / "combined")
+    if not config.get("skip_labelmerge")
+    else config.get("labelmerge_base_dir") or zona_dir,
     **config["subj_wildcards"],
 )
 
@@ -361,13 +364,8 @@ rule tckgen:
     input:
         fod=rules.mtnormalise.output.wm_fod,
         mask=rules.nii2mif.output.mask,
-        cortical_ribbon=rules.fs_xfm_to_native.output.ribbon,
         convex_hull=rules.create_convex_hull.output.convex_hull,
-        subcortical_seg=bids_labelmerge(
-            space="T1w",
-            desc="combined",
-            suffix="dseg.nii.gz",
-        ),
+        subcortical_seg=rules.get_num_nodes.input.seg,
     params:
         step=config["step"],
         sl=config["sl_count"],
@@ -400,7 +398,7 @@ rule tckgen:
         config["singularity"]["mrtrix"]
     shell:
         "mkdir -p {resources.tmp_dir} && "
-        "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.cortical_ribbon} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {resources.tmp_tck} &> {log} && "
+        "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {resources.tmp_tck} &> {log} && "
         "rsync -v {resources.tmp_tck} {output.tck} >> {log} 2>&1"
 
 
