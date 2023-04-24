@@ -1,7 +1,9 @@
 # BIDS partials
 bids_labelmerge = partial(
     bids,
-    root=str(Path(labelmerge_dir) / "combined"),
+    root=str(Path(labelmerge_dir) / "combined")
+    if not config.get("skip_labelmerge")
+    else config.get("labelmerge_base_dir") or zona_dir,
     **config["subj_wildcards"],
 )
 
@@ -18,17 +20,24 @@ rule segment_qc:
     input:
         qc_labels=bids_labelmerge(
             space="T1w",
-            desc="combined",
+            datatype=None if not config.get("skip_labelmerge") else "anat",
+            desc="combined"
+            if not config.get("skip_labelmerge")
+            else config.get("labelmerge_base_desc"),
             suffix="dseg.nii.gz",
         ),
         t1w_image=config["input_path"]["T1w"],
     output:
         qc_png=bids_qc(
-            desc="labelmerge",
+            desc="labelmerge"
+            if not config.get("skip_labelmerge")
+            else config.get("labelmerge_base_desc"),
             suffix="dsegQC.png",
         ),
         qc_html=bids_qc(
-            desc="labelmerge",
+            desc="labelmerge"
+            if not config.get("skip_labelmerge")
+            else config.get("labelmerge_base_desc"),
             suffix="dsegQC.html",
         ),
     threads: 4
