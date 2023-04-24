@@ -5,4 +5,4 @@ Briefly describe the issue you are experiencing (or feature you want to see adde
 ## Environment
 
 * Operating System
-* DBSC version
+* SCATTR version
