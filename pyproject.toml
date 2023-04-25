@@ -23,6 +23,7 @@ numpy = "^1.22.3"
 scipy = "^1.8.0"
 labelmerge = {git = "https://github.com/khanlab/labelmerge.git", rev = "v0.4.3"}
 matplotlib = "^3.7.1"
+niworkflows = "^1.7.9"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "4.0"
@@ -73,6 +74,7 @@ test = ["test_base", "test_freesurfer", "test_responsemean", "test_dwi", "test_l
 [tool.isort]
 profile = "black"
 multi_line_output = 3
+line_length = 79
 
 [tool.black]
 line-length = 79

@@ -1,21 +1,28 @@
 #!/usr/bin/env python
 import matplotlib
-from nilearn import plotting
+from nilearn.image import load_img
+from nilearn.plotting import view_img
+from niworkflows.viz.utils import (
+    compose_view,
+    cuts_from_bbox,
+    plot_registration,
+)
 
 
 def registration_qc(
-    template_t1w,
-    native_t1w,
-    out_png,
+    moving_nii,
+    fixed_nii,
+    svg_cuts,
+    out_svg,
     out_html,
     smk_wildcards,
 ):
     matplotlib.use(backend="Agg")
 
     # HTML output
-    html_view = plotting.view_img(
-        stat_map_img=template_t1w,
-        bg_img=native_t1w,
+    html_view = view_img(
+        stat_map_img=moving_nii,
+        bg_img=fixed_nii,
         opacity=0.5,
         cmap="viridis",
         dim=-1,
@@ -24,18 +31,36 @@ def registration_qc(
     )
     html_view.save_as_html(out_html)
 
-    # PNG output
-    display = plotting.plot_anat(native_t1w, display_mode="mosaic")
-    display.add_edges(template_t1w, color="r")
-    display.savefig(out_png)
-    display.close()
+    # SVG flicker output
+    subj_img = load_img(fixed_nii)
+    template_img = load_img(moving_nii)
+    cuts = cuts_from_bbox(subj_img, svg_cuts)
+
+    compose_view(
+        plot_registration(  # Fixed image
+            anat_nii=subj_img,
+            div_id="fixed-img",
+            estimate_brightness=True,
+            cuts=cuts,
+            label="Subject",
+        ),
+        plot_registration(
+            anat_nii=template_img,
+            div_id="mov-img",
+            estimate_brightness=True,
+            cuts=cuts,
+            label="Template",
+        ),
+        out_file=out_svg,
+    )
 
 
 if __name__ == "__main__":
     registration_qc(
-        template_t1w=snakemake.input.template_t1w,  # noqa: F821
-        native_t1w=snakemake.input.native_t1w,  # noqa: F821
-        out_png=snakemake.output.qc_png,  # noqa: F821
+        moving_nii=snakemake.input.moving_nii,  # noqa: F821
+        fixed_nii=snakemake.input.fixed_nii,  # noqa: F821
+        svg_cuts=snakemake.params.cuts,  # noqa: F821
+        out_svg=snakemake.output.qc_svg,  # noqa: F821
         out_html=snakemake.output.qc_html,  # noqa: F821
         smk_wildcards=snakemake.wildcards,  # noqa: F821
     )
