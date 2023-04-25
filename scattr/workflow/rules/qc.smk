@@ -54,12 +54,14 @@ rule segment_qc:
 
 rule registration_qc:
     input:
-        template_t1w=rules.reg2native.output.t1w_nativespace,
-        native_t1w=config["input_path"]["T1w"],
+        moving_nii=rules.reg2native.output.t1w_nativespace,
+        fixed_nii=config["input_path"]["T1w"],
+    params:
+        cuts=7,
     output:
-        qc_png=bids_qc(
+        qc_svg=bids_qc(
             desc=f"{config['Space']}toNative",
-            suffix="regQC.png",
+            suffix="regQC.svg",
         ),
         qc_html=bids_qc(
             desc=f"{config['Space']}toNative",
@@ -88,7 +90,7 @@ rule gather_qc:
             subject=config["input_lists"]["T1w"]["subject"],
         ),
         reg_png=expand(
-            rules.registration_qc.output.qc_png,
+            rules.registration_qc.output.qc_svg,
             subject=config["input_lists"]["T1w"]["subject"],
         ),
         reg_html=expand(

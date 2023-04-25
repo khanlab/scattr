@@ -253,11 +253,11 @@ freesurfer:
 # Containers
 # NOTE: Update from latest to use specific tags
 singularity:
-  freesurfer: "/project/6050199/akhanf/singularity/bids-apps/pwighton_freesurfer_7.1.0.sif" # "docker://pwighton/freesurfer:7.2.0"
-  neuroglia-core: "/project/6050199/akhanf/singularity/bids-apps/neuroglia-core_latest.sif" # "docker://khanlab/neuroglia-core:latest"
-  ants: "/project/6050199/akhanf/singularity/bids-apps/kaczmarj_ants_2.3.4.sif" # "docker://kaczmarj/ants:2.3.4"
-  mrtrix: "/project/6050199/tkai/singularity/mrtrix3_3.0.3.sif" # "docker://brainlife/mrtrix3:3.0.3"
-  labelmerge: "/project/6050199/tkai/singularity/labelmerge_v0.4.3.sif" # "docker://khanlab/labelmerge:v0.4.3"
-  scattr: "/project/6050199/tkai/singularity/scattr_v0.1.2.sif" # "docker://khanlab/scattr:v0.1.2"
+  freesurfer: "docker://pwighton/freesurfer:7.2.0"
+  neuroglia-core: "docker://khanlab/neuroglia-core:latest"
+  ants: "docker://kaczmarj/ants:2.3.4"
+  mrtrix: "docker://brainlife/mrtrix3:3.0.3"
+  labelmerge: "docker://khanlab/labelmerge:v0.4.3"
+  scattr: "docker://khanlab/scattr:v0.1.2"
 
 fs_license: /path/to/fs/license
