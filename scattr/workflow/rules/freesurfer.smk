@@ -3,6 +3,8 @@ freesurfer_dir = str(Path(config["output_dir"]) / "freesurfer")
 if config.get("freesurfer_dir"):
     freesurfer_dir = config.get("freesurfer_dir")
 
+log_dir = str(Path(config["output_dir"]) / "logs" / "freesurfer")
+
 # Licenses
 if config.get("fs_license"):
     fs_license = config["fs_license"]
@@ -17,7 +19,13 @@ bids_fs_out = partial(
     bids,
     root=freesurfer_dir,
     datatype="anat",
-    **config["subj_wildcards"],
+    **inputs.subj_wildcards,
+)
+
+bids_log = partial(
+    bids,
+    root=log_dir,
+    **inputs["T1w"].input_wildcards,
 )
 
 # Freesurfer references (with additional in rules as necessary)
@@ -59,15 +67,16 @@ rule thalamic_segmentation:
         fs_license=fs_license,
     output:
         thal_seg=str(
-            Path(freesurfer_dir)
-            / "sub-{subject}/mri/ThalamicNuclei.v12.T1.mgz"
+            Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
+            / "mri"
+            / "ThalamicNuclei.v12.T1.mgz"
         ),
     threads: 4
     resources:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/thalamic_segmentation.log",
+        bids_log(suffix="thalamicSegmentation.log"),
     group:
         "freesurfer"
     container:
@@ -91,7 +100,9 @@ rule mgz2nii:
         if not config.get("skip_thal_seg")
         else [],
         aparcaseg=str(
-            Path(freesurfer_dir) / "sub-{subject}/mri/aparc+aseg.mgz"
+            Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
+            / "mri"
+            / "aparc+aseg.mgz"
         ),
     params:
         freesurfer_dir=freesurfer_dir,
@@ -112,7 +123,7 @@ rule mgz2nii:
         mem_mb=16000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/mgz2nii.log",
+        bids_log(suffix="mgz2nii.log"),
     group:
         "freesurfer"
     container:
@@ -130,7 +141,7 @@ rule fs_xfm_to_native:
     input:
         thal=rules.mgz2nii.output.thal,
         aparcaseg=rules.mgz2nii.output.aparcaseg,
-        ref=config["input_path"]["T1w"],
+        ref=inputs["T1w"].path,
     output:
         thal=bids_fs_out(
             space="T1w",
@@ -147,7 +158,7 @@ rule fs_xfm_to_native:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/fs_xfm_to_native.log",
+        bids_log(suffix="fsXfmToNative.log"),
     group:
         "freesurfer"
     container:

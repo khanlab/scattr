@@ -2,6 +2,9 @@
 test/data/derivatives/.snakemake/
 test/data/derivatives/config/
 test/data/derivatives/.snakebids
+test/data/derivatives_sessions/.snakemake/
+test/data/derivatives_sessions/config/
+test/data/derivatives_sessions/.snakebids
 
 # Tar files
 *.tar
