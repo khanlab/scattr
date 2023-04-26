@@ -86,7 +86,7 @@ rule reg2native:
         mem_mb=16000,
         time=60,
     log:
-        bids_log(suffix="reg2native.log")
+        bids_log(suffix="reg2native.log"),
     group:
         "subcortical_1"
     container:
@@ -121,7 +121,7 @@ rule warp2native:
         mem_mb=16000,
         time=30,
     log:
-        bids_log(suffix="warp2native.log")
+        bids_log(suffix="warp2native.log"),
     group:
         "subcortical_1"
     container:
@@ -268,7 +268,7 @@ rule binarize:
         mem_mb=16000,
         time=10,
     log:
-        bids_log(suffix="binarize.log")
+        bids_log(suffix="binarize.log"),
     group:
         "subcortical_2"
     container:
@@ -294,7 +294,7 @@ rule add_brainstem:
         mem_mb=16000,
         time=10,
     log:
-        bids_log(suffix="addBrainstem.log")
+        bids_log(suffix="addBrainstem.log"),
     group:
         "subcortical_2"
     container:
@@ -319,7 +319,7 @@ rule create_convex_hull:
         mem_mb=16000,
         time=60,
     log:
-        bids_log(suffix="createConvexHull.log")
+        bids_log(suffix="createConvexHull.log"),
     group:
         "subcortical_2"
     container:

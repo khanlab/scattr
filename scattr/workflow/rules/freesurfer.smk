@@ -75,7 +75,7 @@ rule thalamic_segmentation:
         mem_mb=16000,
         time=60,
     log:
-        bids_log(suffix="thalamicSegmentation.log")
+        bids_log(suffix="thalamicSegmentation.log"),
     group:
         "freesurfer"
     container:
@@ -120,7 +120,7 @@ rule mgz2nii:
         mem_mb=16000,
         time=10,
     log:
-        bids_log(suffix="mgz2nii.log")
+        bids_log(suffix="mgz2nii.log"),
     group:
         "freesurfer"
     container:
@@ -155,7 +155,7 @@ rule fs_xfm_to_native:
         mem_mb=16000,
         time=60,
     log:
-        bids_log(suffix="fsXfmToNative.log")
+        bids_log(suffix="fsXfmToNative.log"),
     group:
         "freesurfer"
     container:
