@@ -17,7 +17,7 @@ bids_fs_out = partial(
     bids,
     root=freesurfer_dir,
     datatype="anat",
-    **config["subj_wildcards"],
+    **inputs.subj_wildcards,
 )
 
 # Freesurfer references (with additional in rules as necessary)
@@ -130,7 +130,7 @@ rule fs_xfm_to_native:
     input:
         thal=rules.mgz2nii.output.thal,
         aparcaseg=rules.mgz2nii.output.aparcaseg,
-        ref=config["input_path"]["T1w"],
+        ref=inputs["T1w"].path,
     output:
         thal=bids_fs_out(
             space="T1w",

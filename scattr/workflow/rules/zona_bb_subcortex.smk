@@ -11,7 +11,7 @@ bids_anat = partial(
     bids,
     root=zona_dir,
     datatype="anat",
-    **config["subj_wildcards"],
+    **inputs.subj_wildcards,
 )
 
 bids_labelmerge = partial(
@@ -19,7 +19,7 @@ bids_labelmerge = partial(
     root=str(Path(labelmerge_dir) / "combined")
     if not config.get("skip_labelmerge")
     else config.get("labelmerge_base_dir") or zona_dir,
-    **config["subj_wildcards"],
+    **inputs.subj_wildcards,
 )
 
 # References:
@@ -55,7 +55,7 @@ rule reg2native:
             / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
             / Path(config["zona_bb_subcortex"][config["Space"]]["T1w"])
         ),
-        target=config["input_path"]["T1w"],
+        target=inputs["T1w"].path,
     params:
         out_dir=directory(str(Path(bids_anat()).parent)),
         out_prefix=bids_anat(
@@ -133,14 +133,16 @@ rule labelmerge:
             rules.warp2native.output.nii
             if not config.get("labelmerge_base_dir")
             else [],
-            subject=config["input_lists"]["T1w"]["subject"],
+            zip,
+            **inputs["T1w"].input_zip_lists,
             allow_missing=True,
         ),
         fs_seg=expand(
             rules.fs_xfm_to_native.output.thal
             if not config.get("labelmerge_overlay_dir")
             else [],
-            subject=config["input_lists"]["T1w"]["subject"],
+            zip,
+            **inputs["T1w"].input_zip_lists,
             allow_missing=True,
         ),
         fs_tsv=rules.cp_fs_tsv.output.fs_tsv
@@ -184,7 +186,8 @@ rule labelmerge:
                 desc="combined",
                 suffix="dseg.nii.gz",
             ),
-            subject=config["input_lists"]["T1w"]["subject"],
+            zip,
+            **inputs["T1w"].input_zip_lists,
             allow_missing=True,
         ),
         tsv=expand(
@@ -193,7 +196,8 @@ rule labelmerge:
                 desc="combined",
                 suffix="dseg.tsv",
             ),
-            subject=config["input_lists"]["T1w"]["subject"],
+            zip,
+            **inputs["T1w"].input_zip_lists,
             allow_missing=True,
         ),
     threads: 4

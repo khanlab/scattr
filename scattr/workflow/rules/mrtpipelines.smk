@@ -24,7 +24,7 @@ bids_dwi = partial(
     datatype="dwi",
     space="T1w",
     desc="preproc",
-    **config["subj_wildcards"],
+    **inputs.subj_wildcards,
 )
 
 bids_response_out = partial(
@@ -39,21 +39,21 @@ bids_dti_out = partial(
     root=mrtrix_dir,
     datatype="dti",
     model="dti",
-    **config["subj_wildcards"],
+    **inputs.subj_wildcards,
 )
 
 bids_tractography_out = partial(
     bids,
     root=mrtrix_dir,
     datatype="tractography",
-    **config["subj_wildcards"],
+    **inputs.subj_wildcards,
 )
 
 bids_anat_out = partial(
     bids,
     root=mrtrix_dir,
     datatype="anat",
-    **config["subj_wildcards"],
+    **inputs.subj_wildcards,
 )
 
 bids_labelmerge = partial(
@@ -61,7 +61,7 @@ bids_labelmerge = partial(
     root=str(Path(labelmerge_dir) / "combined")
     if not config.get("skip_labelmerge")
     else config.get("labelmerge_base_dir") or zona_dir,
-    **config["subj_wildcards"],
+    **inputs.subj_wildcards,
 )
 
 # Mrtrix3 citation (additional citations are included per rule as necessary):
@@ -78,35 +78,35 @@ rule nii2mif:
         dwi=(
             bids_dwi(suffix="dwi.nii.gz")
             if dwi_dir
-            else config["input_path"]["dwi"]
+            else inputs["dwi"].path
         ),
         bval=(
             bids_dwi(suffix="dwi.bval")
             if dwi_dir
-            else re.sub(".nii.gz", ".bval", config["input_path"]["dwi"])
+            else re.sub(".nii.gz", ".bval", inputs["dwi"].path)
         ),
         bvec=(
             bids_dwi(suffix="dwi.bvec")
             if dwi_dir
-            else re.sub(".nii.gz", ".bvec", config["input_path"]["dwi"])
+            else re.sub(".nii.gz", ".bvec", inputs["dwi"].path)
         ),
         mask=(
             bids_dwi(suffix="mask.nii.gz")
             if dwi_dir
-            else config["input_path"]["mask"]
+            else inputs["mask"].path
         ),
     output:
         dwi=bids(
             root=mrtrix_dir,
             datatype="dwi",
             suffix="dwi.mif",
-            **config["subj_wildcards"]
+            **inputs.subj_wildcards
         ),
         mask=bids(
             root=mrtrix_dir,
             datatype="dwi",
             suffix="brainmask.mif",
-            **config["subj_wildcards"]
+            **inputs.subj_wildcards
         ),
     threads: 4
     resources:
@@ -138,15 +138,15 @@ rule dwi2response:
     output:
         wm_rf=bids_response_out(
             desc="wm",
-            **config["subj_wildcards"],
+            **inputs.subj_wildcards,
         ),
         gm_rf=bids_response_out(
             desc="gm",
-            **config["subj_wildcards"],
+            **inputs.subj_wildcards,
         ),
         csf_rf=bids_response_out(
             desc="csf",
-            **config["subj_wildcards"],
+            **inputs.subj_wildcards,
         ),
     threads: 4
     resources:
@@ -170,8 +170,9 @@ rule responsemean:
                 subject="{subject}",
                 desc="{tissue}",
             ),
+            zip,
+            **inputs["T1w"].input_zip_lists,
             allow_missing=True,
-            subject=config["input_lists"]["T1w"]["subject"],
         ),
     output:
         avg_rf=bids_response_out(
@@ -231,19 +232,19 @@ rule dwi2fod:
             model="csd",
             desc="wm",
             suffix="fod.mif",
-            **config["subj_wildcards"],
+            **inputs.subj_wildcards,
         ),
         gm_fod=bids_response_out(
             model="csd",
             desc="gm",
             suffix="fod.mif",
-            **config["subj_wildcards"],
+            **inputs.subj_wildcards,
         ),
         csf_fod=bids_response_out(
             model="csd",
             desc="csf",
             suffix="fod.mif",
-            **config["subj_wildcards"],
+            **inputs.subj_wildcards,
         ),
     threads: 4
     resources:
@@ -275,19 +276,19 @@ rule mtnormalise:
             model="csd",
             desc="wm",
             suffix="fodNormalized.mif",
-            **config["subj_wildcards"],
+            **inputs.subj_wildcards,
         ),
         gm_fod=bids_response_out(
             model="csd",
             desc="gm",
             suffix="fodNormalized.mif",
-            **config["subj_wildcards"],
+            **inputs.subj_wildcards,
         ),
         csf_fod=bids_response_out(
             model="csd",
             desc="csf",
             suffix="fodNormalized.mif",
-            **config["subj_wildcards"],
+            **inputs.subj_wildcards,
         ),
     threads: 4
     resources:
@@ -314,7 +315,7 @@ rule dwinormalise:
             datatype="dwi",
             desc="normalized",
             suffix="dwi.mif",
-            **config["subj_wildcards"],
+            **inputs.subj_wildcards,
         ),
     threads: 4
     resources:
@@ -431,7 +432,7 @@ checkpoint create_roi_mask:
         num_labels=rules.get_num_nodes.output.num_labels,
     params:
         base_dir=mrtrix_dir,
-        subj_wildcards=config["subj_wildcards"],
+        subj_wildcards=inputs.subj_wildcards,
     output:
         out_dir=directory(bids_anat_out(datatype="roi_masks")),
     threads: 4
@@ -493,7 +494,7 @@ checkpoint create_exclude_mask:
         mask_dir=bids_anat_out(
             datatype="roi_masks",
         ),
-        subj_wildcards=config["subj_wildcards"],
+        subj_wildcards=inputs.subj_wildcards,
     output:
         out_dir=directory(bids_anat_out(datatype="exclude_mask")),
     threads: 4
