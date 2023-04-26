@@ -69,7 +69,8 @@ test_responsemean = { shell = "python ./scattr/run.py ./test/data/bids test/data
 test_dwi = { shell = "python ./scattr/run.py ./test/data/bids_nodwi test/data/derivatives/ participant --dwi_dir ./test/data/derivatives/prepdwi --fs-license ./test/.fs_license -np --force-output" }
 test_labelmerge = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --labelmerge_base_dir ./base_dir --labelmerge_overlay_dir ./overlay_dir --skip_brainstem --skip_thal_seg --fs-license ./test/.fs_license -np --force-output" }
 test_skip_labelmerge = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --skip_labelmerge --skip_brainstem --skip_thal_seg --fs-license ./test/.fs_license -np --force-output" }
-test = ["test_base", "test_freesurfer", "test_responsemean", "test_dwi", "test_labelmerge", "test_skip_labelmerge"]
+test_sessions = { shell = "python ./scattr/run.py ./test/data/bids_sessions test/data/derivatives_sessions/ participant --fs-license ./test.fs_license -np --force-output" }
+test = ["test_base", "test_freesurfer", "test_responsemean", "test_dwi", "test_labelmerge", "test_skip_labelmerge", "test_sessions"]
 
 [tool.isort]
 profile = "black"
