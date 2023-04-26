@@ -263,9 +263,9 @@ rule binarize:
     group:
         "subcortical_2"
     container:
-        config["singularity"]["neuroglia-core"]
-    shell:
-        "fslmaths {input.seg} -bin {output.mask} &> {log}"
+        config["singularity"]["scattr"]
+    script:
+        "../scripts/zona_bb_subcortex/create_seg_mask.py"
 
 
 rule add_brainstem:
@@ -289,9 +289,9 @@ rule add_brainstem:
     group:
         "subcortical_2"
     container:
-        config["singularity"]["neuroglia-core"]
-    shell:
-        "fslmaths {input.aparcaseg} -thr 16 -uthr 16 -bin -max {input.mask} {output.mask} &> {log}"
+        config["singularity"]["scattr"]
+    script:
+        "../scripts/zona_bb_subcortex/add_brainstem.py"
 
 
 rule create_convex_hull:
