@@ -91,3 +91,5 @@ jobs:
         run: poetry run poe test_labelmerge
       - name: Test using single atlas (skipping labelmerge)
         run: poetry run poe test_skip_labelmerge
+      - name: Test sessions
+        run: poetry run poe test_sessions
