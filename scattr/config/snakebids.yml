@@ -26,33 +26,41 @@ pybids_inputs:
       extension: ".nii.gz"
       datatype: "anat"
       desc: "brain" # Reequire a skull-stripped brain
+      # part: "mag"
     wildcards:
       - subject
       - session
       - acquisition
+      # - part
+      - reconstruction
       - run
+
   dwi:
     filters:
       suffix: "dwi"
       extension: ".nii.gz"
       datatype: "dwi"
       space: "T1w"
+      # part: "mag"
     wildcards:
       - subject
       - session
       - acquisition
-      - run
       - direction
+      # - part
+      - reconstruction
+      - run
   mask:
     filters:
       suffix: "mask"
       extension: ".nii.gz"
       datatype: "dwi"
-      space: "T1w"
+      space: ["orig", "scanner", "individual", "T1w"]
     wildcards:
       - subject
       - session
       - acquisition
+      - res
       - run
 
 # Configuration for the command-line parameters to make available
