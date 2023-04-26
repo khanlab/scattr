@@ -3,6 +3,8 @@ freesurfer_dir = str(Path(config["output_dir"]) / "freesurfer")
 if config.get("freesurfer_dir"):
     freesurfer_dir = config.get("freesurfer_dir")
 
+log_dir = str(Path(config["output_dir"]) / "logs" / "freesurfer")
+
 # Licenses
 if config.get("fs_license"):
     fs_license = config["fs_license"]
@@ -18,6 +20,12 @@ bids_fs_out = partial(
     root=freesurfer_dir,
     datatype="anat",
     **inputs.subj_wildcards,
+)
+
+bids_log = partial(
+    bids,
+    root=log_dir,
+    **inputs["T1w"].input_wildcards,
 )
 
 # Freesurfer references (with additional in rules as necessary)
@@ -67,7 +75,7 @@ rule thalamic_segmentation:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/thalamic_segmentation.log",
+        bids_log(suffix="thalamicSegmentation.log")
     group:
         "freesurfer"
     container:
@@ -112,7 +120,7 @@ rule mgz2nii:
         mem_mb=16000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/mgz2nii.log",
+        bids_log(suffix="mgz2nii.log")
     group:
         "freesurfer"
     container:
@@ -147,7 +155,7 @@ rule fs_xfm_to_native:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/freesurfer/sub-{{subject}}/fs_xfm_to_native.log",
+        bids_log(suffix="fsXfmToNative.log")
     group:
         "freesurfer"
     container:

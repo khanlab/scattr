@@ -8,6 +8,7 @@ dwi_dir = config.get("dwi_dir")
 mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
 labelmerge_dir = str(Path(config["output_dir"]) / "labelmerge")
 zona_dir = str(Path(config["output_dir"]) / "zona_bb_subcortex")
+log_dir = str(Path(config["output_dir"]) / "logs" / "mrtrix") 
 
 # Make directory if it doesn't exist
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
@@ -64,6 +65,12 @@ bids_labelmerge = partial(
     **inputs.subj_wildcards,
 )
 
+bids_log = partial(
+    bids,
+    root=log_dir,
+    **inputs["T1w"].input_wildcards,
+)
+
 # Mrtrix3 citation (additional citations are included per rule as necessary):
 # Tournier, J.-D.; Smith, R. E.; Raffelt, D.; Tabbara, R.; Dhollander, T.; Pietsch, M.; Christiaens, D.; Jeurissen, B.; Yeh, C.-H. & Connelly, A. MRtrix3: A fast, flexible and open software framework for medical image processing and visualisation. NeuroImage, 2019, 202, 116137
 
@@ -107,7 +114,7 @@ rule nii2mif:
         mem_mb=16000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/nii2mif.log",
+        bids_log(suffix="nii2mif.log")
     group:
         "dwiproc"
     container:
@@ -147,7 +154,7 @@ rule dwi2response:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2response.log",
+        bids_log(suffix="dwi2response.log")
     group:
         "dwiproc"
     container:
@@ -245,7 +252,7 @@ rule dwi2fod:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2fod.log",
+        bids_log(suffix="dwi2fod.log")
     group:
         "diffmodel"
     container:
@@ -289,7 +296,7 @@ rule mtnormalise:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/mtnormalise.log",
+        bids_log(suffix="mtnormalise.log")
     group:
         "diffmodel"
     container:
@@ -316,7 +323,7 @@ rule dwinormalise:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwinormalise.log",
+        bids_log(suffix="dwinormalise.log")
     container:
         config["singularity"]["mrtrix"]
     group:
@@ -340,7 +347,7 @@ rule dwi2tensor:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/dwi2tensor.log",
+        bids_log(suffix="dwi2tensor.log")
     group:
         "dwiproc"
     container:
@@ -388,7 +395,7 @@ rule tckgen:
         mem_mb=128000,
         time=60 * 24,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tckgen.log",
+        bids_log(suffix="tckgen.log")
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -413,7 +420,7 @@ rule tcksift2:
         mem_mb=32000,
         time=60 * 2,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tcksift2.log",
+        bids_log(suffix="tcksift2.log")
     container:
         config["singularity"]["mrtrix"]
     shell:
@@ -554,7 +561,7 @@ rule tck2connectome:
         mem_mb=128000,
         time=60 * 3,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/tck2connectome.log",
+        bids_log(suffix="tck2connectome.log")
     group:
         "tractography_update"
     container:
@@ -612,7 +619,7 @@ checkpoint connectome2tck:
         mem_mb=128000,
         time=60 * 3,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/connectome2tck.log",
+        bids_log(suffix="connectome2tck.log")
     group:
         "tractography_update"
     container:
@@ -791,7 +798,7 @@ rule filter_combine_tck:
         mem_mb=128000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/combine_filtered.log",
+        bids_log(suffix="combineFiltered.log")
     group:
         "tractography_update"
     container:
@@ -849,7 +856,7 @@ rule filtered_tck2connectome:
         mem_mb=128000,
         time=60 * 3,
     log:
-        f"{config['output_dir']}/logs/mrtrix/sub-{{subject}}/filtered_tck2connectome.log",
+        bids_log(desc="filtered", suffix="tck2connectome")
     group:
         "tractography_update"
     container:

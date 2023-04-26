@@ -1,6 +1,7 @@
 # Directories
 zona_dir = str(Path(config["output_dir"]) / "zona_bb_subcortex")
 labelmerge_dir = str(Path(config["output_dir"]) / "labelmerge")
+log_dir = str(Path(config["output_dir"]) / "logs" / "zona_bb_subcortex")
 
 # Make directory if it doesn't exist
 Path(zona_dir).mkdir(parents=True, exist_ok=True)
@@ -20,6 +21,12 @@ bids_labelmerge = partial(
     if not config.get("skip_labelmerge")
     else config.get("labelmerge_base_dir") or zona_dir,
     **inputs.subj_wildcards,
+)
+
+bids_log = partial(
+    bids,
+    root=log_dir,
+    **inputs["T1w"].input_wildcards,
 )
 
 # References:
@@ -79,7 +86,7 @@ rule reg2native:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/reg2native.log",
+        bids_log(suffix="reg2native.log")
     group:
         "subcortical_1"
     container:
@@ -114,7 +121,7 @@ rule warp2native:
         mem_mb=16000,
         time=30,
     log:
-        f"{config['output_dir']}/logs/zona_bb_subcortex/sub-{{subject}}/warp2native.log",
+        bids_log(suffix="warp2native.log")
     group:
         "subcortical_1"
     container:
@@ -204,8 +211,6 @@ rule labelmerge:
     resources:
         mem_mb=16000,
         time=60,
-    log:
-        f"{config['output_dir']}/logs/zona_bb_subcortex/labelmerge.log",
     group:
         "subcortical_group"
     container:
@@ -263,7 +268,7 @@ rule binarize:
         mem_mb=16000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/binarize.log",
+        bids_log(suffix="binarize.log")
     group:
         "subcortical_2"
     container:
@@ -289,7 +294,7 @@ rule add_brainstem:
         mem_mb=16000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/add_brainstem.log",
+        bids_log(suffix="addBrainstem.log")
     group:
         "subcortical_2"
     container:
@@ -314,7 +319,7 @@ rule create_convex_hull:
         mem_mb=16000,
         time=60,
     log:
-        f"{config['output_dir']}/logs/labelmerge/sub-{{subject}}/create_convex_hull.log",
+        bids_log(suffix="createConvexHull.log")
     group:
         "subcortical_2"
     container:
