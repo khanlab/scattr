@@ -75,11 +75,7 @@ if dwi_dir:
 
 rule nii2mif:
     input:
-        dwi=(
-            bids_dwi(suffix="dwi.nii.gz")
-            if dwi_dir
-            else inputs["dwi"].path
-        ),
+        dwi=(bids_dwi(suffix="dwi.nii.gz") if dwi_dir else inputs["dwi"].path),
         bval=(
             bids_dwi(suffix="dwi.bval")
             if dwi_dir
@@ -91,9 +87,7 @@ rule nii2mif:
             else re.sub(".nii.gz", ".bvec", inputs["dwi"].path)
         ),
         mask=(
-            bids_dwi(suffix="mask.nii.gz")
-            if dwi_dir
-            else inputs["mask"].path
+            bids_dwi(suffix="mask.nii.gz") if dwi_dir else inputs["mask"].path
         ),
     output:
         dwi=bids(
