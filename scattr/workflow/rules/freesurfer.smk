@@ -67,8 +67,9 @@ rule thalamic_segmentation:
         fs_license=fs_license,
     output:
         thal_seg=str(
-            Path(freesurfer_dir)
-            / "sub-{subject}/mri/ThalamicNuclei.v12.T1.mgz"
+            Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
+            / "mri"
+            / "ThalamicNuclei.v12.T1.mgz"
         ),
     threads: 4
     resources:
@@ -99,7 +100,9 @@ rule mgz2nii:
         if not config.get("skip_thal_seg")
         else [],
         aparcaseg=str(
-            Path(freesurfer_dir) / "sub-{subject}/mri/aparc+aseg.mgz"
+            Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
+            / "mri"
+            / "aparc+aseg.mgz"
         ),
     params:
         freesurfer_dir=freesurfer_dir,

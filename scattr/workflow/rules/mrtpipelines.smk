@@ -168,7 +168,6 @@ rule responsemean:
     input:
         subject_rf=expand(
             bids_response_out(
-                subject="{subject}",
                 desc="{tissue}",
             ),
             zip,
