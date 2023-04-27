@@ -3,7 +3,7 @@ freesurfer_dir = str(Path(config["output_dir"]) / "freesurfer")
 if config.get("freesurfer_dir"):
     freesurfer_dir = config.get("freesurfer_dir")
 
-log_dir = str(Path(config["output_dir"]) / "logs" / "freesurfer")
+log_dir = str(Path(config["output_dir"]) / ".logs" / "freesurfer")
 
 # Licenses
 if config.get("fs_license"):

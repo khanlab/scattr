@@ -8,7 +8,7 @@ dwi_dir = config.get("dwi_dir")
 mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
 labelmerge_dir = str(Path(config["output_dir"]) / "labelmerge")
 zona_dir = str(Path(config["output_dir"]) / "zona_bb_subcortex")
-log_dir = str(Path(config["output_dir"]) / "logs" / "mrtrix")
+log_dir = str(Path(config["output_dir"]) / ".logs" / "mrtrix")
 
 # Make directory if it doesn't exist
 Path(mrtrix_dir).mkdir(parents=True, exist_ok=True)
@@ -202,7 +202,7 @@ rule responsemean:
         mem_mb=16000,
         time=10,
     log:
-        f"{config['output_dir']}/logs/mrtrix/{{tissue}}_responsemean.log",
+        f"{log_dir}/{{tissue}}_responsemean.log",
     group:
         "dwiproc_group"
     container:

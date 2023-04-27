@@ -1,7 +1,7 @@
 # Directories
 zona_dir = str(Path(config["output_dir"]) / "zona_bb_subcortex")
 labelmerge_dir = str(Path(config["output_dir"]) / "labelmerge")
-log_dir = str(Path(config["output_dir"]) / "logs" / "zona_bb_subcortex")
+log_dir = str(Path(config["output_dir"]) / ".logs" / "zona_bb_subcortex")
 
 # Make directory if it doesn't exist
 Path(zona_dir).mkdir(parents=True, exist_ok=True)
