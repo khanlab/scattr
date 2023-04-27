@@ -1,7 +1,10 @@
 # ---- begin snakebids boilerplate ----------------------------------------------
 
 from snakebids import (
-    bids, filter_list, generate_inputs, get_wildcard_constraints
+    bids,
+    filter_list,
+    generate_inputs,
+    get_wildcard_constraints,
 )
 
 
@@ -72,7 +75,7 @@ rule all:
             **subj_zip_list
         ),
         dti_files=expand(rules.dwi2tensor.output.dti, zip, **subj_zip_list),
-        qc_files=rules.gather_qc.input
+        qc_files=rules.gather_qc.input,
     params:
         mrtrix_dir=expand(
             bids(

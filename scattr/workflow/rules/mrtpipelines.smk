@@ -78,6 +78,7 @@ MRtrix3: A fast, flexible and open software framework for medical image
 processing and visualisation. NeuroImage, 2019, 202, 116137
 """
 
+
 include: "mrtpipelines/preproc.smk"
 include: "mrtpipelines/tractography.smk"
 include: "mrtpipelines/filter_tck.smk"
@@ -112,4 +113,3 @@ rule dwi2tensor:
             -fa {output.fa} -ad {output.ad} -rd {output.rd} \\
             -adc {output.md} >> {log} 2>&1
         """
-

@@ -31,7 +31,7 @@ rule segment_qc:
             inputs["T1w"].path,
             zip,
             **filter_list(inputs["T1w"].input_zip_lists, wildcards)
-        )[0]
+        )[0],
     output:
         qc_png=report(
             bids_qc(
@@ -73,7 +73,7 @@ rule registration_qc:
             inputs["T1w"].path,
             zip,
             **filter_list(inputs["T1w"].input_zip_lists, wildcards)
-        )[0]
+        )[0],
     params:
         cuts=7,
     output:
@@ -104,6 +104,7 @@ rule registration_qc:
         config["singularity"]["scattr"]
     script:
         "../scripts/qc/registration_qc.py"
+
 
 rule gather_qc:
     input:
