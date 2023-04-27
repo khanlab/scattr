@@ -103,7 +103,7 @@ rule reg2native:
     group:
         "subcortical_1"
     container:
-        config["singularity"]["neuroglia-core"]
+        config["singularity"]["scattr"]
     shell:
         """
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads}
@@ -142,7 +142,7 @@ rule warp2native:
     group:
         "subcortical_1"
     container:
-        config["singularity"]["ants"]
+        config["singularity"]["scattr"]
     shell:
         """
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
@@ -228,7 +228,7 @@ rule labelmerge:
     group:
         "subcortical_group"
     container:
-        config["singularity"]["labelmerge"]
+        config["singularity"]["scattr"]
     shell:
         """
         labelmerge {params.labelmerge_base_dir} {params.labelmerge_out_dir} \\

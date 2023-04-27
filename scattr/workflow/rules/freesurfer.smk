@@ -88,7 +88,7 @@ rule thalamic_segmentation:
     group:
         "freesurfer"
     container:
-        config["singularity"]["freesurfer"]
+        config["singularity"]["scattr"]
     shell:
         """
         FS_LICENSE={params.fs_license}
@@ -139,7 +139,7 @@ rule mgz2nii:
     group:
         "freesurfer"
     container:
-        config["singularity"]["freesurfer"]
+        config["singularity"]["scattr"]
     shell:
         """
         FS_LICENSE={params.fs_license} 
@@ -182,7 +182,7 @@ rule fs_xfm_to_native:
     group:
         "freesurfer"
     container:
-        config["singularity"]["neuroglia-core"]
+        config["singularity"]["scattr"]
     shell:
         """
         antsApplyTransforms -d 3 -n MultiLabel \\

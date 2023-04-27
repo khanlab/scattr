@@ -149,6 +149,7 @@ parse_args:
     help: 'BIDS directory containing overlay input labelmaps.'
     nargs: "?"
     type: Path
+    default: False
 
   --labelmerge_base_desc:
     help: 'Description entity for base labelmaps used in labelmerge. By default,
@@ -175,16 +176,19 @@ parse_args:
     help: 'Space-separated list of indices to drop from the overlay image used 
           in labelmerge.'
     nargs: "*"
+    default: False
 
   --labelmerge_base_exceptions:
     help: 'Space-separated list of integer labels from the base labelmap to 
           keep over overlay labels at corresponding voxels.'
     nargs: "*"
+    default: False
 
   --labelmerge_overlay_exceptions:
     help: 'Space-separated list of integer labels from the overlay labelmap to 
           be overwritten by base labels at corresponding voxels.'
     nargs: "*"
+    default: False
 
   --skip_labelmerge:
     help: 'Skip the merging step, using only the base labelmap to identify 
@@ -281,11 +285,6 @@ freesurfer:
 # Containers
 # NOTE: Update from latest to use specific tags
 singularity:
-  freesurfer: "docker://pwighton/freesurfer:7.2.0"
-  neuroglia-core: "docker://khanlab/neuroglia-core:latest"
-  ants: "docker://kaczmarj/ants:2.3.4"
-  mrtrix: "docker://brainlife/mrtrix3:3.0.3"
-  labelmerge: "docker://khanlab/labelmerge:v0.4.3"
   scattr: "docker://khanlab/scattr:v0.1.2"
-
+  
 fs_license: /path/to/fs/license
