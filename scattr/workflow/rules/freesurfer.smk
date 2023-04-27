@@ -25,7 +25,7 @@ bids_fs_out = partial(
 bids_log = partial(
     bids,
     root=log_dir,
-    **inputs["T1w"].input_wildcards,
+    **inputs.subj_wildcards,
 )
 
 # Freesurfer references (with additional in rules as necessary)
@@ -141,7 +141,11 @@ rule fs_xfm_to_native:
     input:
         thal=rules.mgz2nii.output.thal,
         aparcaseg=rules.mgz2nii.output.aparcaseg,
-        ref=inputs["T1w"].path,
+        ref=lambda wildcards: expand(
+            inputs["T1w"].path,
+            zip,
+            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
+        )[0]
     output:
         thal=bids_fs_out(
             space="T1w",

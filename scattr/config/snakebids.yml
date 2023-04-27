@@ -126,6 +126,14 @@ parse_args:
     nargs: "?"
     type: Path
 
+  --responsemean_ses:
+    help: 'The session used to compute the average response function. If 
+          multiple are available in the dataset, it is HIGHLY RECOMMENDED to 
+          set this to a specific session. If not provided, the average response 
+          function will be computed with all possible sessions.'
+    nargs: "?"
+    default: False
+
   --fs_license:
     help: 'Path to Freesurfer license file. If not provided, workflow will check
           FS_LICENSE environment variable for one.'
@@ -197,6 +205,12 @@ parse_args:
           the thalamus segmentation step.'
     action: store_true
     default: False
+
+  --bzero_thresh:
+    help: 'Set the threshold for a shell to be considered b=0. By default, this
+          value is set to 10'
+    nargs: "?"
+    default: 10
 
   --shells:
     help: '(Mrtrix3) specify one or more b-values to use during processing, as

@@ -68,7 +68,7 @@ bids_labelmerge = partial(
 bids_log = partial(
     bids,
     root=log_dir,
-    **inputs["T1w"].input_wildcards,
+    **inputs.subj_wildcards,
 )
 
 # Mrtrix3 citation (additional citations are included per rule as necessary):
@@ -78,7 +78,6 @@ bids_log = partial(
 # ------------ MRTRIX PREPROC BEGIN ----------#
 if dwi_dir:
     print(f"Searching {dwi_dir} for dwi and mask images...")
-
 
 rule nii2mif:
     input:
@@ -118,7 +117,7 @@ rule nii2mif:
     group:
         "dwiproc"
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "mrconvert -nthreads {threads} -fslgrad {input.bvec} {input.bval} {input.dwi} {output.dwi} &> {log} && "
         "mrconvert -nthreads {threads} {input.mask} {output.mask} >> {log} 2>&1"
@@ -136,6 +135,8 @@ rule dwi2response:
     params:
         shells=f"-shells {','.join(shells)}" if shells else "",
         lmax=f"-lmax {','.join(lmax)}" if lmax else "",
+        bzero_thresh=config.get("bzero_thresh"),
+        mrtrix_conf=temp("~/.mrtrix.conf")
     output:
         wm_rf=bids_response_out(
             desc="wm",
@@ -158,22 +159,39 @@ rule dwi2response:
     group:
         "dwiproc"
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
+        "echo 'BZeroThreshold: {params.bzero_thresh}' > {params.mrtrix_conf} && "
         "dwi2response dhollander {input.dwi} {output.wm_rf} {output.gm_rf} {output.csf_rf} -nthreads {threads} -mask {input.mask} {params.shells} {params.lmax} &> {log}"
+
+def get_subject_rf(wildcards):  
+    """Get appropriate subject response path"""
+    if not inputs.sessions:
+        return expand(
+            bids_response_out(
+                subject="{subject}",
+                desc="{tissue}",
+            ),
+            subject=inputs.subjects,
+            allow_missing=True,
+        )
+    else:
+        return expand(
+            bids_response_out(
+                subject="{subject}",
+                session="{session}",
+                desc="{tissue}",
+            ),
+            subject=inputs.subjects,
+            session=config.get("responsemean_ses", inputs.sessions),
+            allow_missing=True,
+        )
 
 
 rule responsemean:
     """Compute average response function"""
     input:
-        subject_rf=expand(
-            bids_response_out(
-                desc="{tissue}",
-            ),
-            zip,
-            **inputs["T1w"].input_zip_lists,
-            allow_missing=True,
-        ),
+        subject_rf=get_subject_rf
     output:
         avg_rf=bids_response_out(
             root=str(Path(mrtrix_dir) / "avg"),
@@ -188,7 +206,7 @@ rule responsemean:
     group:
         "dwiproc_group"
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "responsemean {input.subject_rf} {output.avg_rf} -nthreads {threads} &> {log}"
 
@@ -255,7 +273,7 @@ rule dwi2fod:
     group:
         "diffmodel"
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "dwi2fod -nthreads {threads} {params.shells} -mask {input.mask} msmt_csd {input.dwi} {input.wm_rf} {output.wm_fod} {input.gm_rf} {output.gm_fod} {input.csf_rf} {output.csf_fod} &> {log}"
 
@@ -299,7 +317,7 @@ rule mtnormalise:
     group:
         "diffmodel"
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "mtnormalise -nthreads {threads} -mask {input.mask} {input.wm_fod} {output.wm_fod} {input.gm_fod} {output.gm_fod} {input.csf_fod} {output.csf_fod} &> {log}"
 
@@ -309,6 +327,9 @@ rule dwinormalise:
     input:
         dwi=rules.nii2mif.output.dwi,
         mask=rules.nii2mif.output.mask,
+    params:
+        bzero_thresh=config.get("bzero_thresh"),
+        mrtrix_conf=temp("~/.mrtrix.conf")
     output:
         dwi=bids(
             root=mrtrix_dir,
@@ -324,10 +345,11 @@ rule dwinormalise:
     log:
         bids_log(suffix="dwinormalise.log"),
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     group:
         "dwiproc"
     shell:
+        "echo 'BZeroThreshold: {params.bzero_thresh}' > {params.mrtrix_conf} && "
         "dwinormalise individual -nthreads {threads} {input.dwi} {input.mask} {output.dwi} &> {log}"
 
 
@@ -350,7 +372,7 @@ rule dwi2tensor:
     group:
         "dwiproc"
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "dwi2tensor -nthreads {threads} -mask {input.mask} {input.dwi} {output.dti} &> {log} && "
         "tensor2metric -nthreads {threads} -mask {input.mask} {output.dti} -fa {output.fa} -ad {output.ad} -rd {output.rd} -adc {output.md} >> {log} 2>&1"
@@ -396,7 +418,7 @@ rule tckgen:
     log:
         bids_log(suffix="tckgen.log"),
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "mkdir -p {resources.tmp_dir} && "
         "tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} -select {params.sl} -exclude {input.convex_hull} -include {input.subcortical_seg} -mask {input.mask} -seed_image {input.mask} {input.fod} {resources.tmp_tck} &> {log} && "
@@ -421,7 +443,7 @@ rule tcksift2:
     log:
         bids_log(suffix="tcksift2.log"),
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "tcksift2 -nthreads {threads} -out_mu {output.mu} {input.tck} {input.fod} {output.weights} &> {log}"
 
@@ -564,7 +586,7 @@ rule tck2connectome:
     group:
         "tractography_update"
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "mkdir -p {resources.tmp_dir} && "
         "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {resources.tmp_sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {resources.tmp_node_weights} &> {log} && "
@@ -622,7 +644,7 @@ checkpoint connectome2tck:
     group:
         "tractography_update"
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "mkdir -p {resources.tmp_dir} {output.output_dir} && "
         "num_labels=$(cat {input.num_labels}) && "
@@ -801,7 +823,7 @@ rule filter_combine_tck:
     group:
         "tractography_update"
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "mkdir -p {resources.tmp_dir} && "
         "parallel --jobs {threads} -k tckedit -exclude {{1}} -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ {params.filtered_weights} :::+ {input.tck} :::+ {params.filtered_tck} || true && "
@@ -859,7 +881,7 @@ rule filtered_tck2connectome:
     group:
         "tractography_update"
     container:
-        config["singularity"]["mrtrix"]
+        config["singularity"]["scattr"]
     shell:
         "mkdir -p {resources.tmp_dir} && "
         "tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum -assignment_radial_search {params.radius} -tck_weights_in {input.weights} -out_assignments {resources.tmp_sl_assignment} -symmetric {input.tck} {input.subcortical_seg} {resources.tmp_node_weights} &> {log} && "

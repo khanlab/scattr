@@ -1,6 +1,8 @@
 # ---- begin snakebids boilerplate ----------------------------------------------
 
-from snakebids import bids, generate_inputs, get_wildcard_constraints
+from snakebids import (
+    bids, filter_list, generate_inputs, get_wildcard_constraints
+)
 
 
 configfile: "config/snakebids.yml"
@@ -45,6 +47,15 @@ if config.get("labelmerge_base_dir") or config.get("labelmerge_overlay_dir"):
     """
     )
 
+if len(inputs.sessions) > 1 and not config.get("responsemean_ses"):
+    print(
+        """
+    WARNING: Multiple sessions detected - average response function will be 
+    computed using all sessions (not recommended), unless specific session is 
+    provided (--responsemean_ses <session>).
+    """
+    )
+
 
 # Rules
 include: "rules/freesurfer.smk"
@@ -61,7 +72,7 @@ rule all:
             **subj_zip_list
         ),
         dti_files=expand(rules.dwi2tensor.output.dti, zip, **subj_zip_list),
-        qc_files=expand(rules.gather_qc.input, zip, **inputs.input_zip_lists),
+        qc_files=rules.gather_qc.input
     params:
         mrtrix_dir=expand(
             bids(

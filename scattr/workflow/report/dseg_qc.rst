@@ -1,0 +1,1 @@
+Discrete segmentation labels

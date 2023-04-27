@@ -26,7 +26,7 @@ bids_labelmerge = partial(
 bids_log = partial(
     bids,
     root=log_dir,
-    **inputs["T1w"].input_wildcards,
+    **inputs.subj_wildcards,
 )
 
 # References:
@@ -62,7 +62,11 @@ rule reg2native:
             / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
             / Path(config["zona_bb_subcortex"][config["Space"]]["T1w"])
         ),
-        target=inputs["T1w"].path,
+        target=lambda wildcards: expand(
+            inputs["T1w"].path,
+            zip,
+            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
+        )[0]
     params:
         out_dir=directory(str(Path(bids_anat()).parent)),
         out_prefix=bids_anat(
@@ -141,7 +145,7 @@ rule labelmerge:
             if not config.get("labelmerge_base_dir")
             else [],
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **subj_zip_list,
             allow_missing=True,
         ),
         fs_seg=expand(
@@ -149,7 +153,7 @@ rule labelmerge:
             if not config.get("labelmerge_overlay_dir")
             else [],
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **subj_zip_list,
             allow_missing=True,
         ),
         fs_tsv=rules.cp_fs_tsv.output.fs_tsv
@@ -194,7 +198,7 @@ rule labelmerge:
                 suffix="dseg.nii.gz",
             ),
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **subj_zip_list,
             allow_missing=True,
         ),
         tsv=expand(
@@ -204,7 +208,7 @@ rule labelmerge:
                 suffix="dseg.tsv",
             ),
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **subj_zip_list,
             allow_missing=True,
         ),
     threads: 4
