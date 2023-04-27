@@ -28,8 +28,12 @@ bids_log = partial(
     **inputs.subj_wildcards,
 )
 
-# Freesurfer references (with additional in rules as necessary)
-# B. Fischl, A. van der Kouwe, C. Destrieux, E. Halgren, F. Ségonne, D.H. Salat, E. Busa, L.J. Seidman, J. Goldstein, D. Kennedy, V. Caviness, N. Makris, B. Rosen, A.M. Dale. Automatically parcellating the human cerebral cortex. Cereb. Cortex, 14 (2004), pp. 11-22, 10.1093/cercor/bhg087
+"""Freesurfer references (with additional in rules as necessary)
+B. Fischl, A. van der Kouwe, C. Destrieux, E. Halgren, F. Ségonne, D.H. Salat, 
+E. Busa, L.J. Seidman, J. Goldstein, D. Kennedy, V. Caviness, N. Makris, 
+B. Rosen, A.M. Dale. Automatically parcellating the human cerebral cortex. 
+Cereb. Cortex, 14 (2004), pp. 11-22, 10.1093/cercor/bhg087
+"""
 
 
 rule cp_fs_tsv:
@@ -57,7 +61,11 @@ rule cp_fs_tsv:
 rule thalamic_segmentation:
     """Perform thalamus segmentation
 
-    Reference: J.E. Iglesias, R. Insausti, G. Lerma-Usabiaga, M. Bocchetta, K. Van Leemput, D.N. Greve, A. van der Kouwe, B. Fischl, C. Caballero-Gaudes, P.M. Paz-Alonso. A probabilistic atlas of the human thalamic nuclei combining ex vivo MRI and histology. NeuroImage, 183 (2018), pp. 314-326, 10.1016/j.neuroimage.2018.08.012
+    Reference: J.E. Iglesias, R. Insausti, G. Lerma-Usabiaga, M. Bocchetta, 
+    K. Van Leemput, D.N. Greve, A. van der Kouwe, B. Fischl, 
+    C. Caballero-Gaudes, P.M. Paz-Alonso. A probabilistic atlas of the 
+    human thalamic nuclei combining ex vivo MRI and histology. 
+    NeuroImage, 183 (2018), pp. 314-326, 10.1016/j.neuroimage.2018.08.012
 
     NOTE: Output file is defined by Freesurfer script
     """
@@ -82,11 +90,15 @@ rule thalamic_segmentation:
     container:
         config["singularity"]["freesurfer"]
     shell:
-        "FS_LICENSE={params.fs_license} && "
-        "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "export SUBJECTS_DIR={input.freesurfer_dir} && "
-        "mkdir -p {input.freesurfer_dir}/sub-{wildcards.subject}/scripts && "
-        "segmentThalamicNuclei.sh sub-{wildcards.subject} &> {log}"
+        """
+        FS_LICENSE={params.fs_license}
+        export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
+        export SUBJECTS_DIR={input.freesurfer_dir} 
+
+        mkdir -p {input.freesurfer_dir}/sub-{wildcards.subject}/scripts 
+
+        segmentThalamicNuclei.sh sub-{wildcards.subject} &> {log}
+        """
 
 
 rule mgz2nii:
@@ -129,11 +141,15 @@ rule mgz2nii:
     container:
         config["singularity"]["freesurfer"]
     shell:
-        "FS_LICENSE={params.fs_license} && "
-        "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "export SUBJECTS_DIR={params.freesurfer_dir} && "
-        "mri_convert {input.thal} {output.thal} &> {log} && "
-        "mri_convert {input.aparcaseg} {output.aparcaseg} >> {log} 2>&1 "
+        """
+        FS_LICENSE={params.fs_license} 
+        export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
+        export SUBJECTS_DIR={params.freesurfer_dir} 
+
+        mri_convert {input.thal} {output.thal} &> {log} 
+
+        mri_convert {input.aparcaseg} {output.aparcaseg} >> {log} 2>&1 
+        """
 
 
 rule fs_xfm_to_native:
@@ -145,7 +161,7 @@ rule fs_xfm_to_native:
             inputs["T1w"].path,
             zip,
             **filter_list(inputs["T1w"].input_zip_lists, wildcards)
-        )[0]
+        )[0],
     output:
         thal=bids_fs_out(
             space="T1w",
@@ -168,5 +184,11 @@ rule fs_xfm_to_native:
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.thal} -r {input.ref} -o {output.thal} &> {log} && "
-        "antsApplyTransforms -d 3 -n MultiLabel -i {input.aparcaseg} -r {input.ref} -o {output.aparcaseg} >> {log} 2>&1"
+        """
+        antsApplyTransforms -d 3 -n MultiLabel \\
+            -i {input.thal} -r {input.ref} -o {output.thal} &> {log} 
+
+        antsApplyTransforms -d 3 -n MultiLabel \\
+            -i {input.aparcaseg} -r {input.ref} \\
+            -o {output.aparcaseg} >> {log} 2>&1"
+        """

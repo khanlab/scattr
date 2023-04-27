@@ -29,10 +29,16 @@ bids_log = partial(
     **inputs.subj_wildcards,
 )
 
-# References:
-# J.C. Lau, Y. Xiao, R.A.M. Haast, G. Gilmore, K. Uludağ, K.W. MacDougall, R.S. Menon, A.G. Parrent, T.M. Peters, A.R. Khan. Direct visualization and characterization of the human zona incerta and surrounding structures. Hum. Brain Mapp., 41 (2020), pp. 4500-4517, 10.1002/hbm.25137
+""" References:
+J.C. Lau, Y. Xiao, R.A.M. Haast, G. Gilmore, K. Uludağ, K.W. MacDougall, 
+R.S. Menon, A.G. Parrent, T.M. Peters, A.R. Khan. Direct visualization and 
+characterization of the human zona incerta and surrounding structures. 
+Hum. Brain Mapp., 41 (2020), pp. 4500-4517, 10.1002/hbm.25137
 
-# Y. Xiao, J.C. Lau, T. Anderson, J. DeKraker, D.L. Collins, T. Peters, A.R. Khan. An accurate registration of the BigBrain dataset with the MNI PD25 and ICBM152 atlases. Sci. Data, 6 (2019), p. 210, 10.1038/s41597-019-0217-0
+Y. Xiao, J.C. Lau, T. Anderson, J. DeKraker, D.L. Collins, T. Peters, 
+A.R. Khan. An accurate registration of the BigBrain dataset with the MNI PD25 
+and ICBM152 atlases. Sci. Data, 6 (2019), p. 210, 10.1038/s41597-019-0217-0
+"""
 
 
 rule cp_zona_tsv:
@@ -55,7 +61,10 @@ rule cp_zona_tsv:
 
 
 rule reg2native:
-    """Create transforms from chosen template space to subject native space via ANTsRegistrationSyNQuick"""
+    """
+    Create transforms from chosen template space to subject native space via 
+    ANTsRegistrationSyNQuick
+    """
     input:
         template=str(
             Path(workflow.basedir).parent
@@ -66,7 +75,7 @@ rule reg2native:
             inputs["T1w"].path,
             zip,
             **filter_list(inputs["T1w"].input_zip_lists, wildcards)
-        )[0]
+        )[0],
     params:
         out_dir=directory(str(Path(bids_anat()).parent)),
         out_prefix=bids_anat(
@@ -96,11 +105,15 @@ rule reg2native:
     container:
         config["singularity"]["neuroglia-core"]
     shell:
-        "mkdir -p {params.out_dir} && "
-        "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "antsRegistrationSyNQuick.sh -n {threads} -d 3 "
-        "-f {input.target} -m {input.template} "
-        "-o {params.out_prefix} &> {log}"
+        """
+        export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads}
+
+        mkdir -p {params.out_dir}
+
+        antsRegistrationSyNQuick.sh -n {threads} -d 3 \\ 
+            -f {input.target} -m {input.template} \\
+            -o {params.out_prefix} &> {log}
+        """
 
 
 rule warp2native:
@@ -131,11 +144,14 @@ rule warp2native:
     container:
         config["singularity"]["ants"]
     shell:
-        "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "antsApplyTransforms -v -d 3 -n MultiLabel "
-        "-i {input.dseg} -r {input.target} "
-        "-t {input.warp} -t {input.affine} "
-        "-o {output.nii} &> {log}"
+        """
+        export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
+
+        antsApplyTransforms -v -d 3 -n MultiLabel \\
+            -i {input.dseg} -r {input.target} \\
+            -t {input.warp} -t {input.affine} \\
+            -o {output.nii} &> {log}
+        """
 
 
 rule labelmerge:
@@ -172,23 +188,17 @@ rule labelmerge:
         base_drops=f"--base_drops {config['labelmerge_base_drops']}",
         base_desc=f"--base_desc {config['labelmerge_base_desc']}",
         base_exceptions=(
-            f"--base_exceptions {config.get('labelmerge_base_exceptions')}"
-            if config.get("labelmerge_base_exceptions")
-            else ""
+            f"--base_exceptions {config.get('labelmerge_base_exceptions', '')}"
         ),
         overlay_dir=(
-            f"--overlay_bids_dir {config.get('labelmerge_overlay_dir') if config.get('labelmerge_overlay_dir') else rules.thalamic_segmentation.input.freesurfer_dir}"
+            f"--overlay_bids_dir {config.get('labelmerge_overlay_dir', rules.thalamic_segmentation.input.freesurfer_dir)}"
         ),
         overlay_desc=f"--overlay_desc {config['labelmerge_overlay_desc']}",
         overlay_drops=(
-            f"--overlay_drops {config.get('labelmerge_overlay_drops')}"
-            if config.get("labelmerge_overlay_drops")
-            else ""
+            f"--overlay_drops {config.get('labelmerge_overlay_drops', '')}"
         ),
         overlay_exceptions=(
-            f"--overlay_exceptions {config.get('labelmerge_overlay_exceptions')}"
-            if config.get("labelmerge_overlay_exceptions")
-            else ""
+            f"--overlay_exceptions {config.get('labelmerge_overlay_exceptions', '')}"
         ),
     output:
         seg=expand(
@@ -220,7 +230,14 @@ rule labelmerge:
     container:
         config["singularity"]["labelmerge"]
     shell:
-        "labelmerge {params.labelmerge_base_dir} {params.labelmerge_out_dir} participant {params.base_desc} {params.base_drops} {params.base_exceptions} {params.overlay_dir} {params.overlay_desc} {params.overlay_drops} {params.overlay_exceptions} --cores {threads} --force-output"
+        """
+        labelmerge {params.labelmerge_base_dir} {params.labelmerge_out_dir} \\
+            participant \\ 
+            {params.base_desc} {params.base_drops} {params.base_exceptions} \\
+            {params.overlay_dir} {params.overlay_desc} \\ 
+            {params.overlay_drops} {params.overlay_exceptions} \\
+            --cores {threads} --force-output
+        """
 
 
 rule get_num_nodes:
