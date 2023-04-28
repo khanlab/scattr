@@ -107,9 +107,9 @@ rule dwi2tensor:
     shell:
         """
         dwi2tensor -nthreads {threads} -mask {input.mask} \\
-            {input.dwi} {output.dti} &> {log}
+        {input.dwi} {output.dti} &> {log}
 
         tensor2metric -nthreads {threads} -mask {input.mask} {output.dti} \\
-            -fa {output.fa} -ad {output.ad} -rd {output.rd} \\
-            -adc {output.md} >> {log} 2>&1
+        -fa {output.fa} -ad {output.ad} -rd {output.rd} \\
+        -adc {output.md} >> {log} 2>&1
         """

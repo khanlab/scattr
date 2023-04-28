@@ -58,6 +58,7 @@ rule cp_fs_tsv:
         "cp -v {input.fs_tsv} {output.fs_tsv}"
 
 
+# Update wildcards here to include both subject wildcards
 rule thalamic_segmentation:
     """Perform thalamus segmentation
 
@@ -73,6 +74,7 @@ rule thalamic_segmentation:
         freesurfer_dir=freesurfer_dir,
     params:
         fs_license=fs_license,
+        subj_dir=str(Path(bids(**inputs.subj_wildcards)).parent),
     output:
         thal_seg=str(
             Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
@@ -95,9 +97,9 @@ rule thalamic_segmentation:
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
         export SUBJECTS_DIR={input.freesurfer_dir} 
 
-        mkdir -p {input.freesurfer_dir}/sub-{wildcards.subject}/scripts 
+        mkdir -p {input.freesurfer_dir}/{params.subj_dir}/scripts 
 
-        segmentThalamicNuclei.sh sub-{wildcards.subject} &> {log}
+        segmentThalamicNuclei.sh {params.subj_dir} &> {log}
         """
 
 
@@ -190,5 +192,5 @@ rule fs_xfm_to_native:
 
         antsApplyTransforms -d 3 -n MultiLabel \\
             -i {input.aparcaseg} -r {input.ref} \\
-            -o {output.aparcaseg} >> {log} 2>&1"
+            -o {output.aparcaseg} >> {log} 2>&1
         """

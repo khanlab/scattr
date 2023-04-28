@@ -174,22 +174,22 @@ rule filter_combine_tck:
         mkdir -p {resources.tmp_dir}
 
         parallel --jobs {threads} -k tckedit -exclude {{1}} \\
-            -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} \\
-            {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ \\
-            {params.filtered_weights} :::+ {input.tck} :::+ \\
-            {params.filtered_tck} || true
+        -tck_weights_in {{2}} -tck_weights_out {{3}} {{4}} \\
+        {{5}} ::: {input.filter_mask} :::+ {input.weights} :::+ \\
+        {params.filtered_weights} :::+ {input.tck} :::+ \\
+        {params.filtered_tck} || true
 
         tckedit {params.filtered_tck_exists} \\
-            {resources.tmp_combined_tck} &> {log}
+        {resources.tmp_combined_tck} &> {log}
 
         cat {params.filtered_weights_exists} >> \\
-            {resources.tmp_combined_weights}
+        {resources.tmp_combined_weights}
 
         rsync -v {resources.tmp_combined_tck} \\
-            {output.combined_tck} >> {log} 2>&1
+        {output.combined_tck} >> {log} 2>&1
 
         rsync -v {resources.tmp_combined_weights} \\
-            {output.combined_weights} >> {log} 2>&1
+        {output.combined_weights} >> {log} 2>&1
 
         rm {params.filtered_tck_exists} {params.filtered_weights_exists}
         """
@@ -247,15 +247,15 @@ rule filtered_tck2connectome:
         """mkdir -p {resources.tmp_dir}
 
         tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum \\
-            -assignment_radial_search {params.radius} \\
-            -tck_weights_in {input.weights} \\
-            -out_assignments {resources.tmp_sl_assignment} \\
-            -symmetric {input.tck} {input.subcortical_seg} \\
-            {resources.tmp_node_weights} &> {log}
+        -assignment_radial_search {params.radius} \\
+        -tck_weights_in {input.weights} \\
+        -out_assignments {resources.tmp_sl_assignment} \\
+        -symmetric {input.tck} {input.subcortical_seg} \\
+        {resources.tmp_node_weights} &> {log}
 
         rsync {resources.tmp_sl_assignment} \\
-            {output.sl_assignment} >> {log} 2>&1
+        {output.sl_assignment} >> {log} 2>&1
 
         rsync {resources.tmp_node_weights} \\
-            {output.node_weights} >> {log} 2>&1
+        {output.node_weights} >> {log} 2>&1
         """

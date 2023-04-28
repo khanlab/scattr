@@ -77,14 +77,10 @@ rule all:
         dti_files=expand(rules.dwi2tensor.output.dti, zip, **subj_zip_list),
         qc_files=rules.gather_qc.input,
     params:
-        mrtrix_dir=expand(
-            bids(
-                root=str(Path(config["output_dir"]) / "mrtrix"),
-                include_subject_dir=False,
-                include_session_dir=False,
-            ),
-            zip,
-            **subj_zip_list
-        ),
-    shell:  # Clean up intermediate files that left behind
-        "rm -r {params.mrtrix_dir}/exclude_mask {params.mrtrix_dir}/roi_masks {params.mrtrix_dir}/unfiltered"
+        mrtrix_dir=mrtrix_dir,
+    shell:  # Clean up intermediate files that are left behind
+        """
+        rm -r {params.mrtrix_dir}/**/exclude_mask \\
+        {params.mrtrix_dir}/**/roi_masks \\
+        {params.mrtrix_dir}/**/unfiltered
+        """

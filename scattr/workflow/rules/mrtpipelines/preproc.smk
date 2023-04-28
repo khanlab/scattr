@@ -44,7 +44,7 @@ rule nii2mif:
     shell:
         """
         mrconvert -nthreads {threads} -fslgrad {input.bvec} {input.bval} \\
-            {input.dwi} {output.dwi} &> {log} 
+        {input.dwi} {output.dwi} &> {log} 
 
         mrconvert -nthreads {threads} {input.mask} {output.mask} >> {log} 2>&1
         """
@@ -94,9 +94,9 @@ rule dwi2response:
         echo 'BZeroThreshold: {params.bzero_thresh}' > {params.mrtrix_conf}
 
         dwi2response dhollander {input.dwi} {output.wm_rf} \\
-            {output.gm_rf} {output.csf_rf} \\
-            -nthreads {threads} -mask {input.mask} \\
-            {params.shells} {params.lmax} &> {log}
+        {output.gm_rf} {output.csf_rf} \\
+        -nthreads {threads} -mask {input.mask} \\
+        {params.shells} {params.lmax} &> {log}
         """
 
 
@@ -146,7 +146,7 @@ rule responsemean:
     shell:
         """
         responsemean {input.subject_rf} {output.avg_rf} \\
-            -nthreads {threads} &> {log}
+        -nthreads {threads} &> {log}
         """
 
 
@@ -220,9 +220,9 @@ rule dwi2fod:
     shell:
         """
         dwi2fod -nthreads {threads} {params.shells} -mask {input.mask} \\
-            msmt_csd {input.dwi} {input.wm_rf} {output.wm_fod} \\
-            {input.gm_rf} {output.gm_fod} \\
-            {input.csf_rf} {output.csf_fod} &> {log}
+        msmt_csd {input.dwi} {input.wm_rf} {output.wm_fod} \\
+        {input.gm_rf} {output.gm_fod} \\
+        {input.csf_rf} {output.csf_fod} &> {log}
         """
 
 
@@ -275,9 +275,9 @@ rule mtnormalise:
     shell:
         """
         mtnormalise -nthreads {threads} -mask {input.mask} \\
-            {input.wm_fod} {output.wm_fod} \\
-            {input.gm_fod} {output.gm_fod} \\
-            {input.csf_fod} {output.csf_fod} &> {log}
+        {input.wm_fod} {output.wm_fod} \\
+        {input.gm_fod} {output.gm_fod} \\
+        {input.csf_fod} {output.csf_fod} &> {log}
         """
 
 
@@ -312,5 +312,5 @@ rule dwinormalise:
         echo 'BZeroThreshold: {params.bzero_thresh}' > {params.mrtrix_conf} 
 
         dwinormalise individual -nthreads {threads} \\
-            {input.dwi} {input.mask} {output.dwi} &> {log}
+        {input.dwi} {input.mask} {output.dwi} &> {log}
         """

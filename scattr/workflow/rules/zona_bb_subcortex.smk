@@ -106,13 +106,14 @@ rule reg2native:
         config["singularity"]["scattr"]
     shell:
         """
+        echo {input.target}        
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads}
 
         mkdir -p {params.out_dir}
 
-        antsRegistrationSyNQuick.sh -n {threads} -d 3 \\ 
-            -f {input.target} -m {input.template} \\
-            -o {params.out_prefix} &> {log}
+        antsRegistrationSyNQuick.sh -n {threads} -d 3 \\
+        -f {input.target} -m {input.template} \\
+        -o {params.out_prefix} &> {log}
         """
 
 
@@ -148,9 +149,9 @@ rule warp2native:
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
 
         antsApplyTransforms -v -d 3 -n MultiLabel \\
-            -i {input.dseg} -r {input.target} \\
-            -t {input.warp} -t {input.affine} \\
-            -o {output.nii} &> {log}
+        -i {input.dseg} -r {input.target} \\
+        -t {input.warp} -t {input.affine} \\
+        -o {output.nii} &> {log}
         """
 
 
@@ -188,17 +189,23 @@ rule labelmerge:
         base_drops=f"--base_drops {config['labelmerge_base_drops']}",
         base_desc=f"--base_desc {config['labelmerge_base_desc']}",
         base_exceptions=(
-            f"--base_exceptions {config.get('labelmerge_base_exceptions', '')}"
+            f"--base_exceptions {config.get('labelmerge_base_exceptions')}"
+            if config.get("labelmerge_base_exceptions")
+            else ""
         ),
         overlay_dir=(
-            f"--overlay_bids_dir {config.get('labelmerge_overlay_dir', rules.thalamic_segmentation.input.freesurfer_dir)}"
+            f"--overlay_bids_dir {config.get('labelmerge_overlay_dir') if config.get('labelmerge_overlay_dir') else rules.thalamic_segmentation.input.freesurfer_dir}"
         ),
         overlay_desc=f"--overlay_desc {config['labelmerge_overlay_desc']}",
         overlay_drops=(
-            f"--overlay_drops {config.get('labelmerge_overlay_drops', '')}"
+            f"--overlay_drops {config.get('labelmerge_overlay_drops')}"
+            if config.get("labelmerge_overlay_drops")
+            else ""
         ),
         overlay_exceptions=(
-            f"--overlay_exceptions {config.get('labelmerge_overlay_exceptions', '')}"
+            f"--overlay_exceptions {config.get('labelmerge_overlay_exceptions')}"
+            if config.get("labelmerge_overlay_exceptions")
+            else ""
         ),
     output:
         seg=expand(
@@ -232,9 +239,9 @@ rule labelmerge:
     shell:
         """
         labelmerge {params.labelmerge_base_dir} {params.labelmerge_out_dir} \\
-            participant \\ 
+            participant \\
             {params.base_desc} {params.base_drops} {params.base_exceptions} \\
-            {params.overlay_dir} {params.overlay_desc} \\ 
+            {params.overlay_dir} {params.overlay_desc} \\
             {params.overlay_drops} {params.overlay_exceptions} \\
             --cores {threads} --force-output
         """

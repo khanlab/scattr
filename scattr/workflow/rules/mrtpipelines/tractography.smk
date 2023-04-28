@@ -229,14 +229,14 @@ rule tck2connectome:
         mkdir -p {resources.tmp_dir}
 
         tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum \\
-            -assignment_radial_search {params.radius} \\
-            -tck_weights_in {input.weights} \\
-            -out_assignments {resources.tmp_sl_assignment} \\
-            -symmetric {input.tck} {input.subcortical_seg} \\
-            {resources.tmp_node_weights} &> {log}
+        -assignment_radial_search {params.radius} \\
+        -tck_weights_in {input.weights} \\
+        -out_assignments {resources.tmp_sl_assignment} \\
+        -symmetric {input.tck} {input.subcortical_seg} \\
+        {resources.tmp_node_weights} &> {log}
 
         rsync {resources.tmp_sl_assignment} \\
-            {output.sl_assignment} >> {log} 2>&1 
+        {output.sl_assignment} >> {log} 2>&1 
 
         rsync {resources.tmp_node_weights} {output.node_weights} >> {log} 2>&1
         """
@@ -300,14 +300,14 @@ checkpoint connectome2tck:
         num_labels=$(cat {input.num_labels})
 
         connectome2tck -nthreads {threads} \\
-            -nodes `seq -s, 1 $((num_labels))` -exclusive \\ 
-            -files per_edge -tck_weights_in {input.node_weights} \\
-            -prefix_tck_weights_out {resources.edge_weight_prefix} \\
-            {input.tck} {input.sl_assignment} \\
-            {resources.edge_tck_prefix} &> {log}
+        -nodes `seq -s, 1 $((num_labels))` \\
+        -exclusive -files per_edge -tck_weights_in {input.node_weights} \\
+        -prefix_tck_weights_out {resources.edge_weight_prefix} \\
+        {input.tck} {input.sl_assignment} \\
+        {resources.edge_tck_prefix} &> {log}
 
         rsync {resources.edge_weight_prefix}*.csv \\
-            {output.output_dir}/ >> {log} 2>&1
+        {output.output_dir}/ >> {log} 2>&1
         rsync {resources.edge_tck_prefix}*.tck \\
-            {output.output_dir}/ >> {log} 2>&1
+        {output.output_dir}/ >> {log} 2>&1
         """
