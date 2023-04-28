@@ -62,14 +62,14 @@ RUN cd /opt/scattr \
 
 # Stage: runtime
 FROM requirements AS runtime
-COPY --from=mrtrix /opt/mrtrix3 /opt/mrtrix3
-COPY --from=freesurfer /usr/local/freesurfer /usr/local/freesurfer
-COPY --from=ants /opt/ants/bin/antsApplyTransforms /opt/ants/bin/antsRegistration /opt/ants/bin/antsRegistrationSyNQuick.sh /opt/ants/bin/
+COPY --from=mrtrix /opt/mrtrix3 /opt/mrtrix3/
+COPY --from=freesurfer /usr/local/freesurfer /usr/local/freesurfer/
+COPY --from=ants /opt/ants /opt/ants
 COPY --from=build /opt/scattr/dist/*.whl /opt/scattr/
 RUN WHEEL=`ls /opt/scattr | grep whl` \
     && pip install /opt/scattr/$WHEEL \
     && rm -r /opt/scattr \
-    && apt-get purge -y -q curl g++ unzip wget \ 
+    && apt-get purge -y -q curl unzip wget \ 
     && apt-get --purge -y -qq autoremove
 # Setup environments
 ENV OS=Linux \
