@@ -132,7 +132,6 @@ parse_args:
           set this to a specific session. If not provided, the average response 
           function will be computed with all possible sessions.'
     nargs: "?"
-    default: False
 
   --fs_license:
     help: 'Path to Freesurfer license file. If not provided, workflow will check

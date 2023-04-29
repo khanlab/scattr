@@ -119,7 +119,11 @@ def get_subject_rf(wildcards):
                 desc="{tissue}",
             ),
             subject=inputs.subjects,
-            session=config.get("responsemean_ses", inputs.sessions),
+            session=(
+                config.get("responsemean_ses")
+                if config.get("responsemean_ses")
+                else inputs.sessions
+            ),
             allow_missing=True,
         )
 
