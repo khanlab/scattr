@@ -280,6 +280,6 @@ freesurfer:
 # Containers
 # NOTE: Update from latest to use specific tags
 singularity:
-  scattr: "docker://khanlab/scattr:v0.1.2"
+  scattr: "docker://khanlab/scattr:v0.2.0"
 
 fs_license: /path/to/fs/license
