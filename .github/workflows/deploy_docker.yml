@@ -1,6 +1,7 @@
 ---
 name: Deploy docker container
 on:
+  workflow_dispatch:
   push:
     tags: [v*]
 jobs:
