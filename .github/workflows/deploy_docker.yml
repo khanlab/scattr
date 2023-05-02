@@ -11,6 +11,15 @@ jobs:
       packages: write
       contents: read
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          remove-android: "true" # android-sdk
+          remove-codeql: "true" # code scanning
+          remove-dotnet: "true" # .net sdk
+          remove-haskell: "true" # haskell
+          remove-docker-images: "true" # rm existing cached images
+          overprovision-lvm: "true" # let "overuse" of set disk space
       - name: Checkout repo
         uses: actions/checkout@master
       - name: Get metadata
