@@ -19,7 +19,6 @@ inputs = generate_inputs(
     derivatives=config["derivatives"],
     participant_label=config["participant_label"],
     exclude_participant_label=config["exclude_participant_label"],
-    use_bids_inputs=True,
 )
 
 
@@ -37,7 +36,7 @@ from functools import partial
 # Relevant wildcards (upgrade for filtering)
 subj_zip_list = {
     k: v
-    for k, v in inputs["T1w"].input_zip_lists.items()
+    for k, v in inputs["T1w"].zip_lists.items()
     if k in ["subject", "session"]
 }
 
@@ -69,12 +68,15 @@ include: "rules/qc.smk"
 
 rule all:
     input:
-        tck_files=expand(
-            rules.filtered_tck2connectome.output.sl_assignment,
-            zip,
-            **subj_zip_list
+        # tck_files=expand(
+        # rules.filtered_tck2connectome.output.sl_assignment,
+        # zip,
+        # **subj_zip_list
+        # ),
+        tck_files=inputs["T1w"].expand(
+            rules.filtered_tck2connectome.output.sl_assignment
         ),
-        dti_files=expand(rules.dwi2tensor.output.dti, zip, **subj_zip_list),
+        dti_files=inputs["T1w"].expand(rules.dwi2tensor.output.dti),
         qc_files=rules.gather_qc.input,
     params:
         mrtrix_dir=mrtrix_dir,

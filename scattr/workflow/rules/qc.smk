@@ -107,23 +107,7 @@ rule registration_qc:
 
 rule gather_qc:
     input:
-        dseg_png=expand(
-            rules.segment_qc.output.qc_png,
-            zip,
-            **inputs["T1w"].input_zip_lists
-        ),
-        dseg_html=expand(
-            rules.segment_qc.output.qc_html,
-            zip,
-            **inputs["T1w"].input_zip_lists
-        ),
-        reg_svg=expand(
-            rules.registration_qc.output.qc_svg,
-            zip,
-            **inputs["T1w"].input_zip_lists
-        ),
-        reg_html=expand(
-            rules.registration_qc.output.qc_html,
-            zip,
-            **inputs["T1w"].input_zip_lists
-        ),
+        dseg_png=inputs["T1w"].expand(rules.segment_qc.output.qc_png),
+        dseg_html=inputs["T1w"].expand(rules.segment_qc.output.qc_html),
+        reg_svg=inputs["T1w"].expand(rules.registration_qc.output.qc_svg),
+        reg_html=inputs["T1w"].expand(rules.registration_qc.output.qc_html),
