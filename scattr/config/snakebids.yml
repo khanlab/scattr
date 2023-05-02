@@ -25,7 +25,7 @@ pybids_inputs:
       suffix: "T1w"
       extension: ".nii.gz"
       datatype: "anat"
-      desc: "brain" # Reequire a skull-stripped brain
+      desc: "brain" # Require a skull-stripped brain
       # part: "mag"
     wildcards:
       - subject
@@ -281,5 +281,5 @@ freesurfer:
 # NOTE: Update from latest to use specific tags
 singularity:
   scattr: "docker://khanlab/scattr:v0.1.2"
-  
+
 fs_license: /path/to/fs/license

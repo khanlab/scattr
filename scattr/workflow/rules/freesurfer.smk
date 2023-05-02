@@ -58,7 +58,6 @@ rule cp_fs_tsv:
         "cp -v {input.fs_tsv} {output.fs_tsv}"
 
 
-# Update wildcards here to include both subject wildcards
 rule thalamic_segmentation:
     """Perform thalamus segmentation
 

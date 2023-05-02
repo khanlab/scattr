@@ -26,7 +26,6 @@ rule segment_qc:
             else config.get("labelmerge_base_desc"),
             suffix="dseg.nii.gz",
         ),
-        # HOW TO PASS APPROPRIATE T1W?
         t1w_image=lambda wildcards: expand(
             inputs["T1w"].path,
             zip,
