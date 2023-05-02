@@ -1,10 +1,10 @@
 # Output Files
 
 After running the workflow, the `/path/to/output/dir` folder will contain a 
-`logs` folder for troubleshooting, as well as additional folders associated with
-the tools that were used to generate files (e.g. `freesurfer`, `labelmerge`),
-but for most purposes, all the primary outputs of interest will be in the 
-`mrtrix` directory with the following structure:
+hidden `.logs` folder for troubleshooting, as well as additional folders 
+associated with the tools that were used to generate files (e.g. `freesurfer`, 
+`labelmerge`), but for most purposes, all the primary outputs of interest will 
+be in the `mrtrix` directory with the following structure:
 
 ```
 mrtrix/
@@ -113,7 +113,7 @@ The top-level `/path/to/output/dir` contains additional files / folders:
 /path/to/output/dir
 ├── ...
 ├── config
-├── logs
+├── .logs
 ├── .snakebids
 └── .snakemake
 ```
@@ -121,9 +121,9 @@ The top-level `/path/to/output/dir` contains additional files / folders:
 The `config` folder, along with the hidden `.snakebids` and `.snakemake` folders 
 contain a record of the code and parameters used, and paths to the inputs.
 
-Workflow steps that write logs to file are stored in the `logs` subfolder, with
-the file names based on the tools used (e.g. `mrtrix`) and rule wildcards 
-(e.g. `subject`). 
+Workflow steps that write logs to file are stored in the hidden `.logs` 
+subfolder, with the file names based on the tools used (e.g. `mrtrix`) and rule 
+wildcards (e.g. `subject`). 
 
 If the app is run in workflow mode (`--workflow-mode` / `-W`), which enables 
 direct use of the Snakemake CLI to run scattr, output folders (e.g. `work`) will

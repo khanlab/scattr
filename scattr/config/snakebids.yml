@@ -25,7 +25,7 @@ pybids_inputs:
       suffix: "T1w"
       extension: ".nii.gz"
       datatype: "anat"
-      desc: "brain" # Reequire a skull-stripped brain
+      desc: "brain" # Require a skull-stripped brain
       # part: "mag"
     wildcards:
       - subject
@@ -34,7 +34,6 @@ pybids_inputs:
       # - part
       - reconstruction
       - run
-
   dwi:
     filters:
       suffix: "dwi"
@@ -127,6 +126,13 @@ parse_args:
     nargs: "?"
     type: Path
 
+  --responsemean_ses:
+    help: 'The session used to compute the average response function. If 
+          multiple are available in the dataset, it is HIGHLY RECOMMENDED to 
+          set this to a specific session. If not provided, the average response 
+          function will be computed with all possible sessions.'
+    nargs: "?"
+
   --fs_license:
     help: 'Path to Freesurfer license file. If not provided, workflow will check
           FS_LICENSE environment variable for one.'
@@ -199,6 +205,12 @@ parse_args:
     action: store_true
     default: False
 
+  --bzero_thresh:
+    help: 'Set the threshold for a shell to be considered b=0. By default, this
+          value is set to 10'
+    nargs: "?"
+    default: 10
+
   --shells:
     help: '(Mrtrix3) specify one or more b-values to use during processing, as
           a space-separated list of the desired approximate b-values (b-values
@@ -256,7 +268,7 @@ zona_bb_subcortex:
   MNI152NLin6Asym:
     dir: 'resources/zona_bb_subcortex/MNI152NLin6Asym/'
     T1w: 'tpl-MNI152NLin6Asym_res-04_desc-brain_T1w.nii.gz'
-    seg:  'sub-SNSX32NLin2020Asym_space-MNI152NLin6Asym_desc-ZonaBB_dseg.nii.gz'
+    seg: 'sub-SNSX32NLin2020Asym_space-MNI152NLin6Asym_desc-ZonaBB_dseg.nii.gz'
   MNI152NLin2009bAsym:
     dir: 'resources/zona_bb_subcortex/MNI152NLin2009bAsym/'
     seg: 'sub-SNSX32NLin2020Asym_space-MNI152NLin2009bAsym_desc-ZonaBB_dseg.nii.gz'
@@ -268,11 +280,6 @@ freesurfer:
 # Containers
 # NOTE: Update from latest to use specific tags
 singularity:
-  freesurfer: "docker://pwighton/freesurfer:7.2.0"
-  neuroglia-core: "docker://khanlab/neuroglia-core:latest"
-  ants: "docker://kaczmarj/ants:2.3.4"
-  mrtrix: "docker://brainlife/mrtrix3:3.0.3"
-  labelmerge: "docker://khanlab/labelmerge:v0.4.3"
   scattr: "docker://khanlab/scattr:v0.1.2"
 
 fs_license: /path/to/fs/license

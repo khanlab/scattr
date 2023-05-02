@@ -26,19 +26,32 @@ rule segment_qc:
             else config.get("labelmerge_base_desc"),
             suffix="dseg.nii.gz",
         ),
-        t1w_image=inputs["T1w"].path,
+        t1w_image=lambda wildcards: expand(
+            inputs["T1w"].path,
+            zip,
+            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
+        )[0],
     output:
-        qc_png=bids_qc(
-            desc="labelmerge"
-            if not config.get("skip_labelmerge")
-            else config.get("labelmerge_base_desc"),
-            suffix="dsegQC.png",
+        qc_png=report(
+            bids_qc(
+                desc="labelmerge"
+                if not config.get("skip_labelmerge")
+                else config.get("labelmerge_base_desc"),
+                suffix="dsegQC.png",
+            ),
+            caption="../report/dseg_qc.rst",
+            category="Label Segmentation QC",
+            subcategory="Static",
         ),
-        qc_html=bids_qc(
-            desc="labelmerge"
-            if not config.get("skip_labelmerge")
-            else config.get("labelmerge_base_desc"),
-            suffix="dsegQC.html",
+        qc_html=report(
+            bids_qc(
+                desc="labelmerge"
+                if not config.get("skip_labelmerge")
+                else config.get("labelmerge_base_desc"),
+                suffix="dsegQC.html",
+            ),
+            category="Label Segmentation QC",
+            subcategory="Interactive",
         ),
     threads: 4
     resources:
@@ -55,17 +68,30 @@ rule segment_qc:
 rule registration_qc:
     input:
         moving_nii=rules.reg2native.output.t1w_nativespace,
-        fixed_nii=inputs["T1w"].path,
+        fixed_nii=lambda wildcards: expand(
+            inputs["T1w"].path,
+            zip,
+            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
+        )[0],
     params:
         cuts=7,
     output:
-        qc_svg=bids_qc(
-            desc=f"{config['Space']}toNative",
-            suffix="regQC.svg",
+        qc_svg=report(
+            bids_qc(
+                desc=f"{config['Space']}toNative",
+                suffix="regQC.svg",
+            ),
+            caption="../report/reg_qc.rst",
+            category="Template to Subject Registration",
+            subcategory="Static GIF",
         ),
-        qc_html=bids_qc(
-            desc=f"{config['Space']}toNative",
-            suffix="regQC.html",
+        qc_html=report(
+            bids_qc(
+                desc=f"{config['Space']}toNative",
+                suffix="regQC.html",
+            ),
+            category="Template to Subject Registration",
+            subcategory="Interactive",
         ),
     threads: 4
     resources:
@@ -84,20 +110,20 @@ rule gather_qc:
         dseg_png=expand(
             rules.segment_qc.output.qc_png,
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **inputs["T1w"].input_zip_lists
         ),
         dseg_html=expand(
             rules.segment_qc.output.qc_html,
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **inputs["T1w"].input_zip_lists
         ),
-        reg_png=expand(
+        reg_svg=expand(
             rules.registration_qc.output.qc_svg,
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **inputs["T1w"].input_zip_lists
         ),
         reg_html=expand(
             rules.registration_qc.output.qc_html,
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **inputs["T1w"].input_zip_lists
         ),

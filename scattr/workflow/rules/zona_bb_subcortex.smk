@@ -1,7 +1,7 @@
 # Directories
 zona_dir = str(Path(config["output_dir"]) / "zona_bb_subcortex")
 labelmerge_dir = str(Path(config["output_dir"]) / "labelmerge")
-log_dir = str(Path(config["output_dir"]) / "logs" / "zona_bb_subcortex")
+log_dir = str(Path(config["output_dir"]) / ".logs" / "zona_bb_subcortex")
 
 # Make directory if it doesn't exist
 Path(zona_dir).mkdir(parents=True, exist_ok=True)
@@ -26,13 +26,19 @@ bids_labelmerge = partial(
 bids_log = partial(
     bids,
     root=log_dir,
-    **inputs["T1w"].input_wildcards,
+    **inputs.subj_wildcards,
 )
 
-# References:
-# J.C. Lau, Y. Xiao, R.A.M. Haast, G. Gilmore, K. Uludağ, K.W. MacDougall, R.S. Menon, A.G. Parrent, T.M. Peters, A.R. Khan. Direct visualization and characterization of the human zona incerta and surrounding structures. Hum. Brain Mapp., 41 (2020), pp. 4500-4517, 10.1002/hbm.25137
+""" References:
+J.C. Lau, Y. Xiao, R.A.M. Haast, G. Gilmore, K. Uludağ, K.W. MacDougall, 
+R.S. Menon, A.G. Parrent, T.M. Peters, A.R. Khan. Direct visualization and 
+characterization of the human zona incerta and surrounding structures. 
+Hum. Brain Mapp., 41 (2020), pp. 4500-4517, 10.1002/hbm.25137
 
-# Y. Xiao, J.C. Lau, T. Anderson, J. DeKraker, D.L. Collins, T. Peters, A.R. Khan. An accurate registration of the BigBrain dataset with the MNI PD25 and ICBM152 atlases. Sci. Data, 6 (2019), p. 210, 10.1038/s41597-019-0217-0
+Y. Xiao, J.C. Lau, T. Anderson, J. DeKraker, D.L. Collins, T. Peters, 
+A.R. Khan. An accurate registration of the BigBrain dataset with the MNI PD25 
+and ICBM152 atlases. Sci. Data, 6 (2019), p. 210, 10.1038/s41597-019-0217-0
+"""
 
 
 rule cp_zona_tsv:
@@ -55,14 +61,21 @@ rule cp_zona_tsv:
 
 
 rule reg2native:
-    """Create transforms from chosen template space to subject native space via ANTsRegistrationSyNQuick"""
+    """
+    Create transforms from chosen template space to subject native space via 
+    ANTsRegistrationSyNQuick
+    """
     input:
         template=str(
             Path(workflow.basedir).parent
             / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
             / Path(config["zona_bb_subcortex"][config["Space"]]["T1w"])
         ),
-        target=inputs["T1w"].path,
+        target=lambda wildcards: expand(
+            inputs["T1w"].path,
+            zip,
+            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
+        )[0],
     params:
         out_dir=directory(str(Path(bids_anat()).parent)),
         out_prefix=bids_anat(
@@ -90,13 +103,18 @@ rule reg2native:
     group:
         "subcortical_1"
     container:
-        config["singularity"]["neuroglia-core"]
+        config["singularity"]["scattr"]
     shell:
-        "mkdir -p {params.out_dir} && "
-        "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "antsRegistrationSyNQuick.sh -n {threads} -d 3 "
-        "-f {input.target} -m {input.template} "
-        "-o {params.out_prefix} &> {log}"
+        """
+        echo {input.target}        
+        export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads}
+
+        mkdir -p {params.out_dir}
+
+        antsRegistrationSyNQuick.sh -n {threads} -d 3 \\
+        -f {input.target} -m {input.template} \\
+        -o {params.out_prefix} &> {log}
+        """
 
 
 rule warp2native:
@@ -125,13 +143,16 @@ rule warp2native:
     group:
         "subcortical_1"
     container:
-        config["singularity"]["ants"]
+        config["singularity"]["scattr"]
     shell:
-        "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} && "
-        "antsApplyTransforms -v -d 3 -n MultiLabel "
-        "-i {input.dseg} -r {input.target} "
-        "-t {input.warp} -t {input.affine} "
-        "-o {output.nii} &> {log}"
+        """
+        export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
+
+        antsApplyTransforms -v -d 3 -n MultiLabel \\
+        -i {input.dseg} -r {input.target} \\
+        -t {input.warp} -t {input.affine} \\
+        -o {output.nii} &> {log}
+        """
 
 
 rule labelmerge:
@@ -141,7 +162,7 @@ rule labelmerge:
             if not config.get("labelmerge_base_dir")
             else [],
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **subj_zip_list,
             allow_missing=True,
         ),
         fs_seg=expand(
@@ -149,7 +170,7 @@ rule labelmerge:
             if not config.get("labelmerge_overlay_dir")
             else [],
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **subj_zip_list,
             allow_missing=True,
         ),
         fs_tsv=rules.cp_fs_tsv.output.fs_tsv
@@ -194,7 +215,7 @@ rule labelmerge:
                 suffix="dseg.nii.gz",
             ),
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **subj_zip_list,
             allow_missing=True,
         ),
         tsv=expand(
@@ -204,7 +225,7 @@ rule labelmerge:
                 suffix="dseg.tsv",
             ),
             zip,
-            **inputs["T1w"].input_zip_lists,
+            **subj_zip_list,
             allow_missing=True,
         ),
     threads: 4
@@ -214,9 +235,16 @@ rule labelmerge:
     group:
         "subcortical_group"
     container:
-        config["singularity"]["labelmerge"]
+        config["singularity"]["scattr"]
     shell:
-        "labelmerge {params.labelmerge_base_dir} {params.labelmerge_out_dir} participant {params.base_desc} {params.base_drops} {params.base_exceptions} {params.overlay_dir} {params.overlay_desc} {params.overlay_drops} {params.overlay_exceptions} --cores {threads} --force-output"
+        """
+        labelmerge {params.labelmerge_base_dir} {params.labelmerge_out_dir} \\
+            participant \\
+            {params.base_desc} {params.base_drops} {params.base_exceptions} \\
+            {params.overlay_dir} {params.overlay_desc} \\
+            {params.overlay_drops} {params.overlay_exceptions} \\
+            --cores {threads} --force-output
+        """
 
 
 rule get_num_nodes:

@@ -1,6 +1,11 @@
 # ---- begin snakebids boilerplate ----------------------------------------------
 
-from snakebids import bids, generate_inputs, get_wildcard_constraints
+from snakebids import (
+    bids,
+    filter_list,
+    generate_inputs,
+    get_wildcard_constraints,
+)
 
 
 configfile: "config/snakebids.yml"
@@ -29,12 +34,28 @@ import os
 from pathlib import Path
 from functools import partial
 
+# Relevant wildcards (upgrade for filtering)
+subj_zip_list = {
+    k: v
+    for k, v in inputs["T1w"].input_zip_lists.items()
+    if k in ["subject", "session"]
+}
+
 # Warnings
 if config.get("labelmerge_base_dir") or config.get("labelmerge_overlay_dir"):
     print(
         """
     WARNING: Use of custom atlas detected - ensure label map used is available 
     for each subject in dataset in subject's T1w space with associated metadata.
+    """
+    )
+
+if len(inputs.sessions) > 1 and not config.get("responsemean_ses"):
+    print(
+        """
+    WARNING: Multiple sessions detected - average response function will be 
+    computed using all sessions (not recommended), unless specific session is 
+    provided (--responsemean_ses <session>).
     """
     )
 
@@ -51,22 +72,15 @@ rule all:
         tck_files=expand(
             rules.filtered_tck2connectome.output.sl_assignment,
             zip,
-            **inputs["T1w"].input_zip_lists
+            **subj_zip_list
         ),
-        dti_files=expand(
-            rules.dwi2tensor.output.dti, zip, **inputs["T1w"].input_zip_lists
-        ),
+        dti_files=expand(rules.dwi2tensor.output.dti, zip, **subj_zip_list),
         qc_files=rules.gather_qc.input,
     params:
-        mrtrix_dir=expand(
-            bids(
-                root=str(Path(config["output_dir"]) / "mrtrix"),
-                subject="{subject}",
-                include_subject_dir=False,
-                include_session_Dir=False,
-            ),
-            zip,
-            **inputs["T1w"].input_zip_lists
-        ),
-    shell:  # Clean up intermediate files that left behind
-        "rm -r {params.mrtrix_dir}/exclude_mask {params.mrtrix_dir}/roi_masks {params.mrtrix_dir}/unfiltered"
+        mrtrix_dir=mrtrix_dir,
+    shell:  # Clean up intermediate files that are left behind
+        """
+        rm -r {params.mrtrix_dir}/**/exclude_mask \\
+        {params.mrtrix_dir}/**/roi_masks \\
+        {params.mrtrix_dir}/**/unfiltered
+        """

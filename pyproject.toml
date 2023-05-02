@@ -24,6 +24,7 @@ scipy = "^1.8.0"
 labelmerge = {git = "https://github.com/khanlab/labelmerge.git", rev = "v0.4.3"}
 matplotlib = "^3.7.1"
 niworkflows = "^1.7.9"
+pygments = "^2.15.1"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "4.0"
