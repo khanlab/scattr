@@ -16,12 +16,12 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
-snakebids = "^0.7.0"
+snakebids = "^0.8.0"
 nibabel = "^3.2.2"
 nilearn = "^0.10.0"
 numpy = "^1.22.3"
 scipy = "^1.8.0"
-labelmerge = {git = "https://github.com/khanlab/labelmerge.git", rev = "v0.4.3"}
+labelmerge = {git = "https://github.com/khanlab/labelmerge.git", rev = "v0.4.4"}
 matplotlib = "^3.7.1"
 niworkflows = "^1.7.9"
 pygments = "^2.15.1"
