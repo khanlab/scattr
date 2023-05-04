@@ -2,9 +2,9 @@
 name: Lint and test workflow
 on:
   push:
-    branches: ['*', '!push-action/*']
+    branches: ["*", "!push-action/*"]
   pull_request:
-    branches: ['*', '!push-action/*']
+    branches: ["*", "!push-action/*"]
 jobs:
   quality:
     name: Lint code
@@ -16,7 +16,7 @@ jobs:
       - name: Setup Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.10"
       - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
@@ -51,7 +51,7 @@ jobs:
     needs: [quality]
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10']
+        python-version: ["3.8", "3.9", "3.10"]
     steps:
       - name: Clone repo
         uses: actions/checkout@master
@@ -71,10 +71,11 @@ jobs:
           virtualenvs-in-project: true
       - name: Load cached venv
         id: cached-poetry-dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-${{ matrix.python-version
+          key:
+            venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-${{ matrix.python-version
             }}
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
