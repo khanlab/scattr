@@ -26,11 +26,9 @@ rule segment_qc:
             else config.get("labelmerge_base_desc"),
             suffix="dseg.nii.gz",
         ),
-        t1w_image=lambda wildcards: expand(
-            inputs["T1w"].path,
-            zip,
-            **filter_list(inputs["T1w"].zip_lists, wildcards)
-        )[0],
+        t1w_image=lambda wildcards: inputs["T1w"]
+        .filter(**wildcards)
+        .expand()[0],
     output:
         qc_png=report(
             bids_qc(
@@ -68,11 +66,9 @@ rule segment_qc:
 rule registration_qc:
     input:
         moving_nii=rules.reg2native.output.t1w_nativespace,
-        fixed_nii=lambda wildcards: expand(
-            inputs["T1w"].path,
-            zip,
-            **filter_list(inputs["T1w"].zip_lists, wildcards)
-        )[0],
+        fixed_nii=lambda wildcards: inputs["T1w"]
+        .filter(**wildcards)
+        .expand()[0],
     params:
         cuts=7,
     output:

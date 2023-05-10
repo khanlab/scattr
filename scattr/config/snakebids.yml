@@ -278,6 +278,6 @@ freesurfer:
 
 # Containers
 singularity:
-  scattr: /project/6050199/tkai/singularity/scattr_v0.2.1.sif # "docker://khanlab/scattr:v0.2.1"
+  scattr: "docker://khanlab/scattr:v0.2.1"
 
 fs_license: /path/to/fs/license

@@ -158,11 +158,7 @@ rule fs_xfm_to_native:
     input:
         thal=rules.mgz2nii.output.thal,
         aparcaseg=rules.mgz2nii.output.aparcaseg,
-        ref=lambda wildcards: expand(
-            inputs["T1w"].path,
-            zip,
-            **filter_list(inputs["T1w"].zip_lists, wildcards)
-        )[0],
+        ref=lambda wildcards: inputs["T1w"].filter(**wildcards).expand()[0],
     output:
         thal=bids_fs_out(
             space="T1w",
