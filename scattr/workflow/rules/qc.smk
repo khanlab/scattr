@@ -29,7 +29,7 @@ rule segment_qc:
         t1w_image=lambda wildcards: expand(
             inputs["T1w"].path,
             zip,
-            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
+            **filter_list(inputs["T1w"].zip_lists, wildcards)
         )[0],
     output:
         qc_png=report(
@@ -71,7 +71,7 @@ rule registration_qc:
         fixed_nii=lambda wildcards: expand(
             inputs["T1w"].path,
             zip,
-            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
+            **filter_list(inputs["T1w"].zip_lists, wildcards)
         )[0],
     params:
         cuts=7,

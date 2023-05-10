@@ -74,7 +74,7 @@ rule reg2native:
         target=lambda wildcards: expand(
             inputs["T1w"].path,
             zip,
-            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
+            **filter_list(inputs["T1w"].zip_lists, wildcards)
         )[0],
     params:
         out_dir=directory(str(Path(bids_anat()).parent)),

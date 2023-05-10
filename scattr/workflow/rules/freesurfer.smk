@@ -161,7 +161,7 @@ rule fs_xfm_to_native:
         ref=lambda wildcards: expand(
             inputs["T1w"].path,
             zip,
-            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
+            **filter_list(inputs["T1w"].zip_lists, wildcards)
         )[0],
     output:
         thal=bids_fs_out(

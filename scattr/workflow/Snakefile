@@ -68,11 +68,6 @@ include: "rules/qc.smk"
 
 rule all:
     input:
-        # tck_files=expand(
-        # rules.filtered_tck2connectome.output.sl_assignment,
-        # zip,
-        # **subj_zip_list
-        # ),
         tck_files=inputs["T1w"].expand(
             rules.filtered_tck2connectome.output.sl_assignment
         ),
