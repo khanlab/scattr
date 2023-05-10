@@ -278,7 +278,6 @@ freesurfer:
   tsv: 'resources/freesurfer/desc-FreesurferThal_dseg.tsv'
 
 # Containers
-# NOTE: Update from latest to use specific tags
 singularity:
   scattr: "docker://khanlab/scattr:v0.2.1"
 
