@@ -16,6 +16,6 @@ def get_num_labels(label_seg, out_num_labels):
 
 if __name__ == "__main__":
     get_num_labels(
-        label_seg=snakemake.input.seg,  
-        out_num_labels=snakemake.output.num_labels,  
+        label_seg=snakemake.input.seg,
+        out_num_labels=snakemake.output.num_labels,
     )

@@ -1,15 +1,16 @@
 [tool.poetry]
 name = "scattr"
 version = "0.3.0-pre.3"
-description = "Snakebids app for structural connectivity between targeted regions"
+description = "[Snakebids app] Structural connectivity between targeted regions"
 authors = [
     "Jason Kai <tkai@uwo.ca>",
     "Tristan Kuehn",
     "Ali R. Khan",
     "Roy A.M. Haast",
     "Jonathan C. Lau",
-    ]
+]
 readme = "README.md"
+documentation = "https://scattr.readthedocs.io"
 packages = [
     { include = "scattr" }
 ]
@@ -51,7 +52,7 @@ isort-check = "isort -c scattr"
 black = "black scattr"
 black-check = "black --check scattr"
 ruff = "ruff --fix scattr"
-ruff-check = "ruff scattr"
+ruff-fix = "ruff scattr"
 snakefmt = "snakefmt scattr"
 snakefmt-check = "snakefmt --check scattr"
 quality = ["yamlfix", "isort", "black", "ruff", "snakefmt"]
@@ -63,12 +64,12 @@ quality-check = [
     "snakefmt-check",
 ]
 test = [
-    "test_base", 
-    "test_freesurfer", 
-    "test_responsemean", 
-    "test_dwi", 
-    "test_labelmerge", 
-    "test_skip_labelmerge", 
+    "test_base",
+    "test_freesurfer",
+    "test_responsemean",
+    "test_dwi",
+    "test_labelmerge",
+    "test_skip_labelmerge",
     "test_sessions"
 ]
 
@@ -90,7 +91,7 @@ shell = """
 python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant \
     --responsemean_dir ./test/data/derivatives/mrtrix/avg \
     --fs-license ./test/.fs_license -np --force-output
-""" 
+"""
 
 [tool.poe.tasks.test_dwi]
 shell = """
@@ -124,14 +125,18 @@ python ./scattr/run.py ./test/data/bids_sessions \
 
 [tool.poe.tasks.yamlfix]
 shell = """
-find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* \
-    ! -iname snakebids* \\) -exec yamlfix {} \\;
+find . -type f \\( \
+    -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* \
+    ! -iname snakebids* \
+\\) -exec yamlfix {} \\;
 """
 
 [tool.poe.tasks.yamlfix-check]
 shell = """
-find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* \
-    ! -iname snakebids* \\) -exec yamlfix --check {} \\;
+find . -type f \\( \
+    -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* \
+    ! -iname snakebids* \
+\\) -exec yamlfix --check {} \\
 """
 
 [tool.isort]
@@ -143,8 +148,8 @@ line_length = 79
 line-length = 79
 
 [tool.ruff]
-builtins = [ "snakemake" ]
 line-length = 79
+builtins = [ "snakemake" ]
 
 [tool.snakefmt]
 line_length = 79

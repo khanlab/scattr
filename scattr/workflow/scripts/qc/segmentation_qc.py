@@ -34,9 +34,9 @@ def segmentation_qc(
 
 if __name__ == "__main__":
     segmentation_qc(
-        t1w_path=snakemake.input.t1w_image,  
-        seg_path=snakemake.input.qc_labels,  
-        output_path_static=snakemake.output.qc_png,  
-        output_path_html=snakemake.output.qc_html,  
+        t1w_path=snakemake.input.t1w_image,
+        seg_path=snakemake.input.qc_labels,
+        output_path_static=snakemake.output.qc_png,
+        output_path_html=snakemake.output.qc_html,
         wildcards=snakemake.wildcards,  # noqa:F821
     )

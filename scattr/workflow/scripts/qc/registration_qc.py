@@ -57,10 +57,10 @@ def registration_qc(
 
 if __name__ == "__main__":
     registration_qc(
-        moving_nii=snakemake.input.moving_nii,  
-        fixed_nii=snakemake.input.fixed_nii,  
-        svg_cuts=snakemake.params.cuts,  
-        out_svg=snakemake.output.qc_svg,  
-        out_html=snakemake.output.qc_html,  
-        smk_wildcards=snakemake.wildcards,  
+        moving_nii=snakemake.input.moving_nii,
+        fixed_nii=snakemake.input.fixed_nii,
+        svg_cuts=snakemake.params.cuts,
+        out_svg=snakemake.output.qc_svg,
+        out_html=snakemake.output.qc_html,
+        smk_wildcards=snakemake.wildcards,
     )
