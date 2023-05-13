@@ -46,8 +46,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
 setup = "pre-commit install"
-yamlfix = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix {} \\;" }
-yamlfix-check = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix --check {} \\;" }
 isort = "isort scattr"
 isort-check = "isort -c scattr"
 black = "black scattr"
@@ -120,8 +118,20 @@ python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant \
 [tool.poe.tasks.test_sessions]
 shell = """
 python ./scattr/run.py ./test/data/bids_sessions \
-    test/data/derivatives_sessions/ participant --fs-license ./test.fs_license \
-    -np --force-output
+    test/data/derivatives_sessions/ participant \
+    --fs-license ./test.fs_license -np --force-output
+"""
+
+[tool.poe.tasks.yamlfix]
+shell = """
+find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* \
+    ! -iname snakebids* \\) -exec yamlfix {} \\;
+"""
+
+[tool.poe.tasks.yamlfix-check]
+shell = """
+find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* \
+    ! -iname snakebids* \\) -exec yamlfix --check {} \\;
 """
 
 [tool.isort]
