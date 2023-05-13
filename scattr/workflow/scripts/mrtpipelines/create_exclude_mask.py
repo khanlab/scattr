@@ -79,13 +79,13 @@ def create_exclude_mask(
 
 if __name__ == "__main__":
     create_exclude_mask(
-        base_dir=snakemake.params.base_dir,  # noqa: F821
-        roi1=snakemake.input.roi1,  # noqa: F821
-        roi2=snakemake.input.roi2,  # noqa: F821
-        subcortical_seg=snakemake.input.subcortical_seg,  # noqa: F821
-        num_labels=snakemake.input.num_labels,  # noqa: F821
-        mask_dir=snakemake.params.mask_dir,  # noqa: F821
-        out_dir=snakemake.output.out_dir,  # noqa: F821
-        wildcards=snakemake.wildcards,  # noqa: F821
-        threads=snakemake.threads,  # noqa: F821
+        base_dir=snakemake.params.base_dir,
+        roi1=snakemake.input.roi1,
+        roi2=snakemake.input.roi2,
+        subcortical_seg=snakemake.input.subcortical_seg,
+        num_labels=snakemake.input.num_labels,
+        mask_dir=snakemake.params.mask_dir,
+        out_dir=snakemake.output.out_dir,
+        wildcards=snakemake.wildcards,
+        threads=snakemake.threads,
     )

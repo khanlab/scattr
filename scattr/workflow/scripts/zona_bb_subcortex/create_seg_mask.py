@@ -13,6 +13,6 @@ def create_seg_mask(dseg, out_mask):
 
 if __name__ == "__main__":
     create_seg_mask(
-        dseg=snakemake.input.seg,  # noqa: F821
-        out_mask=snakemake.output.mask,  # noqa: F821
+        dseg=snakemake.input.seg,
+        out_mask=snakemake.output.mask,
     )

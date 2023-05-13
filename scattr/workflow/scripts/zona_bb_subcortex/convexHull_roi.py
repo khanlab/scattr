@@ -29,6 +29,6 @@ def create_convex_hull(binary_seg, out_convex_hull):
 
 if __name__ == "__main__":
     create_convex_hull(
-        binary_seg=snakemake.input.bin_seg,  # noqa: F821
-        out_convex_hull=snakemake.output.convex_hull,  # noqa: F821
+        binary_seg=snakemake.input.bin_seg,
+        out_convex_hull=snakemake.output.convex_hull,
     )
