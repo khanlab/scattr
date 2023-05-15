@@ -1,6 +1,10 @@
 # Add testing folders to ignore
-test/data/derivatives/**
-test/data/derivatives_sessions/**
+test/data/derivatives/config/
+test/data/derivatives/.snakebids
+test/data/derivatives/.snakemake/
+test/data/derivatives_sessions/config/
+test/data/derivatives_sessions/.snakebids
+test/data/derivatives/sessions/.snakemake/
 
 # Tar files
 *.tar
