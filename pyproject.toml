@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "scattr"
-version = "0.2.2-pre.1"
+version = "0.2.2-pre.2"
 description = "Snakebids app for structural connectivity between targeted regions"
 authors = [
     "Jason Kai <tkai@uwo.ca>",
