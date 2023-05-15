@@ -26,11 +26,9 @@ rule segment_qc:
             else config.get("labelmerge_base_desc"),
             suffix="dseg.nii.gz",
         ),
-        t1w_image=lambda wildcards: expand(
-            inputs["T1w"].path,
-            zip,
-            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
-        )[0],
+        t1w_image=lambda wildcards: inputs["T1w"]
+        .filter(**wildcards)
+        .expand()[0],
     output:
         qc_png=report(
             bids_qc(
@@ -68,11 +66,9 @@ rule segment_qc:
 rule registration_qc:
     input:
         moving_nii=rules.reg2native.output.t1w_nativespace,
-        fixed_nii=lambda wildcards: expand(
-            inputs["T1w"].path,
-            zip,
-            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
-        )[0],
+        fixed_nii=lambda wildcards: inputs["T1w"]
+        .filter(**wildcards)
+        .expand()[0],
     params:
         cuts=7,
     output:
@@ -107,23 +103,7 @@ rule registration_qc:
 
 rule gather_qc:
     input:
-        dseg_png=expand(
-            rules.segment_qc.output.qc_png,
-            zip,
-            **inputs["T1w"].input_zip_lists
-        ),
-        dseg_html=expand(
-            rules.segment_qc.output.qc_html,
-            zip,
-            **inputs["T1w"].input_zip_lists
-        ),
-        reg_svg=expand(
-            rules.registration_qc.output.qc_svg,
-            zip,
-            **inputs["T1w"].input_zip_lists
-        ),
-        reg_html=expand(
-            rules.registration_qc.output.qc_html,
-            zip,
-            **inputs["T1w"].input_zip_lists
-        ),
+        dseg_png=inputs["T1w"].expand(rules.segment_qc.output.qc_png),
+        dseg_html=inputs["T1w"].expand(rules.segment_qc.output.qc_html),
+        reg_svg=inputs["T1w"].expand(rules.registration_qc.output.qc_svg),
+        reg_html=inputs["T1w"].expand(rules.registration_qc.output.qc_html),

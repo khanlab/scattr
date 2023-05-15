@@ -71,11 +71,7 @@ rule reg2native:
             / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
             / Path(config["zona_bb_subcortex"][config["Space"]]["T1w"])
         ),
-        target=lambda wildcards: expand(
-            inputs["T1w"].path,
-            zip,
-            **filter_list(inputs["T1w"].input_zip_lists, wildcards)
-        )[0],
+        target=lambda wildcards: inputs["T1w"].filter(**wildcards).expand()[0],
     params:
         out_dir=directory(str(Path(bids_anat()).parent)),
         out_prefix=bids_anat(
@@ -157,22 +153,16 @@ rule warp2native:
 
 rule labelmerge:
     input:
-        zona_seg=expand(
-            rules.warp2native.output.nii
-            if not config.get("labelmerge_base_dir")
-            else [],
-            zip,
-            **subj_zip_list,
-            allow_missing=True,
-        ),
-        fs_seg=expand(
-            rules.fs_xfm_to_native.output.thal
-            if not config.get("labelmerge_overlay_dir")
-            else [],
-            zip,
-            **subj_zip_list,
-            allow_missing=True,
-        ),
+        zona_seg=inputs["T1w"].expand(
+            rules.warp2native.output.nii, allow_missing=True
+        )
+        if not config.get("labelmerge_base_dir")
+        else [],
+        fs_seg=inputs["T1w"].expand(
+            rules.fs_xfm_to_native.output.thal, allow_missing=True
+        )
+        if not config.get("labelmerge_overlay_dir")
+        else [],
         fs_tsv=rules.cp_fs_tsv.output.fs_tsv
         if not config.get("labelmerge_overlay_dir")
         else [],
@@ -208,27 +198,22 @@ rule labelmerge:
             else ""
         ),
     output:
-        seg=expand(
+        seg=inputs["T1w"].expand(
             bids_labelmerge(
                 space="T1w",
                 desc="combined",
                 suffix="dseg.nii.gz",
             ),
-            zip,
-            **subj_zip_list,
             allow_missing=True,
         ),
-        tsv=expand(
+        tsv=inputs["T1w"].expand(
             bids_labelmerge(
                 space="T1w",
                 desc="combined",
                 suffix="dseg.tsv",
             ),
-            zip,
-            **subj_zip_list,
             allow_missing=True,
         ),
-    threads: 4
     resources:
         mem_mb=16000,
         time=60,

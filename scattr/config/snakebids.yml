@@ -273,12 +273,10 @@ zona_bb_subcortex:
     dir: 'resources/zona_bb_subcortex/MNI152NLin2009bAsym/'
     seg: 'sub-SNSX32NLin2020Asym_space-MNI152NLin2009bAsym_desc-ZonaBB_dseg.nii.gz'
 
-# NOTE: This may not be needed with labelmerge
 freesurfer:
   tsv: 'resources/freesurfer/desc-FreesurferThal_dseg.tsv'
 
 # Containers
-# NOTE: Update from latest to use specific tags
 singularity:
   scattr: "docker://khanlab/scattr:v0.2.1"
 
