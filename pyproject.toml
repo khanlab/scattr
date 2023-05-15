@@ -52,7 +52,7 @@ isort-check = "isort -c scattr"
 black = "black scattr"
 black-check = "black --check scattr"
 ruff = "ruff --fix scattr"
-ruff-fix = "ruff scattr"
+ruff-check = "ruff scattr"
 snakefmt = "snakefmt scattr"
 snakefmt-check = "snakefmt --check scattr"
 quality = ["yamlfix", "isort", "black", "ruff", "snakefmt"]
@@ -136,7 +136,7 @@ shell = """
 find . -type f \\( \
     -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* \
     ! -iname snakebids* \
-\\) -exec yamlfix --check {} \\
+\\) -exec yamlfix --check {} \\;
 """
 
 [tool.isort]

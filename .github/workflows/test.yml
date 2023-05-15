@@ -42,8 +42,8 @@ jobs:
         run: poetry run poe isort-check
       - name: black
         run: poetry run poe black-check
-      - name: flake8
-        run: poetry run poe flake8
+      - name: ruff
+        run: poetry run poe ruff-check
       - name: snakefmt
         run: poetry run poe snakefmt-check
   test:
