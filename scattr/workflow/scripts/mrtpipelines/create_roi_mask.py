@@ -60,11 +60,11 @@ def create_roi_mask(
 
 if __name__ == "__main__":
     create_roi_mask(
-        base_dir=snakemake.params.base_dir,  # noqa: F821
-        subcortical_seg=snakemake.input.subcortical_seg,  # noqa: F821
-        num_labels=snakemake.input.num_labels,  # noqa: F821
-        out_dir=snakemake.output.out_dir,  # noqa: F821
-        wildcards=snakemake.wildcards,  # noqa: F821
-        subj_wildcards=snakemake.params.subj_wildcards,  # noqa: F821
-        threads=snakemake.threads,  # noqa: F821
+        base_dir=snakemake.params.base_dir,
+        subcortical_seg=snakemake.input.subcortical_seg,
+        num_labels=snakemake.input.num_labels,
+        out_dir=snakemake.output.out_dir,
+        wildcards=snakemake.wildcards,
+        subj_wildcards=snakemake.params.subj_wildcards,
+        threads=snakemake.threads,
     )

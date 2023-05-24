@@ -1,15 +1,16 @@
 [tool.poetry]
 name = "scattr"
 version = "0.3.0-pre.3"
-description = "Snakebids app for structural connectivity between targeted regions"
+description = "[Snakebids app] Structural connectivity between targeted regions"
 authors = [
     "Jason Kai <tkai@uwo.ca>",
     "Tristan Kuehn",
     "Ali R. Khan",
     "Roy A.M. Haast",
     "Jonathan C. Lau",
-    ]
+]
 readme = "README.md"
+documentation = "https://scattr.readthedocs.io"
 packages = [
     { include = "scattr" }
 ]
@@ -27,16 +28,15 @@ niworkflows = "^1.7.9"
 pygments = "^2.15.1"
 
 [tool.poetry.group.dev.dependencies]
-flake8 = "4.0"
 pytest-console-scripts = "1.2"
 pytest = "^7.0.1"
 black = "^22.1.0"
-pylint = "^2.12.2"
 isort = "^5.10.1"
 poethepoet = "^0.13.1"
 pre-commit = "^2.17.0"
 snakefmt = "^0.6.1"
 yamlfix = "^1.1.0"
+ruff = "^0.0.267"
 
 [tool.poetry.scripts]
 scattr = 'scattr.run:main'
@@ -47,31 +47,97 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
 setup = "pre-commit install"
-yamlfix = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix {} \\;" }
-yamlfix-check = { shell = "find . -type f \\( -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* ! -iname snakebids* \\) -exec yamlfix --check {} \\;" }
 isort = "isort scattr"
 isort-check = "isort -c scattr"
 black = "black scattr"
 black-check = "black --check scattr"
-flake8 = "flake8 scattr"
+ruff = "ruff --fix scattr"
+ruff-check = "ruff scattr"
 snakefmt = "snakefmt scattr"
 snakefmt-check = "snakefmt --check scattr"
-quality = ["yamlfix", "isort", "black", "flake8", "snakefmt"]
+quality = ["yamlfix", "isort", "black", "ruff", "snakefmt"]
 quality-check = [
     "yamlfix-check",
     "isort-check",
     "black-check",
-    "flake8",
+    "ruff-check",
     "snakefmt-check",
 ]
-test_base = { shell = "python ./scattr/run.py ./test/data/bids ./test/data/derivatives/ participant --fs-license ./test/.fs_license -np --force-output" }
-test_freesurfer = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --freesurfer_dir ./test/data/derivatives/freesurfer --fs-license ./test/.fs_license -np --force-output" }
-test_responsemean = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --responsemean_dir ./test/data/derivatives/mrtrix/avg --fs-license ./test/.fs_license -np --force-output" }
-test_dwi = { shell = "python ./scattr/run.py ./test/data/bids_nodwi test/data/derivatives/ participant --dwi_dir ./test/data/derivatives/prepdwi --fs-license ./test/.fs_license -np --force-output" }
-test_labelmerge = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --labelmerge_base_dir ./base_dir --labelmerge_overlay_dir ./overlay_dir --skip_brainstem --skip_thal_seg --fs-license ./test/.fs_license -np --force-output" }
-test_skip_labelmerge = { shell = "python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant --skip_labelmerge --skip_brainstem --skip_thal_seg --fs-license ./test/.fs_license -np --force-output" }
-test_sessions = { shell = "python ./scattr/run.py ./test/data/bids_sessions test/data/derivatives_sessions/ participant --fs-license ./test.fs_license -np --force-output" }
-test = ["test_base", "test_freesurfer", "test_responsemean", "test_dwi", "test_labelmerge", "test_skip_labelmerge", "test_sessions"]
+test = [
+    "test_base",
+    "test_freesurfer",
+    "test_responsemean",
+    "test_dwi",
+    "test_labelmerge",
+    "test_skip_labelmerge",
+    "test_sessions"
+]
+
+[tool.poe.tasks.test_base]
+shell = """
+python ./scattr/run.py ./test/data/bids ./test/data/derivatives/ participant \
+    --fs-license ./test/.fs_license -np --force-output
+"""
+
+[tool.poe.tasks.test_freesurfer]
+shell = """
+python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant \
+    --freesurfer_dir ./test/data/derivatives/freesurfer \
+    --fs-license ./test/.fs_license -np --force-output
+"""
+
+[tool.poe.tasks.test_responsemean]
+shell = """
+python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant \
+    --responsemean_dir ./test/data/derivatives/mrtrix/avg \
+    --fs-license ./test/.fs_license -np --force-output
+"""
+
+[tool.poe.tasks.test_dwi]
+shell = """
+python ./scattr/run.py ./test/data/bids_nodwi test/data/derivatives/ \
+    participant --dwi_dir ./test/data/derivatives/prepdwi \
+    --fs-license ./test/.fs_license -np --force-output
+"""
+
+[tool.poe.tasks.test_labelmerge]
+shell = """
+python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant \
+    --labelmerge_base_dir ./base_dir \
+    --labelmerge_overlay_dir ./overlay_dir \
+    --skip_brainstem --skip_thal_seg \
+    --fs-license ./test/.fs_license -np --force-output
+"""
+
+[tool.poe.tasks.test_skip_labelmerge]
+shell = """
+python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant \
+    --skip_labelmerge --skip_brainstem --skip_thal_seg \
+    --fs-license ./test/.fs_license -np --force-output
+"""
+
+[tool.poe.tasks.test_sessions]
+shell = """
+python ./scattr/run.py ./test/data/bids_sessions \
+    test/data/derivatives_sessions/ participant \
+    --fs-license ./test.fs_license -np --force-output
+"""
+
+[tool.poe.tasks.yamlfix]
+shell = """
+find . -type f \\( \
+    -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* \
+    ! -iname snakebids* \
+\\) -exec yamlfix {} \\;
+"""
+
+[tool.poe.tasks.yamlfix-check]
+shell = """
+find . -type f \\( \
+    -iname \\*.yaml -o -iname \\*.yml ! -iname snakemake* \
+    ! -iname snakebids* \
+\\) -exec yamlfix --check {} \\;
+"""
 
 [tool.isort]
 profile = "black"
@@ -80,6 +146,10 @@ line_length = 79
 
 [tool.black]
 line-length = 79
+
+[tool.ruff]
+line-length = 79
+builtins = [ "snakemake" ]
 
 [tool.snakefmt]
 line_length = 79

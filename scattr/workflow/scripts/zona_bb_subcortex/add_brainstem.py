@@ -16,7 +16,7 @@ def add_brainstem(dseg_mask, aparcaseg, out_mask):
 
 if __name__ == "__main__":
     add_brainstem(
-        dseg_mask=snakemake.input.mask,  # noqa: F821
-        aparcaseg=snakemake.input.aparcaseg,  # noqa: F821
-        out_mask=snakemake.output.mask,  # noqa: F821
+        dseg_mask=snakemake.input.mask,
+        aparcaseg=snakemake.input.aparcaseg,
+        out_mask=snakemake.output.mask,
     )
