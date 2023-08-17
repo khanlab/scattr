@@ -1,0 +1,12 @@
+---
+name: Deploy packages
+on:
+  workflow_dispatch:
+  push:
+    tags: [v*]
+jobs:
+  deploy_docker:
+    uses: khanlab/actions/.github/workflows/release/docker.yml@main
+    with:
+      maximize_space: true
+    secrets: inherit
