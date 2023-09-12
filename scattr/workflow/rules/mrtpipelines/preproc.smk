@@ -14,7 +14,8 @@ rule nii2mif:
         mask=bids(
             root=mrtrix_dir,
             datatype="dwi",
-            suffix="brainmask.mif",
+            desc="brain",
+            suffix="mask.mif",
             **inputs_dwi.subj_wildcards
         ),
     threads: 4
@@ -22,7 +23,7 @@ rule nii2mif:
         mem_mb=16000,
         time=10,
     log:
-        bids_log(suffix="nii2mif.log"),
+        bids_log(suffix="nii2mif.log", **inputs_dwi.subj_wildcards),
     group:
         "dwiproc"
     container:

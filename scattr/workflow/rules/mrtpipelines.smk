@@ -58,7 +58,7 @@ bids_labelmerge = partial(
 bids_log = partial(
     bids,
     root=log_dir,
-    **inputs_t1w.subj_wildcards,
+    **inputs_dwi.subj_wildcards,
 )
 
 """Mrtrix3 reference (additional citations are included per rule as necessary):
