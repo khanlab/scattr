@@ -34,6 +34,7 @@ pybids_inputs:
       - part
       - reconstruction
       - run
+pybids_inputs_dwi:
   dwi:
     filters:
       suffix: "dwi"

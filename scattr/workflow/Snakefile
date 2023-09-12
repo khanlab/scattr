@@ -12,9 +12,17 @@ configfile: "config/snakebids.yml"
 
 
 # writes inputs_config.yml and updates config dict
-inputs = generate_inputs(
+inputs_t1w = generate_inputs(
     bids_dir=config["bids_dir"],
     pybids_inputs=config["pybids_inputs"],
+    pybids_config=["bids", "derivatives"],
+    derivatives=config["derivatives"],
+    participant_label=config["participant_label"],
+    exclude_participant_label=config["exclude_participant_label"],
+)
+inputs_dwi = generate_inputs(
+    bids_dir=config["dwi_dir"] if config["dwi_dir"] else config["bids_dir"],
+    pybids_inputs=config["pybids_inputs_dwi"],
     pybids_config=["bids", "derivatives"],
     derivatives=config["derivatives"],
     participant_label=config["participant_label"],
@@ -33,13 +41,6 @@ import os
 from pathlib import Path
 from functools import partial
 
-# Relevant wildcards (upgrade for filtering)
-subj_zip_list = {
-    k: v
-    for k, v in inputs["T1w"].zip_lists.items()
-    if k in ["subject", "session"]
-}
-
 # Warnings
 if config.get("labelmerge_base_dir") or config.get("labelmerge_overlay_dir"):
     print(
@@ -49,7 +50,7 @@ if config.get("labelmerge_base_dir") or config.get("labelmerge_overlay_dir"):
     """
     )
 
-if len(inputs.sessions) > 1 and not config.get("responsemean_ses"):
+if len(inputs_dwi.sessions) > 1 and not config.get("responsemean_ses"):
     print(
         """
     WARNING: Multiple sessions detected - average response function will be 
@@ -68,10 +69,10 @@ include: "rules/qc.smk"
 
 rule all:
     input:
-        tck_files=inputs["T1w"].expand(
+        tck_files=inputs_t1w["T1w"].expand(
             rules.filtered_tck2connectome.output.sl_assignment
         ),
-        dti_files=inputs["T1w"].expand(rules.dwi2tensor.output.dti),
+        dti_files=inputs_t1w["T1w"].expand(rules.dwi2tensor.output.dti),
         qc_files=rules.gather_qc.input,
     params:
         mrtrix_dir=mrtrix_dir,

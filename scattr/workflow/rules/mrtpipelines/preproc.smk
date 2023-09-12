@@ -1,35 +1,21 @@
-if dwi_dir:
-    print(f"Searching {dwi_dir} for dwi and mask images...")
-
-
 rule nii2mif:
     input:
-        dwi=(bids_dwi(suffix="dwi.nii.gz") if dwi_dir else inputs["dwi"].path),
-        bval=(
-            bids_dwi(suffix="dwi.bval")
-            if dwi_dir
-            else re.sub(".nii.gz", ".bval", inputs["dwi"].path)
-        ),
-        bvec=(
-            bids_dwi(suffix="dwi.bvec")
-            if dwi_dir
-            else re.sub(".nii.gz", ".bvec", inputs["dwi"].path)
-        ),
-        mask=(
-            bids_dwi(suffix="mask.nii.gz") if dwi_dir else inputs["mask"].path
-        ),
+        dwi=inputs_dwi["dwi"].path,
+        bval=re.sub(".nii.gz", ".bval", inputs_dwi["dwi"].path),
+        bvec=re.sub(".nii.gz", ".bvec", inputs_dwi["dwi"].path),
+        mask=inputs_dwi["mask"].path,
     output:
         dwi=bids(
             root=mrtrix_dir,
             datatype="dwi",
             suffix="dwi.mif",
-            **inputs.subj_wildcards
+            **inputs_dwi.subj_wildcards
         ),
         mask=bids(
             root=mrtrix_dir,
             datatype="dwi",
             suffix="brainmask.mif",
-            **inputs.subj_wildcards
+            **inputs_dwi.subj_wildcards
         ),
     threads: 4
     resources:
@@ -69,15 +55,15 @@ rule dwi2response:
     output:
         wm_rf=bids_response_out(
             desc="wm",
-            **inputs.subj_wildcards,
+            **inputs_dwi.subj_wildcards,
         ),
         gm_rf=bids_response_out(
             desc="gm",
-            **inputs.subj_wildcards,
+            **inputs_dwi.subj_wildcards,
         ),
         csf_rf=bids_response_out(
             desc="csf",
-            **inputs.subj_wildcards,
+            **inputs_dwi.subj_wildcards,
         ),
     threads: 4
     resources:
@@ -102,13 +88,13 @@ rule dwi2response:
 
 def get_subject_rf(wildcards):
     """Get appropriate subject response path"""
-    if not inputs.sessions:
+    if not inputs_dwi.sessions:
         return expand(
             bids_response_out(
                 subject="{subject}",
                 desc="{tissue}",
             ),
-            subject=inputs.subjects,
+            subject=inputs_dwi.subjects,
             allow_missing=True,
         )
     else:
@@ -118,11 +104,11 @@ def get_subject_rf(wildcards):
                 session="{session}",
                 desc="{tissue}",
             ),
-            subject=inputs.subjects,
+            subject=inputs_dwi.subjects,
             session=(
                 config.get("responsemean_ses")
                 if config.get("responsemean_ses")
-                else inputs.sessions
+                else inputs_dwi.sessions
             ),
             allow_missing=True,
         )
@@ -197,19 +183,19 @@ rule dwi2fod:
             model="csd",
             desc="wm",
             suffix="fod.mif",
-            **inputs.subj_wildcards,
+            **inputs_dwi.subj_wildcards,
         ),
         gm_fod=bids_response_out(
             model="csd",
             desc="gm",
             suffix="fod.mif",
-            **inputs.subj_wildcards,
+            **inputs_dwi.subj_wildcards,
         ),
         csf_fod=bids_response_out(
             model="csd",
             desc="csf",
             suffix="fod.mif",
-            **inputs.subj_wildcards,
+            **inputs_dwi.subj_wildcards,
         ),
     threads: 4
     resources:
@@ -252,19 +238,19 @@ rule mtnormalise:
             model="csd",
             desc="wm",
             suffix="fodNormalized.mif",
-            **inputs.subj_wildcards,
+            **inputs_dwi.subj_wildcards,
         ),
         gm_fod=bids_response_out(
             model="csd",
             desc="gm",
             suffix="fodNormalized.mif",
-            **inputs.subj_wildcards,
+            **inputs_dwi.subj_wildcards,
         ),
         csf_fod=bids_response_out(
             model="csd",
             desc="csf",
             suffix="fodNormalized.mif",
-            **inputs.subj_wildcards,
+            **inputs_dwi.subj_wildcards,
         ),
     threads: 4
     resources:
@@ -299,7 +285,7 @@ rule dwinormalise:
             datatype="dwi",
             desc="normalized",
             suffix="dwi.mif",
-            **inputs.subj_wildcards,
+            **inputs_dwi.subj_wildcards,
         ),
     threads: 4
     resources:
