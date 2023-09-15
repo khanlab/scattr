@@ -4,7 +4,6 @@ import numpy as np
 
 # Directories
 responsemean_dir = config.get("responsemean_dir")
-dwi_dir = config.get("dwi_dir")
 mrtrix_dir = str(Path(config["output_dir"]) / "mrtrix")
 labelmerge_dir = str(Path(config["output_dir"]) / "labelmerge")
 zona_dir = str(Path(config["output_dir"]) / "zona_bb_subcortex")
@@ -19,15 +18,6 @@ lmax = config.get("lmax")
 
 
 # BIDS partials
-bids_dwi = partial(
-    bids,
-    root=dwi_dir,
-    datatype="dwi",
-    space="T1w",
-    desc="preproc",
-    **inputs.subj_wildcards,
-)
-
 bids_response_out = partial(
     bids,
     root=mrtrix_dir,
@@ -40,21 +30,21 @@ bids_dti_out = partial(
     root=mrtrix_dir,
     datatype="dti",
     model="dti",
-    **inputs.subj_wildcards,
+    **inputs_dwi.subj_wildcards,
 )
 
 bids_tractography_out = partial(
     bids,
     root=mrtrix_dir,
     datatype="tractography",
-    **inputs.subj_wildcards,
+    **inputs_dwi.subj_wildcards,
 )
 
 bids_anat_out = partial(
     bids,
     root=mrtrix_dir,
     datatype="anat",
-    **inputs.subj_wildcards,
+    **inputs_t1w.subj_wildcards,
 )
 
 bids_labelmerge = partial(
@@ -62,13 +52,13 @@ bids_labelmerge = partial(
     root=str(Path(labelmerge_dir) / "combined")
     if not config.get("skip_labelmerge")
     else config.get("labelmerge_base_dir") or zona_dir,
-    **inputs.subj_wildcards,
+    **inputs_t1w.subj_wildcards,
 )
 
 bids_log = partial(
     bids,
     root=log_dir,
-    **inputs.subj_wildcards,
+    **inputs_dwi.subj_wildcards,
 )
 
 """Mrtrix3 reference (additional citations are included per rule as necessary):

@@ -30,36 +30,27 @@ pybids_inputs:
     wildcards:
       - subject
       - session
-      - acquisition
-      - part
-      - reconstruction
       - run
+pybids_inputs_dwi:
   dwi:
     filters:
       suffix: "dwi"
       extension: ".nii.gz"
       datatype: "dwi"
       space: "T1w"
-      part: ["mag", false]
     wildcards:
       - subject
       - session
-      - acquisition
-      - direction
-      - part
-      - reconstruction
       - run
   mask:
     filters:
       suffix: "mask"
       extension: ".nii.gz"
       datatype: "dwi"
-      space: ["orig", "scanner", "individual", "T1w"]
+      space: "T1w"
     wildcards:
       - subject
       - session
-      - acquisition
-      - res
       - run
 
 # Configuration for the command-line parameters to make available
@@ -115,6 +106,11 @@ parse_args:
     help: "The path to the directory containing pre-processed dwi data
       transformed to subject T1w space. If not provided, workflow assumes
       this data exists in <bids_dir>/<subject>/dwi."
+    nargs: "?"
+    type: Path
+
+  --pybidsdb_dwi_dir:
+    help: "The path to the pybids database associated with provided dwi_dir"
     nargs: "?"
     type: Path
 
