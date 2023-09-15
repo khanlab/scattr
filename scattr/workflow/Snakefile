@@ -27,7 +27,7 @@ inputs_dwi = generate_inputs(
     pybids_inputs=config["pybids_inputs_dwi"],
     pybids_config=["bids", "derivatives"],
     pybidsdb_dir=config.get("pybidsdb_dwi_dir")
-    if config["pybidsdb_dwi_dir"]
+    if config["dwi_dir"]
     else config.get("pybidsdb_dir"),
     pybidsdb_reset=config.get("pybidsdb_reset"),
     derivatives=config["derivatives"],

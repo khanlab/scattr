@@ -1,5 +1,5 @@
-bids_dir: /scratch/tkai/0_dev/scattr/test/data/bids_sessions
-output_dir: /scratch/tkai/0_dev/scattr/test/data/derivatives_sessions
+bids_dir: /home/jkai/git/scattr/test/data/bids_sessions
+output_dir: /home/jkai/git/scattr/test/data/derivatives_sessions
 snakebids_dir: .
 debug: false
 derivatives: false
@@ -15,12 +15,14 @@ pybids_inputs:
       extension: .nii.gz
       datatype: anat
       desc: brain
+      part:
+      - mag
+      - false
     wildcards:
     - subject
     - session
-    - acquisition
-    - reconstruction
     - run
+pybids_inputs_dwi:
   dwi:
     filters:
       suffix: dwi
@@ -30,25 +32,16 @@ pybids_inputs:
     wildcards:
     - subject
     - session
-    - acquisition
-    - direction
-    - reconstruction
     - run
   mask:
     filters:
       suffix: mask
       extension: .nii.gz
       datatype: dwi
-      space:
-      - orig
-      - scanner
-      - individual
-      - T1w
+      space: T1w
     wildcards:
     - subject
     - session
-    - acquisition
-    - res
     - run
 parse_args:
   bids_dir:
@@ -82,31 +75,41 @@ parse_args:
     help: The path to the freesurfer directory. If not provided, workflow assumes
       the directory exists at <output_dir>/freesurfer.
     nargs: '?'
-    type: &id002 !!python/name:pathlib.Path ''
+    type: Path
   --dwi_dir:
     help: The path to the directory containing pre-processed dwi data transformed
       to subject T1w space. If not provided, workflow assumes this data exists in
       <bids_dir>/<subject>/dwi.
     nargs: '?'
-    type: *id002
+    type: Path
+  --pybidsdb_dwi_dir:
+    help: The path to the pybids database associated with provided dwi_dir
+    nargs: '?'
+    type: Path
   --responsemean_dir:
     help: The path to the directory containing average response functions. If not
       provided, one will be computed from the subjects in the input directory.
     nargs: '?'
-    type: *id002
+    type: Path
+  --responsemean_ses:
+    help: The session used to compute the average response function. If multiple are
+      available in the dataset, it is HIGHLY RECOMMENDED to set this to a specific
+      session. If not provided, the average response function will be computed with
+      all possible sessions.
+    nargs: '?'
   --fs_license:
     help: Path to Freesurfer license file. If not provided, workflow will check FS_LICENSE
       environment variable for one.
     nargs: '?'
-    type: *id002
+    type: Path
   --labelmerge_base_dir:
     help: BIDS directory containing base input labelmaps.
     nargs: '?'
-    type: *id002
+    type: Path
   --labelmerge_overlay_dir:
     help: BIDS directory containing overlay input labelmaps.
     nargs: '?'
-    type: *id002
+    type: Path
   --labelmerge_base_desc:
     help: 'Description entity for base labelmaps used in labelmerge. By default, uses
       ZonaBB entity as intended in the subcortical connectome workflow (default: ZonaBB).'
@@ -151,6 +154,11 @@ parse_args:
       step.
     action: store_true
     default: false
+  --bzero_thresh:
+    help: Set the threshold for a shell to be considered b=0. By default, this value
+      is set to 10
+    nargs: '?'
+    default: 10
   --shells:
     help: '(Mrtrix3) specify one or more b-values to use during processing, as a space-separated
       list of the desired approximate b-values (b-values are clustered to allow for
@@ -201,21 +209,14 @@ zona_bb_subcortex:
 freesurfer:
   tsv: resources/freesurfer/desc-FreesurferThal_dseg.tsv
 singularity:
-  freesurfer: docker://pwighton/freesurfer:7.2.0
-  neuroglia-core: docker://khanlab/neuroglia-core:latest
-  ants: docker://kaczmarj/ants:2.3.4
-  mrtrix: docker://brainlife/mrtrix3:3.0.3
-  labelmerge: docker://khanlab/labelmerge:v0.4.3
-  scattr: docker://khanlab/scattr:v0.1.2
-fs_license: /scratch/tkai/0_dev/scattr/test.fs_license
-snakemake_dir: /scratch/tkai/0_dev/scattr/scattr
-snakefile: /scratch/tkai/0_dev/scattr/scattr/workflow/Snakefile
-pybids_db_reset: false
+  scattr: docker://khanlab/scattr:v0.2.1
+fs_license: /home/jkai/git/scattr/test.fs_license
 snakemake_args:
 - -np
 workflow_mode: false
 force_conversion: false
 pybidsdb_dir: null
+pybidsdb_reset: false
 reset_db: false
 force_output: true
 retrofit: false
@@ -226,7 +227,9 @@ exclude_participant_label: null
 slurm_tmpdir: false
 freesurfer_dir: null
 dwi_dir: null
+pybidsdb_dwi_dir: null
 responsemean_dir: null
+responsemean_ses: null
 labelmerge_base_dir: null
 labelmerge_overlay_dir: null
 labelmerge_base_desc: ZonaBB
@@ -238,9 +241,15 @@ labelmerge_overlay_exceptions: null
 skip_labelmerge: false
 skip_brainstem: false
 skip_thal_seg: false
+bzero_thresh: 10
 shells: null
 lmax: null
 step: 0.35
 sl_count: 20000000
 radial_search: 1.5
+snakemake_dir: /home/jkai/git/scattr/scattr
+snakefile: /home/jkai/git/scattr/scattr/workflow/Snakefile
 root: ''
+snakemake_version: 7.32.3
+snakebids_version: 0.9.2
+app_version: 0.3.0rc9
