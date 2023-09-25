@@ -6,7 +6,9 @@ on:
     tags: [v*]
 jobs:
   deploy_docker:
-    uses: khanlab/actions/.github/workflows/workflow-release_task-deployDocker.yml@v0.1.0
+    uses: khanlab/actions/.github/workflows/workflow-release_task-deployDocker.yml@v0.1.1
     with:
       maximize_space: true
-    secrets: inherit
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
