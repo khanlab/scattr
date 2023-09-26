@@ -5,4 +5,4 @@ on:
     types: [opened, ready_for_review]
 jobs:
   assign-reviewer:
-    uses: khanlab/actions/.github/workflows/workflow-pr_task-assignReviewer.yml@v0.1.0
+    uses: khanlab/actions/.github/workflows/workflow-pr_task-assignReviewer.yml@v0.2.0

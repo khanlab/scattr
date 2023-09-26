@@ -8,9 +8,9 @@ on:
         required: false
 jobs:
   release_package:
-    uses: khanlab/actions/.github/workflows/workflow-release_task-publishGithub.yml@v0.1.0
+    uses: khanlab/actions/.github/workflows/workflow-release_task-publishGithub.yml@v0.2.0
     with:
       comments: ${{ github.event.inputs.comments }}
-      pipeline_description: true
+      pipeline-description: true
     secrets:
-      BP_PAT: ${{ secrets.BP_PAT_TOKEN }}
+      BP-PAT: ${{ secrets.BP_PAT_TOKEN }}
