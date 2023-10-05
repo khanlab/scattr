@@ -6,6 +6,6 @@ on:
 jobs:
   bump-version:
     if: github.event.pull_request.merged == true
-    uses: khanlab/actions/.github/workflows/workflow-version_task-semverGithub.yml@v0.2.0
+    uses: khanlab/actions/.github/workflows/workflow-version_task-semverGithub.yml@v0.2.1
     secrets:
       BP-PAT: ${{ secrets.BP_PAT_TOKEN }}
