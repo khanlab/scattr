@@ -36,6 +36,7 @@ jobs:
         uses: khanlab/actions/.github/actions/action-setup_task-installPyProject@v0.2.1
         with:
           python-version: ${{ matrix.python-version }}
+          install-library: true
       - name: Test minimum inputs
         run: poetry run poe test_base
       - name: Test freesurfer input
