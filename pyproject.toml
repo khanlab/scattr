@@ -11,9 +11,7 @@ authors = [
 ]
 readme = "README.md"
 documentation = "https://scattr.readthedocs.io"
-packages = [
-    { include = "scattr" }
-]
+packages = [{ include = "scattr" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
@@ -22,7 +20,7 @@ nibabel = "^3.2.2"
 nilearn = "^0.10.0"
 numpy = "^1.22.3"
 scipy = "^1.8.0"
-labelmerge = {git = "https://github.com/khanlab/labelmerge.git", rev = "v0.4.5"}
+labelmerge = "^v0.4.6"
 matplotlib = "^3.7.1"
 niworkflows = "^1.7.9"
 pygments = "^2.15.1"
@@ -70,7 +68,7 @@ test = [
     "test_dwi",
     "test_labelmerge",
     "test_skip_labelmerge",
-    "test_sessions"
+    "test_sessions",
 ]
 
 [tool.poe.tasks.test_base]
@@ -156,7 +154,7 @@ line-length = 79
 
 [tool.ruff]
 line-length = 79
-builtins = [ "snakemake" ]
+builtins = ["snakemake"]
 
 [tool.snakefmt]
 line_length = 79
