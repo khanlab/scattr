@@ -38,5 +38,5 @@ if __name__ == "__main__":
         seg_path=snakemake.input.qc_labels,
         output_path_static=snakemake.output.qc_png,
         output_path_html=snakemake.output.qc_html,
-        wildcards=snakemake.wildcards,  # noqa:F821
+        wildcards=snakemake.wildcards,
     )

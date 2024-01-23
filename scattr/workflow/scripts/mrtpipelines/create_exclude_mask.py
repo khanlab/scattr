@@ -22,13 +22,13 @@ def create_exclude_mask(
     Path(out_dir).mkdir(parents=True, exist_ok=True)
 
     # Get number of labels
-    with open(num_labels, "r") as f:
+    with open(num_labels) as f:
         num_labels = int(f.read().strip())
 
     node_pairs = np.triu_indices(num_labels, k=1)
 
     # Zona labels (currently misisng subjects)
-    lZI = expand(  # noqa: F841 (used in shell call)
+    lZI = expand(  # (used in shell call)   # noqa: N806
         bids(
             root=base_dir,
             datatype="roi_masks",
@@ -37,7 +37,7 @@ def create_exclude_mask(
             **wildcards,
         )
     )
-    rZI = bids(  # noqa: F841 (used in shell call)
+    rZI = bids(  # (used in shell call) # noqa: N806
         root=base_dir,
         datatype="roi_masks",
         desc="22",
@@ -62,7 +62,7 @@ def create_exclude_mask(
 
     # Create masks - run sequentially due to parallelization errors
     for idx, mask in enumerate(out_mask):
-        in_roi1, in_roi2 = roi1[idx], roi2[idx]  # noqa: F841 (used in shell)
+        in_roi1, in_roi2 = roi1[idx], roi2[idx]  # (used in shell)
         shell(
             "mrcalc -nthreads {threads} "
             "{subcortical_seg} 0 -neq {in_roi1} -sub {in_roi2} -sub {lZI} "

@@ -14,27 +14,27 @@ documentation = "https://scattr.readthedocs.io"
 packages = [{ include = "scattr" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8, <3.11"
-snakebids = "^0.9.0"
+python = ">=3.8, <3.12"
+snakebids = "^0.10.2"
+labelmerge = "^0.4.7"
+matplotlib = "^3.7.1"
 nibabel = "^3.2.2"
 nilearn = "^0.10.0"
-numpy = "^1.22.3"
-scipy = "^1.8.0"
-labelmerge = "^v0.4.6"
-matplotlib = "^3.7.1"
 niworkflows = "^1.7.9"
+numpy = "^1.22.3"
 pygments = "^2.15.1"
+scipy = "^1.8.0"
+# Required constraint for compatability with snakebids
+pulp = "<2.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest-console-scripts = "1.2"
 pytest = "^7.0.1"
-black = "^22.1.0"
-isort = "^5.10.1"
 poethepoet = "^0.13.1"
 pre-commit = "^2.17.0"
 snakefmt = "^0.6.1"
 yamlfix = "^1.1.0"
-ruff = "^0.0.267"
+ruff = "^0.1.14"
 
 [tool.poetry.scripts]
 scattr = 'scattr.run:main'
@@ -45,22 +45,13 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
 setup = "pre-commit install"
-isort = "isort scattr"
-isort-check = "isort -c scattr"
-black = "black scattr"
-black-check = "black --check scattr"
-ruff = "ruff --fix scattr"
-ruff-check = "ruff scattr"
+ruff-lint = "ruff check --fix scattr"
+ruff-lint-check = "ruff check scattr"
+ruff-format = "ruff format ."
 snakefmt = "snakefmt scattr"
 snakefmt-check = "snakefmt --check scattr"
-quality = ["yamlfix", "ruff", "isort", "black", "snakefmt"]
-quality-check = [
-    "ruff-check",
-    "yamlfix-check",
-    "isort-check",
-    "black-check",
-    "snakefmt-check",
-]
+quality = ["yamlfix", "ruff-lint", "ruff-format", "snakefmt"]
+quality-check = ["yamlfix-check", "ruff-lint-check", "snakefmt-check"]
 test = [
     "test_base",
     "test_freesurfer",
@@ -144,15 +135,8 @@ find . -type f \\( \
 \\) -exec yamlfix --check {} \\;
 """
 
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-line_length = 79
-
-[tool.black]
-line-length = 79
-
 [tool.ruff]
+select = ["E", "W", "N", "RUF", "I", "UP"]
 line-length = 79
 builtins = ["snakemake"]
 

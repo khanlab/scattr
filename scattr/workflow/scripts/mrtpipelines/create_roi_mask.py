@@ -2,7 +2,7 @@
 from pathlib import Path
 
 from snakebids import bids
-from snakemake.io import expand  # noqa: F401 (used in commented command)
+from snakemake.io import expand  # (used in commented command)
 from snakemake.shell import shell
 
 
@@ -19,12 +19,12 @@ def create_roi_mask(
     Path(out_dir).mkdir(parents=True, exist_ok=True)
 
     # Read number of labels
-    with open(num_labels, "r") as f:
+    with open(num_labels) as f:
         num_labels = int(f.read().strip())
 
     # Create masks sequentially (error with trying to do it in parallel)
     for idx in range(1, num_labels + 1):
-        roi = bids(  # noqa: F841 (used in shell call)
+        roi = bids(  # (used in shell call)
             root=base_dir,
             datatype="roi_masks",
             desc=f"{idx}",
