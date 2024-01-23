@@ -2,9 +2,9 @@
 name: Lint and test workflow
 on:
   push:
-    branches: ["*", "!push-action/*"]
+    branches: ['*', '!push-action/*']
   pull_request:
-    branches: ["*", "!push-action/*"]
+    branches: ['*', '!push-action/*']
 jobs:
   quality:
     name: Lint code
@@ -14,7 +14,7 @@ jobs:
       - name: Setup Python environment
         uses: khanlab/actions/.github/actions/action-setup_task-installPyProject@v0.3.4
         with:
-          python-version: "3.10"
+          python-version: '3.10'
       - name: yamlfix
         run: poetry run poe yamlfix-check
       - name: ruff
@@ -26,7 +26,7 @@ jobs:
     needs: [quality]
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ['3.8', '3.9', '3.10', '3.11']
     steps:
       - name: Setup Python environments
         uses: khanlab/actions/.github/actions/action-setup_task-installPyProject@v0.3.4
