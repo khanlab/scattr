@@ -16,7 +16,7 @@ and DWI derivatives (which can be stored separately).
 
 ## Docker on Windows / Mac (Intel) / Linux
 
-The SCATTR BIDS App is available on DuckerHub as versioned releases.
+The SCATTR BIDS App is available on DockerHub as versioned releases.
 Instructions can be found in the [Docker](https://scattr.readthedocs.io/en/stable/getting_started/docker.html) documentation page.
 
 ### Pros

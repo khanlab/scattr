@@ -1,7 +1,7 @@
 # Running SCATTR with Singularity
 
 ## Pre-requisites
-1. Singularity / Apptainer is is installed on your system. For more info, see
+1. Singularity / Apptainer is installed on your system. For more info, see
 the detailed [Apptainer install instructions](https://apptainer.org/docs/admin/main/installation.html#install-from-pre-built-packages).
 1. The following command-line tools are installed:
     * wget
@@ -10,7 +10,7 @@ the detailed [Apptainer install instructions](https://apptainer.org/docs/admin/m
     * in your working folder to store the container (~20GB)
     * for SCATTR outputs (~40GB per subject using default parameters)
 1. Sufficient CPU and memory - the more you have, the faster it will run and 
-the more streamlines that can be estimated. We recommand at least 8 CPU cores 
+the more streamlines that can be estimated. We recommend at least 8 CPU cores 
 and 64GB memory if using default parameters.
 
 ## First time setup
