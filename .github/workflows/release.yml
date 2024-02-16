@@ -8,7 +8,7 @@ on:
         required: false
 jobs:
   release_package:
-    uses: khanlab/actions/.github/workflows/workflow-release_task-publishGithub.yml@v0.3.4
+    uses: khanlab/actions/.github/workflows/workflow-release_task-publishGithub.yml@v0.3.5
     with:
       comments: ${{ github.event.inputs.comments }}
       pipeline-description: true
