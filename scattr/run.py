@@ -1,22 +1,23 @@
 #!/usr/bin/env python
-import os
+from pathlib import Path
 
-from snakebids.app import SnakeBidsApp
-from snakebids.cli import add_dynamic_args
+from snakebids import bidsapp, plugins
+
+app = bidsapp.app(
+    [
+        plugins.SnakemakeBidsApp(Path(__file__).resolve().parent),
+        plugins.Version(distribution="scattr"),
+    ]
+)
 
 
 def get_parser():
     """Exposes parser for sphinx doc generation, cwd is the docs dir"""
-    app = SnakeBidsApp("../scattr", skip_parse_args=True)
-    add_dynamic_args(
-        app.parser, app.config["parse_args"], app.config["pybids_inputs"]
-    )
-    return app.parser
+    return app.build_parser().parser
 
 
 def main():
-    app = SnakeBidsApp(os.path.abspath(os.path.dirname(__file__)))
-    app.run_snakemake()
+    app.run()
 
 
 if __name__ == "__main__":

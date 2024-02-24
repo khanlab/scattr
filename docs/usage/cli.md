@@ -9,8 +9,9 @@ cases, only the required arguments are needed.
 
 ```{argparse}
 ---
-filename: ../scattr/run.py
-func: get_parser
+ref: scattr.run.get_parser
+#filename: ../scattr/run.py
+#func: get_parser
 prog: scattr
 ---
 ```
