@@ -71,9 +71,7 @@ rule reg2native:
             / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
             / Path(config["zona_bb_subcortex"][config["Space"]]["T1w"])
         ),
-        target=lambda wildcards: inputs["T1w"]
-        .filter(**wildcards)
-        .expand()[0],
+        target=lambda wildcards: inputs["T1w"].filter(**wildcards).expand()[0],
     params:
         out_dir=directory(str(Path(bids_anat()).parent)),
         out_prefix=bids_anat(

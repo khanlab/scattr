@@ -76,9 +76,7 @@ rule thalamic_segmentation:
         subj_dir=str(Path(bids(**inputs.subj_wildcards)).parent),
     output:
         thal_seg=str(
-            Path(
-                bids(root=freesurfer_dir, **inputs.subj_wildcards)
-            ).parent
+            Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
             / "mri"
             / "ThalamicNuclei.v12.T1.mgz"
         ),
@@ -115,9 +113,7 @@ rule mgz2nii:
         if not config.get("skip_thal_seg")
         else [],
         aparcaseg=str(
-            Path(
-                bids(root=freesurfer_dir, **inputs.subj_wildcards)
-            ).parent
+            Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
             / "mri"
             / "aparc+aseg.mgz"
         ),
