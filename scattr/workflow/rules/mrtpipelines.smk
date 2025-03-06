@@ -30,21 +30,21 @@ bids_dti_out = partial(
     root=mrtrix_dir,
     datatype="dti",
     model="dti",
-    **inputs_dwi.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 bids_tractography_out = partial(
     bids,
     root=mrtrix_dir,
     datatype="tractography",
-    **inputs_dwi.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 bids_anat_out = partial(
     bids,
     root=mrtrix_dir,
     datatype="anat",
-    **inputs_t1w.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 bids_labelmerge = partial(
@@ -52,13 +52,13 @@ bids_labelmerge = partial(
     root=str(Path(labelmerge_dir) / "combined")
     if not config.get("skip_labelmerge")
     else config.get("labelmerge_base_dir") or zona_dir,
-    **inputs_t1w.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 bids_log = partial(
     bids,
     root=log_dir,
-    **inputs_dwi.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 """Mrtrix3 reference (additional citations are included per rule as necessary):

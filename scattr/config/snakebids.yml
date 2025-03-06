@@ -31,7 +31,6 @@ pybids_inputs:
       - subject
       - session
       - run
-pybids_inputs_dwi:
   dwi:
     filters:
       suffix: "dwi"
@@ -42,7 +41,7 @@ pybids_inputs_dwi:
       - subject
       - session
       - run
-  mask:
+  dwi_mask:
     filters:
       suffix: "mask"
       extension: ".nii.gz"
@@ -106,11 +105,6 @@ parse_args:
     help: "The path to the directory containing pre-processed dwi data
       transformed to subject T1w space. If not provided, workflow assumes
       this data exists in <bids_dir>/<subject>/dwi."
-    nargs: "?"
-    type: Path
-
-  --pybidsdb_dwi_dir:
-    help: "The path to the pybids database associated with provided dwi_dir"
     nargs: "?"
     type: Path
 
