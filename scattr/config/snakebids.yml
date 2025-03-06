@@ -41,7 +41,7 @@ pybids_inputs:
       - subject
       - session
       - run
-  dwi_mask:
+  mask:
     filters:
       suffix: "mask"
       extension: ".nii.gz"

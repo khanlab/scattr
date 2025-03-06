@@ -85,14 +85,20 @@ python ./scattr/run.py ./test/data/bids test/data/derivatives/ participant \
 [tool.poe.tasks.test_dwi]
 shell = """
 python ./scattr/run.py ./test/data/bids_nodwi test/data/derivatives/ \
-    participant --dwi_dir ./test/data/derivatives/prepdwi \
+    participant --path-dwi \
+    ./test/data/derivatives/prepdwi/sub-{subject}/dwi/sub-{subject}_space-T1w_desc-preproc_dwi.nii.gz \
+    --path-mask \
+    ./test/data/derivatives/prepdwi/sub-{subject}/dwi/sub-{subject}_space-T1w_desc-preproc_mask.nii.gz \
     --fs-license ./test/.fs_license -np --force-output
 """
 
 [tool.poe.tasks.test_snakedwi]
 shell = """
 python ./scattr/run.py ./test/data/bids_nodwi test/data/derivatives/ \
-    participant --dwi_dir ./test/data/derivatives/snakedwi \
+    participant --path-dwi \
+    ./test/data/derivatives/snakedwi/sub-{subject}/dwi/sub-{subject}_space-T1w_desc-eddy_res-orig_dwi.nii.gz \
+    --path-dwi-mask \
+    ./test/data/derivatives/snakedwi/sub-{subject}/dwi/sub-{subject}_space-T1w_desc-eddy_res-orig_mask.nii.gz \
     --fs-license ./test/.fs_license -np --force-output
 """
 

@@ -3,7 +3,7 @@ rule nii2mif:
         dwi=inputs["dwi"].path,
         bval=re.sub(".nii.gz", ".bval", inputs["dwi"].path),
         bvec=re.sub(".nii.gz", ".bvec", inputs["dwi"].path),
-        mask=inputs["dwi_mask"].path,
+        mask=inputs["mask"].path,
     output:
         dwi=bids(
             root=mrtrix_dir,
