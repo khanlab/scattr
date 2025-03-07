@@ -101,13 +101,6 @@ parse_args:
     nargs: "?"
     type: Path
 
-  --dwi_dir:
-    help: "The path to the directory containing pre-processed dwi data
-      transformed to subject T1w space. If not provided, workflow assumes
-      this data exists in <bids_dir>/<subject>/dwi."
-    nargs: "?"
-    type: Path
-
   --responsemean_dir:
     help: "The path to the directory containing average response functions. If
       not provided, one will be computed from the subjects in the input
