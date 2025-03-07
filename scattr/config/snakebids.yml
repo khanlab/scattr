@@ -26,7 +26,6 @@ pybids_inputs:
       extension: ".nii.gz"
       datatype: "anat"
       desc: "brain" # Require a skull-stripped brain
-      part: ["mag", false]
     wildcards:
       - subject
       - session
