@@ -199,7 +199,7 @@ rule filtered_tck2connectome:
     input:
         weights=rules.filter_combine_tck.output.combined_weights,
         tck=rules.filter_combine_tck.output.combined_tck,
-        subcortical_seg=rules.tckgen.input.subcortical_seg,
+        subcortical_seg=rules.tckgen_chunk.input.subcortical_seg,
     params:
         radius=config["radial_search"],
     output:

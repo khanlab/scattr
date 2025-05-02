@@ -1,55 +1,68 @@
-rule tckgen:
-    """
-    Tournier, J.-D.; Calamante, F. & Connelly, A. Improved probabilistic 
-    streamlines tractography by 2nd order integration over fibre orientation 
-    distributions. Proceedings of the International Society for Magnetic 
-    Resonance in Medicine, 2010, 1670
-    """
+rule tckgen_chunk:
     input:
         fod=rules.mtnormalise.output.wm_fod,
         mask=rules.nii2mif.output.mask,
         convex_hull=rules.create_convex_hull.output.convex_hull,
         subcortical_seg=rules.get_num_nodes.input.seg,
+    output:
+        tck=temp(bids_tractography_out(
+            desc="iFOD2",
+            suffix="tractography_{chunk}.tck",
+        )),
     params:
         step=config["step"],
-        sl=config["sl_count"],
-    output:
-        tck=bids_tractography_out(
-            desc="iFOD2",
-            suffix="tractography.tck",
-        ),
-    threads: 32
-    resources:
+        chunk_size=int(config["sl_count"]) // config["num_chunks"],
+        seed_offset=lambda wildcards: int(wildcards.chunk) * 10000,
         tmp_dir=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
-            **wildcards,
-        ),
-        tmp_tck=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=os.environ.get("SLURM_TMPDIR") if config.get("slurm_tmpdir") else "/tmp",
             desc="iFOD2",
-            suffix="tractography.tck",
-            **wildcards,
+            suffix=f"tractography_{wildcards.chunk}.tck",
+            subject=wildcards.subject
         ),
-        mem_mb=128000,
-        time=60 * 24,
+    threads: 12
+    resources:
+        mem_mb=32000,
+        time=60 * 3,
     log:
-        bids_log(suffix="tckgen.log"),
+        bids_log(suffix="tckgen_chunk_{chunk}.log"),
     container:
         config["singularity"]["scattr"]
     shell:
         """
-        mkdir -p {resources.tmp_dir} 
+        mkdir -p {params.tmp_dir}
 
+        MRTRIX_RNG_SEED={params.seed_offset} \\
         tckgen -nthreads {threads} -algorithm iFOD2 -step {params.step} \\
-            -select {params.sl} -exclude {input.convex_hull} \\
-            -include {input.subcortical_seg} -mask {input.mask} \\
-            -seed_image {input.mask} {input.fod} {resources.tmp_tck} &> {log} 
+            -select {params.chunk_size} \\
+            -seed_image {input.mask} \\
+            -include {input.subcortical_seg} -exclude {input.convex_hull} \\
+            -mask {input.mask} \\
+            {input.fod} {output.tck} &> {log}
+        """
 
-        rsync -v {resources.tmp_tck} {output.tck} >> {log} 2>&1
+rule tck_concat:
+    input:
+        tcks=lambda wildcards: expand(
+            bids_tractography_out(
+                desc="iFOD2",
+                suffix="tractography_{chunk}.tck",
+                subject=wildcards.subject,
+            ),
+            chunk=range(config["num_chunks"])
+        ),
+    output:
+        tck=bids_tractography_out(
+            desc="iFOD2",
+            suffix="tractography.tck",
+            subject="{subject}",
+        ),
+    log:
+        bids_log(suffix="tck_concat.log"),
+    container:
+        config["singularity"]["scattr"]
+    shell:
+        """
+        tckedit {input.tcks} {output.tck} -force &> {log}
         """
 
 
@@ -60,7 +73,7 @@ rule tcksift2:
     connectome. NeuroImage, 2015, 104, 253-265
     """
     input:
-        tck=rules.tckgen.output.tck,
+        tck=rules.tck_concat.output.tck,
         fod=rules.mtnormalise.output.wm_fod,
     output:
         weights=bids_tractography_out(
@@ -82,10 +95,9 @@ rule tcksift2:
             {input.tck} {input.fod} {output.weights} &> {log}
         """
 
-
 checkpoint create_roi_mask:
     input:
-        subcortical_seg=rules.tckgen.input.subcortical_seg,
+        subcortical_seg=rules.tckgen_chunk.input.subcortical_seg,
         num_labels=rules.get_num_nodes.output.num_labels,
     params:
         base_dir=mrtrix_dir,
@@ -144,7 +156,7 @@ checkpoint create_exclude_mask:
     input:
         unpack(aggregate_rois),
         rules.create_roi_mask.output.out_dir,
-        subcortical_seg=rules.tckgen.input.subcortical_seg,
+        subcortical_seg=rules.tckgen_chunk.input.subcortical_seg,
         num_labels=rules.get_num_nodes.output.num_labels,
     params:
         base_dir=mrtrix_dir,
@@ -167,8 +179,6 @@ checkpoint create_exclude_mask:
 
 
 # TODO (v0.2): ADD OPTION TO OUTPUT TDI MAP
-
-
 rule tck2connectome:
     """
     Smith, R. E.; Tournier, J.-D.; Calamante, F. & Connelly, A. The 
@@ -179,21 +189,10 @@ rule tck2connectome:
     """
     input:
         weights=rules.tcksift2.output.weights,
-        tck=rules.tckgen.output.tck,
-        subcortical_seg=rules.tckgen.input.subcortical_seg,
+        tck=rules.tck_concat.output.tck,
+        subcortical_seg=rules.tckgen_chunk.input.subcortical_seg,
     params:
         radius=config["radial_search"],
-    output:
-        sl_assignment=bids_tractography_out(
-            desc="subcortical",
-            suffix="nodeAssignment.txt",
-        ),
-        node_weights=bids_tractography_out(
-            desc="subcortical",
-            suffix="nodeWeights.csv",
-        ),
-    threads: 32
-    resources:
         tmp_dir=lambda wildcards: bids_tractography_out(
             root=os.environ.get("SLURM_TMPDIR")
             if config.get("slurm_tmpdir")
@@ -216,6 +215,17 @@ rule tck2connectome:
             suffix="nodeWeights.csv",
             **wildcards,
         ),
+    output:
+        sl_assignment=bids_tractography_out(
+            desc="subcortical",
+            suffix="nodeAssignment.txt",
+        ),
+        node_weights=bids_tractography_out(
+            desc="subcortical",
+            suffix="nodeWeights.csv",
+        ),
+    threads: 32
+    resources:
         mem_mb=128000,
         time=60 * 3,
     log:
@@ -226,27 +236,26 @@ rule tck2connectome:
         config["singularity"]["scattr"]
     shell:
         """
-        mkdir -p {resources.tmp_dir}
+        mkdir -p {params.tmp_dir}
 
         tck2connectome -nthreads {threads} -zero_diagonal -stat_edge sum \\
         -assignment_radial_search {params.radius} \\
         -tck_weights_in {input.weights} \\
-        -out_assignments {resources.tmp_sl_assignment} \\
+        -out_assignments {params.tmp_sl_assignment} \\
         -symmetric {input.tck} {input.subcortical_seg} \\
-        {resources.tmp_node_weights} &> {log}
+        {params.tmp_node_weights} &> {log}
 
-        rsync {resources.tmp_sl_assignment} \\
+        rsync {params.tmp_sl_assignment} \\
         {output.sl_assignment} >> {log} 2>&1 
 
-        rsync {resources.tmp_node_weights} {output.node_weights} >> {log} 2>&1
+        rsync {params.tmp_node_weights} {output.node_weights} >> {log} 2>&1
         """
-
 
 checkpoint connectome2tck:
     input:
         node_weights=rules.tcksift2.output.weights,
         sl_assignment=rules.tck2connectome.output.sl_assignment,
-        tck=rules.tckgen.output.tck,
+        tck=rules.tck_concat.output.tck,
         num_labels=rules.get_num_nodes.output.num_labels,
     output:
         output_dir=directory(
@@ -258,8 +267,7 @@ checkpoint connectome2tck:
                 ).parent
             )
         ),
-    threads: 32
-    resources:
+    params:
         tmp_dir=lambda wildcards: bids_tractography_out(
             root=os.environ.get("SLURM_TMPDIR")
             if config.get("slurm_tmpdir")
@@ -267,6 +275,8 @@ checkpoint connectome2tck:
             datatype="unfiltered",
             **wildcards,
         ),
+    threads: 32
+    resources:
         edge_weight_prefix=lambda wildcards: bids_tractography_out(
             root=os.environ.get("SLURM_TMPDIR")
             if config.get("slurm_tmpdir")
@@ -295,7 +305,7 @@ checkpoint connectome2tck:
         config["singularity"]["scattr"]
     shell:
         """
-        mkdir -p {resources.tmp_dir} {output.output_dir}
+        mkdir -p {params.tmp_dir} {output.output_dir}
 
         num_labels=$(cat {input.num_labels})
 
