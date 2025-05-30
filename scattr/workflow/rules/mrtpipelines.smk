@@ -94,6 +94,8 @@ rule dwi2tensor:
         "dwiproc"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         dwi2tensor -nthreads {threads} -mask {input.mask} \\

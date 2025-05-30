@@ -145,6 +145,8 @@ rule mgz2nii:
         "freesurfer"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         FS_LICENSE={params.fs_license} 
@@ -184,6 +186,8 @@ rule fs_xfm_to_native:
         "freesurfer"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/ants.yaml"
     shell:
         """
         antsApplyTransforms -d 3 -n MultiLabel \\

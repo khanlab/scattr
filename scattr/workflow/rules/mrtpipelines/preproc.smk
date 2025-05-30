@@ -28,6 +28,8 @@ rule nii2mif:
         "dwiproc"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         mrconvert -nthreads {threads} -fslgrad {input.bvec} {input.bval} \\
@@ -76,6 +78,8 @@ rule dwi2response:
         "dwiproc"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         echo 'BZeroThreshold: {params.bzero_thresh}' > {params.mrtrix_conf}
@@ -134,6 +138,8 @@ rule responsemean:
         "dwiproc_group"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         responsemean {input.subject_rf} {output.avg_rf} \\
@@ -208,6 +214,8 @@ rule dwi2fod:
         "diffmodel"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         dwi2fod -nthreads {threads} {params.shells} -mask {input.mask} \\
@@ -263,6 +271,8 @@ rule mtnormalise:
         "diffmodel"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         mtnormalise -nthreads {threads} -mask {input.mask} \\
@@ -296,6 +306,8 @@ rule dwinormalise:
         bids_log(suffix="dwinormalise.log"),
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     group:
         "dwiproc"
     shell:

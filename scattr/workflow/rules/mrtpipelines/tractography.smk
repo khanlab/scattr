@@ -40,6 +40,8 @@ rule tckgen:
         bids_log(suffix="tckgen.log"),
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         mkdir -p {resources.tmp_dir} 
@@ -76,6 +78,8 @@ rule tcksift2:
         bids_log(suffix="tcksift2.log"),
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         tcksift2 -nthreads {threads} -out_mu {output.mu} \\
@@ -224,6 +228,8 @@ rule tck2connectome:
         "tractography_update"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         mkdir -p {resources.tmp_dir}
@@ -293,6 +299,8 @@ checkpoint connectome2tck:
         "tractography_update"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         mkdir -p {resources.tmp_dir} {output.output_dir}

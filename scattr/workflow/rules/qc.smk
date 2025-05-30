@@ -59,6 +59,8 @@ rule segment_qc:
         "qc"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/neurovis.yaml"
     script:
         "../scripts/qc/segmentation_qc.py"
 
@@ -97,6 +99,8 @@ rule registration_qc:
         "qc"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/neurovis.yaml"
     script:
         "../scripts/qc/registration_qc.py"
 

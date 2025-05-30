@@ -169,6 +169,8 @@ rule filter_combine_tck:
         "tractography_update"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         mkdir -p {resources.tmp_dir}
@@ -243,6 +245,8 @@ rule filtered_tck2connectome:
         "tractography_update"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """mkdir -p {resources.tmp_dir}
 
