@@ -41,7 +41,7 @@ rule tckgen:
     container:
         config["singularity"]["scattr"]
     conda:
-        "../envs/mrtrix3.yaml"
+        "../../envs/mrtrix3.yaml"
     shell:
         """
         mkdir -p {resources.tmp_dir} 
@@ -79,7 +79,7 @@ rule tcksift2:
     container:
         config["singularity"]["scattr"]
     conda:
-        "../envs/mrtrix3.yaml"
+        "../../envs/mrtrix3.yaml"
     shell:
         """
         tcksift2 -nthreads {threads} -out_mu {output.mu} \\
@@ -229,7 +229,7 @@ rule tck2connectome:
     container:
         config["singularity"]["scattr"]
     conda:
-        "../envs/mrtrix3.yaml"
+        "../../envs/mrtrix3.yaml"
     shell:
         """
         mkdir -p {resources.tmp_dir}
@@ -300,7 +300,7 @@ checkpoint connectome2tck:
     container:
         config["singularity"]["scattr"]
     conda:
-        "../envs/mrtrix3.yaml"
+        "../../envs/mrtrix3.yaml"
     shell:
         """
         mkdir -p {resources.tmp_dir} {output.output_dir}

@@ -1,4 +1,4 @@
 ---
-name: label_merge
+name: labelmerge
 channels: [khanlab, conda-forge, defaults]
 dependencies: [python=3.9, labelmerge=1.0.0]
