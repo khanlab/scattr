@@ -92,7 +92,7 @@ rule thalamic_segmentation:
         config["singularity"]["scattr"]
     shell:
         """
-        FS_LICENSE={params.fs_license}
+        export FS_LICENSE={params.fs_license}
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
         export SUBJECTS_DIR={input.freesurfer_dir} 
 
@@ -143,7 +143,7 @@ rule mgz2nii:
         config["singularity"]["scattr"]
     shell:
         """
-        FS_LICENSE={params.fs_license} 
+        export FS_LICENSE={params.fs_license} 
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
         export SUBJECTS_DIR={params.freesurfer_dir} 
 
