@@ -1,12 +1,10 @@
 name: neurovis
 channels:
   - conda-forge
-  - khanlab
   - defaults
 dependencies:
   - python=3.9
   - nilearn>=0.10.0,<0.11.0
-  - nibabel>=3.2.2,<4.0.0
   - niworkflows>=1.7.9,<2.0.0
   - matplotlib>=3.7.1,<4.0.0
   - numpy>=1.22.3,<2.0.0

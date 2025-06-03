@@ -146,7 +146,7 @@ rule mgz2nii:
     container:
         config["singularity"]["scattr"]
     conda:
-        "../../envs/mrtrix3.yaml"
+        "../envs/mrtrix3.yaml"
     shell:
         """
         FS_LICENSE={params.fs_license} 

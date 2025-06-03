@@ -1,4 +1,4 @@
 ---
 name: labelmerge
-channels: [khanlab, conda-forge, defaults]
-dependencies: [python=3.9, labelmerge=1.0.0]
+channels: [khanlab, conda-forge, bioconda, defaults]
+dependencies: [python=3.11, labelmerge=1.0.0]
