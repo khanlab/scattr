@@ -178,7 +178,7 @@ rule labelmerge:
             if config.get("labelmerge_base_dir")
             else zona_dir
         ),
-        base_drops=f"--base_drops {config['labelmerge_base_drops']}",
+        base_drops=f"--base_drops {' '.join(config['labelmerge_base_drops'])}",
         base_desc=f"--base_desc {config['labelmerge_base_desc']}",
         base_exceptions=(
             f"--base_exceptions {config.get('labelmerge_base_exceptions')}"
@@ -190,7 +190,7 @@ rule labelmerge:
         ),
         overlay_desc=f"--overlay_desc {config['labelmerge_overlay_desc']}",
         overlay_drops=(
-            f"--overlay_drops {config.get('labelmerge_overlay_drops')}"
+            f"--overlay_drops {' '.join(config.get['labelmerge_overlay_drops'])}"
             if config.get("labelmerge_overlay_drops")
             else ""
         ),
