@@ -126,6 +126,3 @@ Workflow steps that write logs to file are stored in the hidden `.logs`
 subfolder, with the file names based on the tools used (e.g. `mrtrix`) and rule
 wildcards (e.g. `subject`).
 
-If the app is run in workflow mode (`--workflow-mode` / `-W`), which enables
-direct use of the Snakemake CLI to run scattr, output folders (e.g. `work`) will
-be placed in a `results` folder.

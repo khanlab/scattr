@@ -12,7 +12,7 @@ bids_anat = partial(
     bids,
     root=zona_dir,
     datatype="anat",
-    **inputs_t1w.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 bids_labelmerge = partial(
@@ -20,13 +20,13 @@ bids_labelmerge = partial(
     root=str(Path(labelmerge_dir) / "combined")
     if not config.get("skip_labelmerge")
     else config.get("labelmerge_base_dir") or zona_dir,
-    **inputs_t1w.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 bids_log = partial(
     bids,
     root=log_dir,
-    **inputs_t1w.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 """ References:
@@ -71,9 +71,7 @@ rule reg2native:
             / Path(config["zona_bb_subcortex"][config["Space"]]["dir"])
             / Path(config["zona_bb_subcortex"][config["Space"]]["T1w"])
         ),
-        target=lambda wildcards: inputs_t1w["T1w"]
-        .filter(**wildcards)
-        .expand()[0],
+        target=lambda wildcards: inputs["T1w"].filter(**wildcards).expand()[0],
     params:
         out_dir=directory(str(Path(bids_anat()).parent)),
         out_prefix=bids_anat(
@@ -155,12 +153,12 @@ rule warp2native:
 
 rule labelmerge:
     input:
-        zona_seg=inputs_t1w["T1w"].expand(
+        zona_seg=inputs["T1w"].expand(
             rules.warp2native.output.nii, allow_missing=True
         )
         if not config.get("labelmerge_base_dir")
         else [],
-        fs_seg=inputs_t1w["T1w"].expand(
+        fs_seg=inputs["T1w"].expand(
             rules.fs_xfm_to_native.output.thal, allow_missing=True
         )
         if not config.get("labelmerge_overlay_dir")
@@ -200,7 +198,7 @@ rule labelmerge:
             else ""
         ),
     output:
-        seg=inputs_t1w["T1w"].expand(
+        seg=inputs["T1w"].expand(
             bids_labelmerge(
                 space="T1w",
                 desc="combined",
@@ -208,7 +206,7 @@ rule labelmerge:
             ),
             allow_missing=True,
         ),
-        tsv=inputs_t1w["T1w"].expand(
+        tsv=inputs["T1w"].expand(
             bids_labelmerge(
                 space="T1w",
                 desc="combined",

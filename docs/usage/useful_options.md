@@ -44,11 +44,19 @@ Similarly, subjects can be excluded from processing using the
 ## Alternate Freesurfer / derived-diffusion data locations
 
 By default, SCATTR attempts to locate Freesurfer and derived diffusion data 
-locations. Users can overwrite these options, by passing along the actual 
-location of each using either `--freesurfer_dir` or `--dwi_dir`, respectively.
+locations. Users can overwrite the Freesurfer location by passing `--freesurfer_dir`, 
+e.g.: 
 
 ```
---freesurfer_dir /path/to/fs_dir --dwi_dir /path/to/dwi_dir
+--freesurfer_dir /path/to/fs_dir
+```
+
+The paths to any of the BIDS files (T1w, dwi, dwi mask) can always be customized
+using the `--path-T1w`, `--path-dwi`, or `--path-mask` options. Note, you must
+include generic wildcards in any path you specify, e.g.:
+
+```
+--path-T1w /mydata/project1/sub-{subject}/T1.nii.gz`
 ```
 
 ## Pre-generated average response function

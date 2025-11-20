@@ -12,7 +12,9 @@ supported**. We do not have a Docker arm64 container yet._
 
 ### Notes
 * Inputs to SCATTR should be a BIDS dataset, including processed Freesurfer
-and DWI derivatives (which can be stored separately). 
+and DWI derivatives. If any BIDS files are stored separately, you can point to these using the
+relevant `--path-{component}` CLI option. The Freesurfer folder is specified with a separate 
+CLI option `--freesurfer-dir`(which can be stored separately). 
 
 ## Docker on Windows / Mac (Intel) / Linux
 
