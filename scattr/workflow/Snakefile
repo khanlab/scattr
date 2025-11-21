@@ -7,6 +7,7 @@ from snakebids import (
     get_wildcard_constraints,
 )
 
+shell.executable ("/bin/bash")
 
 configfile: "config/snakebids.yml"
 

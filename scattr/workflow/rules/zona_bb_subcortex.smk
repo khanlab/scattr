@@ -174,6 +174,7 @@ rule labelmerge:
         fs_seg=inputs_t1w["T1w"].expand(
             rules.fs_xfm_to_native.output.thal, allow_missing=True
         )
+
             if (not config.get("use_hippunfold"))
             else [],
 
@@ -187,7 +188,6 @@ rule labelmerge:
         )
             if config.get("use_hippunfold")
             else [],
-
             
     params:
         labelmerge_out_dir=directory(labelmerge_dir),
