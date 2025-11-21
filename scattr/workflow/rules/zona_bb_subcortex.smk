@@ -100,6 +100,8 @@ rule reg2native:
         "subcortical_1"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/ants.yaml"
     shell:
         """
         echo {input.target}        
@@ -140,6 +142,8 @@ rule warp2native:
         "subcortical_1"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/ants.yaml"
     shell:
         """
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
@@ -221,6 +225,8 @@ rule labelmerge:
         "subcortical_group"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/labelmerge.yaml"
     shell:
         """
         labelmerge {params.labelmerge_base_dir} {params.labelmerge_out_dir} \\
@@ -261,6 +267,8 @@ rule get_num_nodes:
         "subcortical_2"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/neurovis.yaml"
     script:
         "../scripts/zona_bb_subcortex/get_num_labels.py"
 
@@ -286,6 +294,8 @@ rule binarize:
         "subcortical_2"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/neurovis.yaml"
     script:
         "../scripts/zona_bb_subcortex/create_seg_mask.py"
 
@@ -312,6 +322,8 @@ rule add_brainstem:
         "subcortical_2"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/neurovis.yaml"
     script:
         "../scripts/zona_bb_subcortex/add_brainstem.py"
 
@@ -337,5 +349,7 @@ rule create_convex_hull:
         "subcortical_2"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/neurovis.yaml"
     script:
         "../scripts/zona_bb_subcortex/convexHull_roi.py"

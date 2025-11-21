@@ -1,0 +1,4 @@
+---
+name: ants
+channels: [conda-forge, defaults]
+dependencies: [python=3.9, ants=2.4.4]

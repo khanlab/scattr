@@ -1,0 +1,4 @@
+---
+name: mrtrix3
+channels: [mrtrix3, conda-forge, defaults]
+dependencies: [python=3.9, mrtrix3=3.0.4]
