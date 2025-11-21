@@ -4,7 +4,7 @@ bids_labelmerge = partial(
     root=str(Path(labelmerge_dir) / "combined")
     if not config.get("skip_labelmerge")
     else config.get("labelmerge_base_dir") or zona_dir,
-    **inputs_t1w.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 bids_qc = partial(
@@ -12,7 +12,7 @@ bids_qc = partial(
     root=str(Path(config["output_dir"]) / "qc"),
     datatype="anat",
     space="T1w",
-    **inputs_t1w.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 
@@ -26,7 +26,7 @@ rule segment_qc:
             else config.get("labelmerge_base_desc"),
             suffix="dseg.nii.gz",
         ),
-        t1w_image=lambda wildcards: inputs_t1w["T1w"]
+        t1w_image=lambda wildcards: inputs["T1w"]
         .filter(**wildcards)
         .expand()[0],
     output:
@@ -68,7 +68,7 @@ rule segment_qc:
 rule registration_qc:
     input:
         moving_nii=rules.reg2native.output.t1w_nativespace,
-        fixed_nii=lambda wildcards: inputs_t1w["T1w"]
+        fixed_nii=lambda wildcards: inputs["T1w"]
         .filter(**wildcards)
         .expand()[0],
     params:
@@ -107,7 +107,7 @@ rule registration_qc:
 
 rule gather_qc:
     input:
-        dseg_png=inputs_t1w["T1w"].expand(rules.segment_qc.output.qc_png),
-        dseg_html=inputs_t1w["T1w"].expand(rules.segment_qc.output.qc_html),
-        reg_svg=inputs_t1w["T1w"].expand(rules.registration_qc.output.qc_svg),
-        reg_html=inputs_t1w["T1w"].expand(rules.registration_qc.output.qc_html),
+        dseg_png=inputs["T1w"].expand(rules.segment_qc.output.qc_png),
+        dseg_html=inputs["T1w"].expand(rules.segment_qc.output.qc_html),
+        reg_svg=inputs["T1w"].expand(rules.registration_qc.output.qc_svg),
+        reg_html=inputs["T1w"].expand(rules.registration_qc.output.qc_html),

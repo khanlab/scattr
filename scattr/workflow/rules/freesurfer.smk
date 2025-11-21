@@ -19,13 +19,13 @@ bids_fs_out = partial(
     bids,
     root=freesurfer_dir,
     datatype="anat",
-    **inputs_t1w.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 bids_log = partial(
     bids,
     root=log_dir,
-    **inputs_t1w.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 """Freesurfer references (with additional in rules as necessary)
@@ -73,12 +73,10 @@ rule thalamic_segmentation:
         freesurfer_dir=freesurfer_dir,
     params:
         fs_license=fs_license,
-        subj_dir=str(Path(bids(**inputs_t1w.subj_wildcards)).parent),
+        subj_dir=str(Path(bids(**inputs.subj_wildcards)).parent),
     output:
         thal_seg=str(
-            Path(
-                bids(root=freesurfer_dir, **inputs_t1w.subj_wildcards)
-            ).parent
+            Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
             / "mri"
             / "ThalamicNuclei.v12.T1.mgz"
         ),
@@ -94,7 +92,7 @@ rule thalamic_segmentation:
         config["singularity"]["scattr"]
     shell:
         """
-        FS_LICENSE={params.fs_license}
+        export FS_LICENSE={params.fs_license}
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
         export SUBJECTS_DIR={input.freesurfer_dir} 
 
@@ -115,9 +113,7 @@ rule mgz2nii:
         if not config.get("skip_thal_seg")
         else [],
         aparcaseg=str(
-            Path(
-                bids(root=freesurfer_dir, **inputs_t1w.subj_wildcards)
-            ).parent
+            Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
             / "mri"
             / "aparc+aseg.mgz"
         ),
@@ -149,7 +145,7 @@ rule mgz2nii:
         "../envs/mrtrix3.yaml"
     shell:
         """
-        FS_LICENSE={params.fs_license} 
+        export FS_LICENSE={params.fs_license} 
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
         export SUBJECTS_DIR={params.freesurfer_dir} 
 
@@ -164,7 +160,7 @@ rule fs_xfm_to_native:
     input:
         thal=rules.mgz2nii.output.thal,
         aparcaseg=rules.mgz2nii.output.aparcaseg,
-        ref=lambda wildcards: inputs_t1w["T1w"].filter(**wildcards).expand()[0],
+        ref=lambda wildcards: inputs["T1w"].filter(**wildcards).expand()[0],
     output:
         thal=bids_fs_out(
             space="T1w",

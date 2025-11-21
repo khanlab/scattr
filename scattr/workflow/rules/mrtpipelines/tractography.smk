@@ -93,7 +93,7 @@ checkpoint create_roi_mask:
         num_labels=rules.get_num_nodes.output.num_labels,
     params:
         base_dir=mrtrix_dir,
-        subj_wildcards=inputs_dwi.subj_wildcards,
+        subj_wildcards=inputs.subj_wildcards,
     output:
         out_dir=directory(bids_anat_out(datatype="roi_masks")),
     threads: 4
@@ -155,7 +155,7 @@ checkpoint create_exclude_mask:
         mask_dir=bids_anat_out(
             datatype="roi_masks",
         ),
-        subj_wildcards=inputs_dwi.subj_wildcards,
+        subj_wildcards=inputs.subj_wildcards,
     output:
         out_dir=directory(bids_anat_out(datatype="exclude_mask")),
     threads: 4

@@ -1,29 +1,29 @@
 rule nii2mif:
     input:
-        dwi=inputs_dwi["dwi"].path,
-        bval=re.sub(".nii.gz", ".bval", inputs_dwi["dwi"].path),
-        bvec=re.sub(".nii.gz", ".bvec", inputs_dwi["dwi"].path),
-        mask=inputs_dwi["mask"].path,
+        dwi=inputs["dwi"].path,
+        bval=re.sub(".nii.gz", ".bval", inputs["dwi"].path),
+        bvec=re.sub(".nii.gz", ".bvec", inputs["dwi"].path),
+        mask=inputs["mask"].path,
     output:
         dwi=bids(
             root=mrtrix_dir,
             datatype="dwi",
             suffix="dwi.mif",
-            **inputs_dwi.subj_wildcards
+            **inputs.subj_wildcards
         ),
         mask=bids(
             root=mrtrix_dir,
             datatype="dwi",
             desc="brain",
             suffix="mask.mif",
-            **inputs_dwi.subj_wildcards
+            **inputs.subj_wildcards
         ),
     threads: 4
     resources:
         mem_mb=16000,
         time=10,
     log:
-        bids_log(suffix="nii2mif.log", **inputs_dwi.subj_wildcards),
+        bids_log(suffix="nii2mif.log", **inputs.subj_wildcards),
     group:
         "dwiproc"
     container:
@@ -58,15 +58,15 @@ rule dwi2response:
     output:
         wm_rf=bids_response_out(
             desc="wm",
-            **inputs_dwi.subj_wildcards,
+            **inputs.subj_wildcards,
         ),
         gm_rf=bids_response_out(
             desc="gm",
-            **inputs_dwi.subj_wildcards,
+            **inputs.subj_wildcards,
         ),
         csf_rf=bids_response_out(
             desc="csf",
-            **inputs_dwi.subj_wildcards,
+            **inputs.subj_wildcards,
         ),
     threads: 4
     resources:
@@ -93,13 +93,13 @@ rule dwi2response:
 
 def get_subject_rf(wildcards):
     """Get appropriate subject response path"""
-    if not inputs_dwi.sessions:
+    if not inputs.sessions:
         return expand(
             bids_response_out(
                 subject="{subject}",
                 desc="{tissue}",
             ),
-            subject=inputs_dwi.subjects,
+            subject=inputs.subjects,
             allow_missing=True,
         )
     else:
@@ -109,11 +109,11 @@ def get_subject_rf(wildcards):
                 session="{session}",
                 desc="{tissue}",
             ),
-            subject=inputs_dwi.subjects,
+            subject=inputs.subjects,
             session=(
                 config.get("responsemean_ses")
                 if config.get("responsemean_ses")
-                else inputs_dwi.sessions
+                else inputs.sessions
             ),
             allow_missing=True,
         )
@@ -190,19 +190,19 @@ rule dwi2fod:
             model="csd",
             desc="wm",
             suffix="fod.mif",
-            **inputs_dwi.subj_wildcards,
+            **inputs.subj_wildcards,
         ),
         gm_fod=bids_response_out(
             model="csd",
             desc="gm",
             suffix="fod.mif",
-            **inputs_dwi.subj_wildcards,
+            **inputs.subj_wildcards,
         ),
         csf_fod=bids_response_out(
             model="csd",
             desc="csf",
             suffix="fod.mif",
-            **inputs_dwi.subj_wildcards,
+            **inputs.subj_wildcards,
         ),
     threads: 4
     resources:
@@ -247,19 +247,19 @@ rule mtnormalise:
             model="csd",
             desc="wm",
             suffix="fodNormalized.mif",
-            **inputs_dwi.subj_wildcards,
+            **inputs.subj_wildcards,
         ),
         gm_fod=bids_response_out(
             model="csd",
             desc="gm",
             suffix="fodNormalized.mif",
-            **inputs_dwi.subj_wildcards,
+            **inputs.subj_wildcards,
         ),
         csf_fod=bids_response_out(
             model="csd",
             desc="csf",
             suffix="fodNormalized.mif",
-            **inputs_dwi.subj_wildcards,
+            **inputs.subj_wildcards,
         ),
     threads: 4
     resources:
@@ -296,7 +296,7 @@ rule dwinormalise:
             datatype="dwi",
             desc="normalized",
             suffix="dwi.mif",
-            **inputs_dwi.subj_wildcards,
+            **inputs.subj_wildcards,
         ),
     threads: 4
     resources:

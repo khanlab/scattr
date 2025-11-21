@@ -21,7 +21,7 @@ the dataset, so we suggest using the
 your dataset has no errors.
 
 If you passed Freesurfer or diffusion derivative locations (`--freesurfer-dir` 
-or `--dwi-dir`), you may get get this message as the files are a different
+or `--path-dwi`), you may get get this message as the files are a different
 location than in the input directory provided.
 
 ### 2. What if I want to use merge two different atlases?
