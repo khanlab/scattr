@@ -171,6 +171,11 @@ rule labelmerge:
         zona_tsv=rules.cp_zona_tsv.output.zona_tsv
         if not config.get("labelmerge_base_dir")
         else [],
+        
+        hip_tsv=rules.cp_hippu_tsv.output.hip_tsv
+            if config.get("labelmerge_overlay_desc") == "HippUnfoldSubfields"
+            else [],
+            
     params:
         labelmerge_out_dir=directory(labelmerge_dir),
         labelmerge_base_dir=(

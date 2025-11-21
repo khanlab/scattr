@@ -163,7 +163,7 @@ parse_args:
       labelmerge. By default, will drop the thalamus labels for intended use
       in the subcortical connectome workflow (default: 15 16)."
     nargs: "*"
-    default: 15 16
+    default: 15 16 17 18
 
   --labelmerge_overlay_drops:
     help: "Space-separated list of indices to drop from the overlay image used
@@ -276,3 +276,12 @@ singularity:
   scattr: "docker://khanlab/scattr:v0.3.2"
 
 fs_license: /path/to/fs/license
+
+hippunfold:
+  tsv: "resources/hippunfold/desc-HippUnfoldSubfields_dseg.tsv"
+  env: "envs/hippunfold.yml"
+  modality: "T1w"
+  threads: 8
+  extra: "-p"
+hippunfold_overlay_dir: null
+
