@@ -1,9 +1,11 @@
 # BIDS partials
 bids_labelmerge = partial(
     bids,
-    root=str(Path(labelmerge_dir) / "combined")
-    if not config.get("skip_labelmerge")
-    else config.get("labelmerge_base_dir") or zona_dir,
+    root=(
+        str(Path(labelmerge_dir) / "combined")
+        if not config.get("skip_labelmerge")
+        else config.get("labelmerge_base_dir") or zona_dir
+    ),
     **inputs.subj_wildcards,
 )
 
@@ -21,9 +23,11 @@ rule segment_qc:
         qc_labels=bids_labelmerge(
             space="T1w",
             datatype=None if not config.get("skip_labelmerge") else "anat",
-            desc="combined"
-            if not config.get("skip_labelmerge")
-            else config.get("labelmerge_base_desc"),
+            desc=(
+                "combined"
+                if not config.get("skip_labelmerge")
+                else config.get("labelmerge_base_desc")
+            ),
             suffix="dseg.nii.gz",
         ),
         t1w_image=lambda wildcards: inputs["T1w"]
@@ -32,9 +36,11 @@ rule segment_qc:
     output:
         qc_png=report(
             bids_qc(
-                desc="labelmerge"
-                if not config.get("skip_labelmerge")
-                else config.get("labelmerge_base_desc"),
+                desc=(
+                    "labelmerge"
+                    if not config.get("skip_labelmerge")
+                    else config.get("labelmerge_base_desc")
+                ),
                 suffix="dsegQC.png",
             ),
             caption="../report/dseg_qc.rst",
@@ -43,9 +49,11 @@ rule segment_qc:
         ),
         qc_html=report(
             bids_qc(
-                desc="labelmerge"
-                if not config.get("skip_labelmerge")
-                else config.get("labelmerge_base_desc"),
+                desc=(
+                    "labelmerge"
+                    if not config.get("skip_labelmerge")
+                    else config.get("labelmerge_base_desc")
+                ),
                 suffix="dsegQC.html",
             ),
             category="Label Segmentation QC",

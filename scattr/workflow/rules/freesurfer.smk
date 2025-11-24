@@ -109,9 +109,11 @@ rule mgz2nii:
     NOTE: During conversion, files are renamed to BIDS-esque formatting
     """
     input:
-        thal=rules.thalamic_segmentation.output.thal_seg
-        if not config.get("skip_thal_seg")
-        else [],
+        thal=(
+            rules.thalamic_segmentation.output.thal_seg
+            if not config.get("skip_thal_seg")
+            else []
+        ),
         aparcaseg=str(
             Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
             / "mri"

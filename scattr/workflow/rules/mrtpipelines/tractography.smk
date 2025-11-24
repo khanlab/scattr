@@ -21,15 +21,19 @@ rule tckgen:
     threads: 32
     resources:
         tmp_dir=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             **wildcards,
         ),
         tmp_tck=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             desc="iFOD2",
             suffix="tractography.tck",
             **wildcards,
@@ -203,23 +207,29 @@ rule tck2connectome:
     threads: 32
     resources:
         tmp_dir=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             **wildcards,
         ),
         tmp_sl_assignment=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             desc="subcortical",
             suffix="nodeAssignment.txt",
             **wildcards,
         ),
         tmp_node_weights=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             desc="subcortical",
             suffix="nodeWeights.csv",
             **wildcards,
@@ -271,25 +281,31 @@ checkpoint connectome2tck:
     threads: 32
     resources:
         tmp_dir=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             datatype="unfiltered",
             **wildcards,
         ),
         edge_weight_prefix=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             datatype="unfiltered",
             desc="subcortical",
             suffix="tckWeights",
             **wildcards,
         ),
         edge_tck_prefix=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             datatype="unfiltered",
             desc="subcortical",
             suffix="from",

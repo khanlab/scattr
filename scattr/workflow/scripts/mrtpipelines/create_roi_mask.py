@@ -32,10 +32,7 @@ def create_roi_mask(
             **wildcards,
         )
 
-        shell(
-            "mrcalc -nthreads {threads} "
-            "{subcortical_seg} {idx} -eq {roi} -force"
-        )
+        shell("mrcalc -nthreads {threads} " "{subcortical_seg} {idx} -eq {roi} -force")
 
     # Build mask list and create in parallel
     # label_list = [idx for idx in range(1, num_labels+1)]

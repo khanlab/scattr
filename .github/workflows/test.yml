@@ -24,13 +24,13 @@ jobs:
           activate-environment: dev-only
 
       - name: isort
-        run: isort hippunfold/*.py -c
+        run: isort scattr/* -c
 
       - name: Black
-        run: black hippunfold --check
+        run: black scattr --check
 
       - name: snakefmt
-        run: snakefmt hippunfold --check
+        run: snakefmt scattr --check
 
   # test:
   #   runs-on: ubuntu-latest

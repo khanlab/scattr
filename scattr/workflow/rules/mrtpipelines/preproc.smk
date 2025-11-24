@@ -9,14 +9,14 @@ rule nii2mif:
             root=mrtrix_dir,
             datatype="dwi",
             suffix="dwi.mif",
-            **inputs.subj_wildcards
+            **inputs.subj_wildcards,
         ),
         mask=bids(
             root=mrtrix_dir,
             datatype="dwi",
             desc="brain",
             suffix="mask.mif",
-            **inputs.subj_wildcards
+            **inputs.subj_wildcards,
         ),
     threads: 4
     resources:

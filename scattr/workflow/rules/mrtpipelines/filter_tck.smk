@@ -140,23 +140,29 @@ rule filter_combine_tck:
     threads: 1
     resources:
         tmp_dir=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             **wildcards,
         ),
         tmp_combined_tck=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             desc="filteredsubcortical",
             suffix="tractography.tck",
             **wildcards,
         ),
         tmp_combined_weights=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             desc="filteredsubcortical",
             suffix="tckWeights.txt",
             **wildcards,
@@ -216,23 +222,29 @@ rule filtered_tck2connectome:
     threads: 32
     resources:
         tmp_dir=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             **wildcards,
         ),
         tmp_sl_assignment=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             desc="filteredsubcortical",
             suffix="nodeAssignment.txt",
             **wildcards,
         ),
         tmp_node_weights=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             desc="filteredsubcortical",
             suffix="nodeWeights.csv",
             **wildcards,
