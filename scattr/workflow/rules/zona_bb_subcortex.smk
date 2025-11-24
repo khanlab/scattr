@@ -17,9 +17,11 @@ bids_anat = partial(
 
 bids_labelmerge = partial(
     bids,
-    root=str(Path(labelmerge_dir) / "combined")
-    if not config.get("skip_labelmerge")
-    else config.get("labelmerge_base_dir") or zona_dir,
+    root=(
+        str(Path(labelmerge_dir) / "combined")
+        if not config.get("skip_labelmerge")
+        else config.get("labelmerge_base_dir") or zona_dir
+    ),
     **inputs.subj_wildcards,
 )
 
@@ -100,6 +102,8 @@ rule reg2native:
         "subcortical_1"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/ants.yaml"
     shell:
         """
         echo {input.target}        
@@ -140,6 +144,8 @@ rule warp2native:
         "subcortical_1"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/ants.yaml"
     shell:
         """
         export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS={threads} 
@@ -153,22 +159,30 @@ rule warp2native:
 
 rule labelmerge:
     input:
-        zona_seg=inputs["T1w"].expand(
-            rules.warp2native.output.nii, allow_missing=True
-        )
-        if not config.get("labelmerge_base_dir")
-        else [],
-        fs_seg=inputs["T1w"].expand(
-            rules.fs_xfm_to_native.output.thal, allow_missing=True
-        )
-        if not config.get("labelmerge_overlay_dir")
-        else [],
-        fs_tsv=rules.cp_fs_tsv.output.fs_tsv
-        if not config.get("labelmerge_overlay_dir")
-        else [],
-        zona_tsv=rules.cp_zona_tsv.output.zona_tsv
-        if not config.get("labelmerge_base_dir")
-        else [],
+        zona_seg=(
+            inputs["T1w"].expand(
+                rules.warp2native.output.nii, allow_missing=True
+            )
+            if not config.get("labelmerge_base_dir")
+            else []
+        ),
+        fs_seg=(
+            inputs["T1w"].expand(
+                rules.fs_xfm_to_native.output.thal, allow_missing=True
+            )
+            if not config.get("labelmerge_overlay_dir")
+            else []
+        ),
+        fs_tsv=(
+            rules.cp_fs_tsv.output.fs_tsv
+            if not config.get("labelmerge_overlay_dir")
+            else []
+        ),
+        zona_tsv=(
+            rules.cp_zona_tsv.output.zona_tsv
+            if not config.get("labelmerge_base_dir")
+            else []
+        ),
     params:
         labelmerge_out_dir=directory(labelmerge_dir),
         labelmerge_base_dir=(
@@ -221,6 +235,8 @@ rule labelmerge:
         "subcortical_group"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/labelmerge.yaml"
     shell:
         """
         labelmerge {params.labelmerge_base_dir} {params.labelmerge_out_dir} \\
@@ -237,9 +253,11 @@ rule get_num_nodes:
         seg=bids_labelmerge(
             space="T1w",
             datatype="anat" if config.get("skip_labelmerge") else "",
-            desc="combined"
-            if not config.get("skip_labelmerge")
-            else config.get("labelmerge_base_desc"),
+            desc=(
+                "combined"
+                if not config.get("skip_labelmerge")
+                else config.get("labelmerge_base_desc")
+            ),
             suffix="dseg.nii.gz",
         ),
     output:
@@ -247,9 +265,11 @@ rule get_num_nodes:
             bids_labelmerge(
                 space="T1w",
                 datatype="anat" if config.get("skip_labelmerge") else "",
-                desc="combined"
-                if not config.get("skip_labelmerge")
-                else config.get("labelmerge_base_desc"),
+                desc=(
+                    "combined"
+                    if not config.get("skip_labelmerge")
+                    else config.get("labelmerge_base_desc")
+                ),
                 suffix="numNodes.txt",
             )
         ),
@@ -261,6 +281,8 @@ rule get_num_nodes:
         "subcortical_2"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/neurovis.yaml"
     script:
         "../scripts/zona_bb_subcortex/get_num_labels.py"
 
@@ -271,9 +293,11 @@ rule binarize:
     output:
         mask=bids_labelmerge(
             space="T1w",
-            desc="combined"
-            if not config.get("skip_labelmerge")
-            else config.get("labelmerge_base_desc"),
+            desc=(
+                "combined"
+                if not config.get("skip_labelmerge")
+                else config.get("labelmerge_base_desc")
+            ),
             suffix="mask.nii.gz",
         ),
     threads: 4
@@ -286,6 +310,8 @@ rule binarize:
         "subcortical_2"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/neurovis.yaml"
     script:
         "../scripts/zona_bb_subcortex/create_seg_mask.py"
 
@@ -293,9 +319,11 @@ rule binarize:
 rule add_brainstem:
     input:
         mask=rules.binarize.output.mask,
-        aparcaseg=rules.fs_xfm_to_native.output.aparcaseg
-        if not config.get("skip_brainstem")
-        else [],
+        aparcaseg=(
+            rules.fs_xfm_to_native.output.aparcaseg
+            if not config.get("skip_brainstem")
+            else []
+        ),
     output:
         mask=bids_labelmerge(
             space="T1w",
@@ -312,15 +340,19 @@ rule add_brainstem:
         "subcortical_2"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/neurovis.yaml"
     script:
         "../scripts/zona_bb_subcortex/add_brainstem.py"
 
 
 rule create_convex_hull:
     input:
-        bin_seg=rules.binarize.output.mask
-        if config["skip_brainstem"]
-        else rules.add_brainstem.output.mask,
+        bin_seg=(
+            rules.binarize.output.mask
+            if config["skip_brainstem"]
+            else rules.add_brainstem.output.mask
+        ),
     output:
         convex_hull=bids_labelmerge(
             space="T1w",
@@ -337,5 +369,7 @@ rule create_convex_hull:
         "subcortical_2"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/neurovis.yaml"
     script:
         "../scripts/zona_bb_subcortex/convexHull_roi.py"

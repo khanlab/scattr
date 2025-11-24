@@ -2,11 +2,7 @@
 import matplotlib
 from nilearn.image import load_img
 from nilearn.plotting import view_img
-from niworkflows.viz.utils import (
-    compose_view,
-    cuts_from_bbox,
-    plot_registration,
-)
+from niworkflows.viz.utils import compose_view, cuts_from_bbox, plot_registration
 
 
 def registration_qc(

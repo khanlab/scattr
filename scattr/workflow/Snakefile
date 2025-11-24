@@ -5,7 +5,10 @@ from snakebids import (
     filter_list,
     generate_inputs,
     get_wildcard_constraints,
+    set_bids_spec,
 )
+
+set_bids_spec("v0_0_0")
 
 
 configfile: "config/snakebids.yml"

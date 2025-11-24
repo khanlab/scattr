@@ -49,9 +49,11 @@ bids_anat_out = partial(
 
 bids_labelmerge = partial(
     bids,
-    root=str(Path(labelmerge_dir) / "combined")
-    if not config.get("skip_labelmerge")
-    else config.get("labelmerge_base_dir") or zona_dir,
+    root=(
+        str(Path(labelmerge_dir) / "combined")
+        if not config.get("skip_labelmerge")
+        else config.get("labelmerge_base_dir") or zona_dir
+    ),
     **inputs.subj_wildcards,
 )
 
@@ -94,6 +96,8 @@ rule dwi2tensor:
         "dwiproc"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         dwi2tensor -nthreads {threads} -mask {input.mask} \\

@@ -109,9 +109,11 @@ rule mgz2nii:
     NOTE: During conversion, files are renamed to BIDS-esque formatting
     """
     input:
-        thal=rules.thalamic_segmentation.output.thal_seg
-        if not config.get("skip_thal_seg")
-        else [],
+        thal=(
+            rules.thalamic_segmentation.output.thal_seg
+            if not config.get("skip_thal_seg")
+            else []
+        ),
         aparcaseg=str(
             Path(bids(root=freesurfer_dir, **inputs.subj_wildcards)).parent
             / "mri"
@@ -141,6 +143,8 @@ rule mgz2nii:
         "freesurfer"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/mrtrix3.yaml"
     shell:
         """
         export FS_LICENSE={params.fs_license} 
@@ -180,6 +184,8 @@ rule fs_xfm_to_native:
         "freesurfer"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../envs/ants.yaml"
     shell:
         """
         antsApplyTransforms -d 3 -n MultiLabel \\

@@ -21,15 +21,19 @@ rule tckgen:
     threads: 32
     resources:
         tmp_dir=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             **wildcards,
         ),
         tmp_tck=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             desc="iFOD2",
             suffix="tractography.tck",
             **wildcards,
@@ -40,6 +44,8 @@ rule tckgen:
         bids_log(suffix="tckgen.log"),
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../../envs/mrtrix3.yaml"
     shell:
         """
         mkdir -p {resources.tmp_dir} 
@@ -76,6 +82,8 @@ rule tcksift2:
         bids_log(suffix="tcksift2.log"),
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../../envs/mrtrix3.yaml"
     shell:
         """
         tcksift2 -nthreads {threads} -out_mu {output.mu} \\
@@ -100,6 +108,8 @@ checkpoint create_roi_mask:
         "tract_masks"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../../envs/mrtrix3.yaml"
     script:
         "../../scripts/mrtpipelines/create_roi_mask.py"
 
@@ -162,6 +172,8 @@ checkpoint create_exclude_mask:
         "tract_masks"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../../envs/mrtrix3.yaml"
     script:
         "../../scripts/mrtpipelines/create_exclude_mask.py"
 
@@ -195,23 +207,29 @@ rule tck2connectome:
     threads: 32
     resources:
         tmp_dir=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             **wildcards,
         ),
         tmp_sl_assignment=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             desc="subcortical",
             suffix="nodeAssignment.txt",
             **wildcards,
         ),
         tmp_node_weights=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             desc="subcortical",
             suffix="nodeWeights.csv",
             **wildcards,
@@ -224,6 +242,8 @@ rule tck2connectome:
         "tractography_update"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../../envs/mrtrix3.yaml"
     shell:
         """
         mkdir -p {resources.tmp_dir}
@@ -261,25 +281,31 @@ checkpoint connectome2tck:
     threads: 32
     resources:
         tmp_dir=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             datatype="unfiltered",
             **wildcards,
         ),
         edge_weight_prefix=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             datatype="unfiltered",
             desc="subcortical",
             suffix="tckWeights",
             **wildcards,
         ),
         edge_tck_prefix=lambda wildcards: bids_tractography_out(
-            root=os.environ.get("SLURM_TMPDIR")
-            if config.get("slurm_tmpdir")
-            else "/tmp",
+            root=(
+                os.environ.get("SLURM_TMPDIR")
+                if config.get("slurm_tmpdir")
+                else "/tmp"
+            ),
             datatype="unfiltered",
             desc="subcortical",
             suffix="from",
@@ -293,6 +319,8 @@ checkpoint connectome2tck:
         "tractography_update"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../../envs/mrtrix3.yaml"
     shell:
         """
         mkdir -p {resources.tmp_dir} {output.output_dir}
