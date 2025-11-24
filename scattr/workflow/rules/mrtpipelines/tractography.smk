@@ -104,6 +104,8 @@ checkpoint create_roi_mask:
         "tract_masks"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../../envs/mrtrix3.yaml"
     script:
         "../../scripts/mrtpipelines/create_roi_mask.py"
 
@@ -166,6 +168,8 @@ checkpoint create_exclude_mask:
         "tract_masks"
     container:
         config["singularity"]["scattr"]
+    conda:
+        "../../envs/mrtrix3.yaml"
     script:
         "../../scripts/mrtpipelines/create_exclude_mask.py"
 
