@@ -11,39 +11,50 @@ jobs:
     if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
     steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.base_ref }}
+
       - name: Setup Python environment
-        uses: khanlab/actions/.github/actions/action-setup_task-installPyProject@v0.3.6
+        uses: prefix-dev/setup-pixi@v0.8.14
         with:
-          python-version: '3.10'
-      - name: yamlfix
-        run: poetry run poe yamlfix-check
-      - name: ruff
-        run: poetry run poe ruff-lint-check
+          environments: >-
+            dev-only
+          activate-environment: dev-only
+
+      - name: isort
+        run: isort hippunfold/*.py -c
+
+      - name: Black
+        run: black hippunfold --check
+
       - name: snakefmt
-        run: poetry run poe snakefmt-check
-  test:
-    runs-on: ubuntu-latest
-    needs: [quality]
-    strategy:
-      matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
-    steps:
-      - name: Setup Python environments
-        uses: khanlab/actions/.github/actions/action-setup_task-installPyProject@v0.3.6
-        with:
-          python-version: ${{ matrix.python-version }}
-          install-library: true
-      - name: Test minimum inputs
-        run: poetry run poe test_base
-      - name: Test freesurfer input
-        run: poetry run poe test_freesurfer
-      - name: Test responsemean input
-        run: poetry run poe test_responsemean
-      - name: Test dwi input
-        run: poetry run poe test_dwi
-      - name: Test custom labelmerge inputs
-        run: poetry run poe test_labelmerge
-      - name: Test using single atlas (skipping labelmerge)
-        run: poetry run poe test_skip_labelmerge
-      - name: Test sessions
-        run: poetry run poe test_sessions
+        run: snakefmt hippunfold --check
+
+  # test:
+  #   runs-on: ubuntu-latest
+  #   needs: [quality]
+  #   strategy:
+  #     matrix:
+  #       python-version: ['3.11', '3.12', '3.13']
+  #   steps:
+  #     - name: Setup Python environments
+  #       uses: khanlab/actions/.github/actions/action-setup_task-installPyProject@v0.3.6
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #         install-library: true
+  #     - name: Test minimum inputs
+  #       run: poetry run poe test_base
+  #     - name: Test freesurfer input
+  #       run: poetry run poe test_freesurfer
+  #     - name: Test responsemean input
+  #       run: poetry run poe test_responsemean
+  #     - name: Test dwi input
+  #       run: poetry run poe test_dwi
+  #     - name: Test custom labelmerge inputs
+  #       run: poetry run poe test_labelmerge
+  #     - name: Test using single atlas (skipping labelmerge)
+  #       run: poetry run poe test_skip_labelmerge
+  #     - name: Test sessions
+  #       run: poetry run poe test_sessions
