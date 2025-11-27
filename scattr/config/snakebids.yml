@@ -130,6 +130,12 @@ parse_args:
     nargs: "?"
     type: Path
 
+  --use-hippunfold:
+    help: "Use HippUnfold subfield segmentations as overlay labelmaps in
+      labelmerge."
+    action: store_true
+    default: False
+
   --labelmerge_base_desc:
     help: "Description entity for base labelmaps used in labelmerge. By default,
       uses ZonaBB entity as intended in the subcortical connectome workflow
@@ -149,7 +155,7 @@ parse_args:
       labelmerge. By default, will drop the thalamus labels for intended use
       in the subcortical connectome workflow (default: 15 16)."
     nargs: "*"
-    default: 15 16
+    default: 15 16 17 18
 
   --labelmerge_overlay_drops:
     help: "Space-separated list of indices to drop from the overlay image used
@@ -262,3 +268,9 @@ singularity:
   scattr: "docker://khanlab/scattr:v0.3.2"
 
 fs_license: /path/to/fs/license
+
+hippunfold:
+  tsv: "resources/hippunfold/desc-HippUnfoldSubfields_dseg.tsv"
+
+hippunfold_overlay_dir: null
+

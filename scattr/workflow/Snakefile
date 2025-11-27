@@ -56,6 +56,7 @@ if len(inputs.sessions) > 1 and not config.get("responsemean_ses"):
 
 # Rules
 include: "rules/freesurfer.smk"
+include: "rules/hippunfold.smk"
 include: "rules/zona_bb_subcortex.smk"
 include: "rules/mrtpipelines.smk"
 include: "rules/qc.smk"

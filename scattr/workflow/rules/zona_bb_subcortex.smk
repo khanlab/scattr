@@ -153,22 +153,42 @@ rule warp2native:
 
 rule labelmerge:
     input:
-        zona_seg=inputs["T1w"].expand(
+        zona_tsv=rules.cp_zona_tsv.output.zona_tsv
+            if not config.get("labelmerge_base_dir")
+            else [],
+
+        fs_tsv=rules.cp_fs_tsv.output.fs_tsv
+            if (not config.get("use_hippunfold"))
+            else [],
+
+        hip_tsv=rules.cp_hippu_tsv.output.hip_tsv
+            if config.get("use_hippunfold")
+            else [],
+
+        zona_seg=inputs_t1w["T1w"].expand(
             rules.warp2native.output.nii, allow_missing=True
         )
-        if not config.get("labelmerge_base_dir")
-        else [],
-        fs_seg=inputs["T1w"].expand(
+            if not config.get("labelmerge_base_dir")
+            else [],
+
+        fs_seg=inputs_t1w["T1w"].expand(
             rules.fs_xfm_to_native.output.thal, allow_missing=True
         )
-        if not config.get("labelmerge_overlay_dir")
-        else [],
-        fs_tsv=rules.cp_fs_tsv.output.fs_tsv
-        if not config.get("labelmerge_overlay_dir")
-        else [],
-        zona_tsv=rules.cp_zona_tsv.output.zona_tsv
-        if not config.get("labelmerge_base_dir")
-        else [],
+            if (not config.get("use_hippunfold"))
+            else [],
+
+        hip_seg=inputs_t1w["T1w"].expand(
+            bids_hippu_overlay(
+                space="T1w",
+                desc="HippUnfoldSubfields",
+                suffix="dseg.nii.gz",
+            ),
+            allow_missing=True,
+        )
+            if config.get("use_hippunfold")
+            else [],
+
+            
     params:
         labelmerge_out_dir=directory(labelmerge_dir),
         labelmerge_base_dir=(
@@ -183,10 +203,23 @@ rule labelmerge:
             if config.get("labelmerge_base_exceptions")
             else ""
         ),
+        
         overlay_dir=(
-            f"--overlay_bids_dir {config.get('labelmerge_overlay_dir') if config.get('labelmerge_overlay_dir') else rules.thalamic_segmentation.input.freesurfer_dir}"
+            f"--overlay_bids_dir {config['hippunfold_overlay_dir']}"
+            if config.get("use_hippunfold")
+            else (
+                f"--overlay_bids_dir {config.get('labelmerge_overlay_dir')}"
+                if config.get("labelmerge_overlay_dir")
+                else f"--overlay_bids_dir {rules.thalamic_segmentation.input.freesurfer_dir}"
+            )
         ),
-        overlay_desc=f"--overlay_desc {config['labelmerge_overlay_desc']}",
+
+        overlay_desc=(
+            "--overlay_desc HippUnfoldSubfields"
+            if config.get("use_hippunfold")
+            else f"--overlay_desc {config['labelmerge_overlay_desc']}"
+        ),
+
         overlay_drops=(
             f"--overlay_drops {config.get('labelmerge_overlay_drops')}"
             if config.get("labelmerge_overlay_drops")
