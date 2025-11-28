@@ -178,7 +178,7 @@ rule labelmerge:
             else [],
 
         hip_seg=inputs_t1w["T1w"].expand(
-            bids_hippu_overlay(
+            bids_hippu_out(
                 space="T1w",
                 desc="HippUnfoldSubfields",
                 suffix="dseg.nii.gz",

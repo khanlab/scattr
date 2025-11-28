@@ -1,6 +1,7 @@
-from pathlib import Path
+from functools import partial
 import glob
-import nibabel and nib
+import nibabel as nib
+from pathlib import Path
 
 hippunfold_root = Path(config["bids_dir"]) / "derivatives" / "hippunfold"
 
@@ -58,7 +59,7 @@ rule hippunfold_merge_subfields:
     <output_dir>/hippunfold_bids/sub-XXX/anat/...desc-HippUnfoldSubfields_dseg.nii.gz
     """
     input:
-        t1=inputs_t1w["T1w"]
+        []
     output:
         dseg=bids_hippu_out(
             space="T1w",
