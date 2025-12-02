@@ -18,13 +18,13 @@ bids_hippu_out = partial(
 	bids,
 	root=hippunfold_overlay_dir,
 	datatype='anat',
-	**inputs_t1w.subj_wildcards,
+	**inputs.subj_wildcards,
 )
 
 bids_hippu_log = partial(
     bids,
     root=str(log_dir),
-    **inputs_t1w.subj_wildcards,
+    **inputs.subj_wildcards,
 )
 
 
