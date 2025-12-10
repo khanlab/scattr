@@ -30,8 +30,7 @@ bids_hippu_log = partial(
 
 rule cp_hippu_tsv:
     """
-    Copy HippUnfold TSV (provided by user in config)
-    into hippunfold overlay directory.
+    Copy HippUnfold TSV into hippunfold overlay directory.
     """
     input:
         hip_tsv=str(
@@ -53,10 +52,10 @@ rule cp_hippu_tsv:
 rule hippunfold_merge_subfields:
     """
     Locate the HippUnfold left/right dseg outputs from:
-    <bids_dir>/derivatives/hippunfold/sub-XXX/anat
+    bidsdir/derivatives/hippunfold/sub/anat
 
     Merge into a single:
-    <output_dir>/hippunfold_bids/sub-XXX/anat/...desc-HippUnfoldSubfields_dseg.nii.gz
+    output_dir/hippunfold_bids/sub/anat/sub_desc-HippUnfoldSubfields_dseg.nii.gz
     """
     input:
         []
